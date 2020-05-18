@@ -319,7 +319,7 @@ procFulc <- function(dir) {
   }
 
   # Create trail polygon object from trail_coordinates dataframe. Can be looped if gets too long
-  trail_polygons <-  SpatialPolygons(list(
+  trail_polygons <-  sp::SpatialPolygons(list(
     Polygons(list(Polygon(cbind(trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][1]}")) %>% .$longitudes,
                                 trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][1]}")) %>% .$latitudes))),
              ID = glue::glue("{list(unique(trail_coordinates$trail))[[1]][1]}")),
