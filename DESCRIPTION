@@ -19,5 +19,6 @@ LazyData: true
 RoxygenNote: 7.1.0
 Imports:
     glue,
-    readr
+    readr,
+    sp
 
