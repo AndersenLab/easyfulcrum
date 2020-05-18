@@ -380,7 +380,7 @@ procFulc <- function(dir) {
                                  joined_data %>% dplyr::filter(!is.na(collection_latitude)) %>% .$collection_latitude))
 
   # bind trails
-  fulc_data <<- cbind(unname(over(pts, trail_polygons)), joined_data %>%
+  fulc_data <<- cbind(unname(sp::over(pts, trail_polygons)), joined_data %>%
                         dplyr::filter(!is.na(collection_longitude) & !is.na(collection_latitude))) %>%
     dplyr::rename(collection_trail = 1) %>%
     dplyr::rowwise() %>%
