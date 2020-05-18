@@ -303,7 +303,7 @@ procFulc <- function(dir) {
   # Make dataframe with trail specific polygon points
   trail_coordinates <- NULL
 
-  for(i in seq_len(trails)) {
+  for(i in 1:length(trails)) {
     longs <- as_tibble(str_match_all(trails,  "(?<=\\[).+?(?=,)")[[i]]) %>%
       dplyr::rename(longitudes = V1) %>%
       dplyr::mutate(longitudes = as.numeric(longitudes))
