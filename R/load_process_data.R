@@ -24,9 +24,9 @@ FtoC <- function(F) {
    (F - 32) * (5 / 9)
 }
 
-#' loadFulc
+#' loadFulcrum
 #'
-#' \code{loadFulc} loads .csv files exported from Fulcrum into R and names variables correctly
+#' \code{loadFulcrum} loads .csv files exported from Fulcrum into R and names variables correctly
 #'
 #' @param dir The path of the directory with five Fulcrum .csv files:
 #' nematode_field_sampling.csv,
@@ -34,7 +34,7 @@ FtoC <- function(F) {
 #' nematode_isolation.csv,
 #' nematode_isolation_s_labeled_plates.csv,
 #' nematode_isolation_photos.csv
-#' @return five data frames generated from the .csv files.
+#' @return five named data frames generated from the .csv files.
 #' Each data frame has a shortened name.
 #' \tabular{ll}{
 #' collection \tab nematode_field_sampling.csv\cr
@@ -45,7 +45,7 @@ FtoC <- function(F) {
 #' }
 #' @export
 
-loadFulc <- function(dir) {
+loadFulcrum <- function(dir) {
 
   # Read collection data
   collection <<- readr::read_csv(glue::glue("{dir}/nematode_field_sampling.csv")) %>%
@@ -105,9 +105,9 @@ loadFulc <- function(dir) {
   isolation_photo <<- readr::read_csv(glue::glue("{dir}/nematode_isolation_photos.csv"))
 }
 
-#' procFulc
+#' procFulcrum
 #'
-#' \code{procFulc} loads Fulcrum .csv files, joins collection and isolation data, and adds collection variables
+#' \code{procFulcrum} loads Fulcrum .csv files, joins collection and isolation data, and adds collection variables
 #'
 #' @param dir The path of the directory with five Fulcrum .csv files:
 #' nematode_field_sampling.csv,
@@ -115,11 +115,11 @@ loadFulc <- function(dir) {
 #' nematode_isolation.csv,
 #' nematode_isolation_s_labeled_plates.csv,
 #' nematode_isolation_photos.csv
-#' @return A dataframe \code{fulc_data} generated from the .csv files.
-#' This data frame contains all variables used from the Fulcrum exports
+#' @return A dataframe generated from the .csv files.
+#' This data frame contains all necessary variables from Fulcrum. It also contains data quality flags. The variable names match the data dictionary.
 #' @export
 
-procFulc <- function(dir) {
+procFulcrum <- function(dir) {
 
   # Read collection data
   collection <- readr::read_csv(glue::glue("{dir}/nematode_field_sampling.csv")) %>%
@@ -340,7 +340,7 @@ procFulc <- function(dir) {
                                  joined_data %>% dplyr::filter(!is.na(collection_latitude)) %>% .$collection_latitude))
 
   # bind trails
-  fulc_data <<- cbind(unname(sp::over(pts, trail_polygons)), joined_data %>%
+  fulc_data <- cbind(unname(sp::over(pts, trail_polygons)), joined_data %>%
                         dplyr::filter(!is.na(collection_longitude) & !is.na(collection_latitude))) %>%
     dplyr::rename(collection_trail = 1) %>%
     dplyr::rowwise() %>%
@@ -348,4 +348,63 @@ procFulc <- function(dir) {
     dplyr::ungroup() %>%
     dplyr::mutate(collection_trail = ifelse(collection_trail == "NA", NA_character_, collection_trail)) %>% # fix NAs
     dplyr::full_join(joined_data) # add back joined_data with NAs for complete collection
+
+  return(fulc_data)
+}
+
+#' loadGenotypes
+#'
+#' \code{loadGenotypes} loads genotyping data from project specific genotyping Google sheets
+#'
+#' @param gsKey a vector containing the google sheet keys for the genotype data to load.
+#' Your Google Sheet keys are found in your Google sheets URL. Select the string
+#' found between the slashes after spreadsheets/d in your Google Sheet URL.
+#'
+#' @return A dataframe generated from the Google sheets \code{gsKey} argument. If multiple Google sheets
+#' are provided the data are appended using rbind. A \code{project_id} variable is assigned from the Google sheets name.
+#' The genotyping sheet must be named with the convention {YOUR_PROJECT_NAME}_wild_isolate_genotyping.
+#' @export
+#'
+
+loadGenotypes <- function(gsKey) {
+  # read genotyping sheet(s)
+  genotyping_sheet <- NULL
+
+    for(i in unique(gsKey)) {
+      # get project from sheet name
+      project <- stringr::str_replace(googlesheets4::gs4_get(i)$name,
+                                      pattern = "_wild_isolate_genotyping", replacement = "")
+
+      # get data from sheet
+      geno <- googlesheets4::read_sheet(i, range = "genotyping template") %>%
+        dplyr::filter(!is.na(s_label)) %>%
+        dplyr::mutate(project_id = project)
+
+    genotyping_sheet <- rbind(genotyping_sheet, geno)
+    }
+
+    # find s_labels in genotyping sheet
+    slabs <- str_subset(genotyping_sheet$s_label, pattern = "S-")
+
+    # filter genotyping sheet by s_labels matching "S-" pattern
+    unusual_slabs <- genotyping_sheet %>%
+      dplyr::filter(!(s_label %in% slabs)) %>%
+      dplyr::pull(s_label)
+
+    duplicated_slabs <- genotyping_sheet %>%
+      dplyr::group_by(s_label) %>%
+      dplyr::mutate(slab_n = n(),
+                    slab_duplicate = ifelse(slab_n > 1, 1, 0)) %>%
+      dplyr::ungroup() %>%
+      dplyr::distinct(s_label, .keep_all = T) %>%
+      dplyr::filter(slab_duplicate == 1) %>%
+      dplyr::pull(s_label)
+
+    # print warning if duplicates or unusual names found for S-labels
+    print(paste0("There are ", length(unusual_slabs), " unsual S-label names in genotyping sheets: ", unusual_slabs))
+
+    # print warning if duplicates or unusual names found for strain names
+    print(paste0("There are ", length(duplicated_slabs), " duplicated S-label names in genotyping sheets: ", duplicated_slabs))
+
+  return(genotyping_sheet)
 }
