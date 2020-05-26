@@ -362,7 +362,7 @@ procFulcrum <- function(dir) {
 #'
 #' @return A dataframe generated from the Google sheets \code{gsKey} argument. If multiple Google sheets
 #' are provided the data are appended using rbind. A \code{project_id} variable is assigned from the Google sheets name.
-#' The genotyping sheet must be named with the convention {YOUR_PROJECT_NAME}_wild_isolate_genotyping.
+#' The genotyping sheet must be named with the convention \code{YOUR_PROJECT_NAME}_wild_isolate_genotyping.
 #' @export
 #'
 
@@ -372,13 +372,13 @@ loadGenotypes <- function(gsKey) {
 
     for(i in unique(gsKey)) {
       # get project from sheet name
-      project <- stringr::str_replace(googlesheets4::gs4_get(i)$name,
+      project_geno <- stringr::str_replace(googlesheets4::gs4_get(i)$name,
                                       pattern = "_wild_isolate_genotyping", replacement = "")
 
       # get data from sheet
       geno <- googlesheets4::read_sheet(i, range = "genotyping template") %>%
         dplyr::filter(!is.na(s_label)) %>%
-        dplyr::mutate(project_id = project)
+        dplyr::mutate(project_geno = project_geno)
 
     genotyping_sheet <- rbind(genotyping_sheet, geno)
     }
@@ -401,10 +401,158 @@ loadGenotypes <- function(gsKey) {
       dplyr::pull(s_label)
 
     # print warning if duplicates or unusual names found for S-labels
-    print(paste0("There are ", length(unusual_slabs), " unsual S-label names in genotyping sheets: ", unusual_slabs))
+    print(paste0("There are ", length(unusual_slabs), " unsual S-label names in genotyping sheet(s) ", unusual_slabs))
 
     # print warning if duplicates or unusual names found for strain names
-    print(paste0("There are ", length(duplicated_slabs), " duplicated S-label names in genotyping sheets: ", duplicated_slabs))
+    print(paste0("There are ", length(duplicated_slabs), " duplicated S-label names in genotyping sheet(s) ", duplicated_slabs))
 
   return(genotyping_sheet)
+}
+
+#' joinFulcGeno
+#'
+#' \code{joinFulcGeno} joins the collection data output from the \code{procFulcrum} function
+#' with the genotyping data output from the \code{loadGenotypes} function.
+#' Blast data output from the \code{procSanger} function can also be joined if desired.
+#'
+#' @param fulc a collection data frame output from the \code{procFulcrum} function.
+#' @param geno a genotyping data frame output from the \code{loadGenotypes} function.
+#' @param blast OPTINOAL, a blast results data frame output from the \code{procSanger} function.
+#'
+#' @return A single collection dataframe with variables descriped in the data dictionary.
+#' @export
+#'
+
+joinFulcGeno <- function(fulc, geno, blast = NULL) {
+  if(is.null(blast)) {
+  # Join genotyping sheet with collection and isolation data
+    # Join genotyping sheet with collection and isolation data
+    out_dat <- fulc %>%
+      dplyr::full_join(geno) %>%
+      # Rename variables
+      dplyr::rename(project_fulc = project,
+                    collection_id = c_label,
+                    isolation_id = s_label) %>%
+      # Reorder variables
+      dplyr::select(project_geno,
+                    project_fulc,
+                  collection_id,
+                  isolation_id,
+                  species_id,
+                  ECA_dirty,
+                  ECA_clean,
+                  collection_by,
+                  collection_datetime_UTC,
+                  collection_date_UTC,
+                  collection_local_time,
+                  collection_island,
+                  collection_location,
+                  collection_trail,
+                  collection_latitude,
+                  collection_longitude,
+                  collection_fulcrum_latitude,
+                  collection_fulcrum_longitude,
+                  collection_lat_long_method,
+                  collection_lat_long_method_diff,
+                  ambient_temperature,
+                  flag_ambient_temperature_run,
+                  ambient_humidity,
+                  substrate_temperature,
+                  altitude,
+                  altitude_method,
+                  #altitude_methods_range,
+                  landscape,
+                  sky_view,
+                  substrate,
+                  substrate_other,
+                  substrate_notes,
+                  sample_photo_url,
+                  gridsect,
+                  gridsect_index,
+                  grid_sect_direction,
+                  gridsect_radius,
+                  isolation_by,
+                  isolation_datetime_UTC,
+                  isolation_date_UTC,
+                  isolation_local_time,
+                  isolation_latitude,
+                  isolation_longitude,
+                  worms_on_sample,
+                  proliferation_48,
+                  proliferation_168,
+                  proliferating,
+                  approximate_number_of_worms,
+                  shipment_number,
+                  pcr_product_its2,
+                  pcr_product_ssu,
+                  general_notes,
+                  manual_blast_notes,
+                  possible_new_caeno_sp,
+                  make_strain_name,
+                  reason_strain_not_named)
+  }
+  # Join genotyping sheet with collection and isolation data
+  out_dat <- fulc %>%
+    dplyr::full_join(geno) %>%
+    # Rename variables
+    dplyr::rename(project_fulc = project,
+                  collection_id = c_label,
+                  isolation_id = s_label) %>%
+    # Reorder variables
+    dplyr::select(project_geno,
+                  project_fulc,
+                  collection_id,
+                  isolation_id,
+                  species_id,
+                  ECA_dirty,
+                  ECA_clean,
+                  collection_by,
+                  collection_datetime_UTC,
+                  collection_date_UTC,
+                  collection_local_time,
+                  collection_island,
+                  collection_location,
+                  collection_trail,
+                  collection_latitude,
+                  collection_longitude,
+                  collection_fulcrum_latitude,
+                  collection_fulcrum_longitude,
+                  collection_lat_long_method,
+                  collection_lat_long_method_diff,
+                  ambient_temperature,
+                  flag_ambient_temperature_run,
+                  ambient_humidity,
+                  substrate_temperature,
+                  altitude,
+                  altitude_method,
+                  #altitude_methods_range,
+                  landscape,
+                  sky_view,
+                  substrate,
+                  substrate_other,
+                  substrate_notes,
+                  sample_photo_url,
+                  gridsect,
+                  gridsect_index,
+                  grid_sect_direction,
+                  gridsect_radius,
+                  isolation_by,
+                  isolation_datetime_UTC,
+                  isolation_date_UTC,
+                  isolation_local_time,
+                  isolation_latitude,
+                  isolation_longitude,
+                  worms_on_sample,
+                  proliferation_48,
+                  proliferation_168,
+                  proliferating,
+                  approximate_number_of_worms,
+                  shipment_number,
+                  pcr_product_its2,
+                  pcr_product_ssu,
+                  general_notes,
+                  manual_blast_notes,
+                  possible_new_caeno_sp,
+                  make_strain_name,
+                  reason_strain_not_named)
 }
