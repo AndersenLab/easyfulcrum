@@ -247,7 +247,7 @@ procFulcrum <- function(dir) {
                  "Wa'ahila Ridge Trail" = "[-157.7976712119,21.3056033836],[-157.7987690736,21.3057559723],[-157.7980324719,21.3084880175],[-157.7944368031,21.3144206272],[-157.7901313547,21.3208797418],[-157.7878303546,21.3269979915],[-157.7816081326,21.3348734629],[-157.7798913512,21.3357678864],[-157.7770589385,21.3357519592],[-157.7820592467,21.3306206609],[-157.7863646951,21.3232067337],[-157.7895887103,21.3147499927],[-157.7944440115,21.3088634687],[-157.7976712119,21.3056033836]",
                  "Wiliwilinui Ridge Trail" = "[-157.7610354219,21.2980014303],[-157.7636727039,21.2980178301],[-157.7656396013,21.3032706853],[-157.7655542735,21.3067857077],[-157.7571375016,21.324271483],[-157.7542390395,21.3277997446],[-157.7481931727,21.327357194],[-157.7475859877,21.326016573],[-157.7508203965,21.317912309],[-157.7549794968,21.3108024385],[-157.7585446555,21.30330364],[-157.7603906859,21.3009099537],[-157.7610354219,21.2980014303]",
                  "Kalopa State Recreation Area" = "[-155.4445436339,20.0258025884],[-155.453435995,20.0282838619],[-155.4542096446,20.032764671],[-155.4505063522,20.0361599209],[-155.4452068101,20.041061784],[-155.4429866116,20.0424226244],[-155.4317761513,20.0372755906],[-155.4366200532,20.0294838493],[-155.4445436339,20.0258025884]",
-                 "Kipuka Puaulu Trail" ="[-155.3014187816,19.4369739997],[-155.3037875074,19.4375076905],[-155.3063687983,19.439252133],[-155.3066034916,19.442442035],[-155.3056325319,19.4446149707],[-155.3023801858,19.4453876473],[-155.2996805425,19.4445240766],[-155.2984629872,19.4429099473],[-155.2977664511,19.4410944082],[-155.2980630028,19.4391639233],[-155.2992270815,19.4379103288],[-155.3014187816,19.4369739997]",
+                 "Kipuka Puaulu Trail" = "[-155.3014187816,19.4369739997],[-155.3037875074,19.4375076905],[-155.3063687983,19.439252133],[-155.3066034916,19.442442035],[-155.3056325319,19.4446149707],[-155.3023801858,19.4453876473],[-155.2996805425,19.4445240766],[-155.2984629872,19.4429099473],[-155.2977664511,19.4410944082],[-155.2980630028,19.4391639233],[-155.2992270815,19.4379103288],[-155.3014187816,19.4369739997]",
                  "Manuka Nature Trail" = "[-155.8248741667,19.1080109154],[-155.8269825506,19.1095439203],[-155.8271397951,19.1100389204],[-155.827794757,19.1150164005],[-155.8279053981,19.1171844974],[-155.8258975971,19.1192328223],[-155.8215480599,19.122471411],[-155.8204518746,19.122596379],[-155.8179482001,19.1211388884],[-155.8166575546,19.1174307983],[-155.8166456523,19.1151944365],[-155.8232769112,19.1102486416],[-155.8248741667,19.1080109154]",
                  "Kaloko Loop Trial" = "[-155.9489068876,19.7179298978],[-155.9554239011,19.7181607717],[-155.9569940831,19.7189532045],[-155.956992239,19.7236042001],[-155.9479893207,19.7263051335],[-155.9465989306,19.7213376595],[-155.946744608,19.7198175933],[-155.9471745158,19.7191565394],[-155.9489068876,19.7179298978]",
                  "Kahakapao Loop Trail" = "[-156.2674384865,20.8117053473],[-156.2753739695,20.8119787889],[-156.2762706655,20.8172152958],[-156.2790301557,20.8205754146],[-156.2802150215,20.8267645811],[-156.2787543911,20.831007382],[-156.2759664024,20.832625409],[-156.2715335491,20.8303936647],[-156.2711030546,20.8245575065],[-156.2684174928,20.8211622211],[-156.2669984366,20.8141752356],[-156.2674384865,20.8117053473]",
@@ -263,7 +263,7 @@ procFulcrum <- function(dir) {
   # Make dataframe with trail specific polygon points
   trail_coordinates <- NULL
 
-  for(i in 1:length(trails)) {
+  for(i in 1:length(trails)){
     longs <- as_tibble(str_match_all(trails,  "(?<=\\[).+?(?=,)")[[i]]) %>%
       dplyr::rename(longitudes = V1) %>%
       dplyr::mutate(longitudes = as.numeric(longitudes))
@@ -370,7 +370,7 @@ loadGenotypes <- function(gsKey) {
   # read genotyping sheet(s)
   genotyping_sheet <- NULL
 
-    for(i in unique(gsKey)) {
+    for(i in unique(gsKey)){
       # get project from sheet name
       project_geno <- stringr::str_replace(googlesheets4::gs4_get(i)$name,
                                       pattern = "_wild_isolate_genotyping", replacement = "")
@@ -417,14 +417,14 @@ loadGenotypes <- function(gsKey) {
 #'
 #' @param fulc a collection data frame output from the \code{procFulcrum} function.
 #' @param geno a genotyping data frame output from the \code{loadGenotypes} function.
-#' @param blast OPTINOAL, a blast results data frame output from the \code{procSanger} function.
+#' @param blast OPTIONAL, a blast results data frame output from the \code{procSanger} function.
 #'
 #' @return A single collection dataframe with variables descriped in the data dictionary.
 #' @export
 #'
 
 joinFulcGeno <- function(fulc, geno, blast = NULL) {
-  if(is.null(blast)) {
+  if(is.null(blast)){
   # Join genotyping sheet with collection and isolation data
     # Join genotyping sheet with collection and isolation data
     out_dat <- fulc %>%
@@ -491,6 +491,11 @@ joinFulcGeno <- function(fulc, geno, blast = NULL) {
                   make_strain_name,
                   reason_strain_not_named)
   }
+  else{
+  # load blast results
+  blast_results <- read_tsv(blast)
+  print(paste0("loading blast results from", blast))
+
   # Join genotyping sheet with collection and isolation data
   out_dat <- fulc %>%
     dplyr::full_join(geno) %>%
@@ -555,4 +560,6 @@ joinFulcGeno <- function(fulc, geno, blast = NULL) {
                   possible_new_caeno_sp,
                   make_strain_name,
                   reason_strain_not_named)
+  }
+  return(out_dat)
 }
