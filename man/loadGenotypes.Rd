@@ -14,7 +14,7 @@ found between the slashes after spreadsheets/d in your Google Sheet URL.}
 \value{
 A dataframe generated from the Google sheets \code{gsKey} argument. If multiple Google sheets
 are provided the data are appended using rbind. A \code{project_id} variable is assigned from the Google sheets name.
-The genotyping sheet must be named with the convention {YOUR_PROJECT_NAME}_wild_isolate_genotyping.
+The genotyping sheet must be named with the convention \code{YOUR_PROJECT_NAME}_wild_isolate_genotyping.
 }
 \description{
 \code{loadGenotypes} loads genotyping data from project specific genotyping Google sheets
