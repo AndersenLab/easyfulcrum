@@ -23,10 +23,10 @@ Every collection project should be contained in its own repository. The reposito
 
 The directory structure within the repository is critically important for
 `easyfulcrum` functions.
-The `data` directory contains the  `raw` and `processed` subdirectories. 
-    - `raw/fulcrum` holds the `.csv` files exported from Fulcrum and `raw/fulcrum/photos` contains `.jpg` files exported from Fulcrum.
-    - `raw/sanger` holds the `.ab1`, `.phd.1`, `.scf`, and `.seq` files exported from the sequencing facility.
-    - `processed/fulcrum` and `processed/sanger` directories hold `easyfulcrum` function outputs.
+The `data` directory contains the  `raw` and `processed` subdirectories.<br>
+    - `raw/fulcrum` holds the `.csv` files exported from Fulcrum and `raw/fulcrum/photos` contains `.jpg` files exported from Fulcrum.<br>
+    - `raw/sanger` holds the `.ab1`, `.phd.1`, `.scf`, and `.seq` files exported from the sequencing facility.<br>
+    - `processed/fulcrum` and `processed/sanger` directories hold `easyfulcrum` function outputs.<br>
 The `plots` and `reports` directories hold `easyfulcrum` function outputs.
 
 ```
