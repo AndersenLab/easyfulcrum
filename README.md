@@ -54,6 +54,8 @@ The `plots` and `reports` directories hold `easyfulcrum` function outputs.
 │   ├── processed
 │       ├── fulcrum
 │           ├── empty
+│       ├── genotypes
+│           ├── empty
 │       ├── sanger
 │           ├── empty
 ├── plots
@@ -66,13 +68,9 @@ This directory exhibits the minimal file content and naming for all the `easyful
 
 ## Project workflow
 
-Nematode collections are performed following a detailed protocol found here **link**. The `easyfulcrum` package is written to process and analyze the data generated for a specific collection project. 
+Nematode collections are performed following a detailed protocol found here **link**. The `easyfulcrum` package is written to process and analyze the data generated for a specific collection project. The basic workflow is to generate a final processed dataframe that can be used for downstream analysis. 
 
-![File name convention](.FileNaming.png)
-
-### Overview
-
-![Overview](.Overview.png)
+![Project workflow](.readmefiles/easyfulcrum_workflow_1.png)
 
 ### Example
 
