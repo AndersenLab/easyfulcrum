@@ -33,3 +33,8 @@ genotype_data3 <- loadGenotypes(gsKey = c("14xvEXbKVej7gnPPaHtCcEHDc6xLbRPfN9ESL
 # test joinFulcGeno function to join genotype data to fulcrum data
 project_data3 <- joinFulcGeno(fulc = aus2020feb, geno = genotype_data3)
 
+# test readGenotypes function
+genotype_data3_2 <- readGenotypes(gsKey = c("1CxKJHM6mEu4VvnN2T1ioXiJNZmmmpeosmECP2zeAPmY"))
+
+# test joinFulcGeno function to join genotype data to fulcrum data
+project_data3_2 <- joinFulcGeno(fulc = aus2020feb, geno = genotype_data3_2)
