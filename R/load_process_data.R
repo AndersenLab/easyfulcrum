@@ -409,160 +409,6 @@ loadGenotypes <- function(gsKey) {
   return(genotyping_sheet)
 }
 
-#' joinFulcGeno
-#'
-#' \code{joinFulcGeno} joins the collection data output from the \code{procFulcrum} function
-#' with the genotyping data output from the \code{loadGenotypes} function.
-#' Blast data output from the \code{procSanger} function can also be joined if desired.
-#'
-#' @param fulc a collection data frame output from the \code{procFulcrum} function.
-#' @param geno a genotyping data frame output from the \code{loadGenotypes} function.
-#' @param blast OPTIONAL, a blast results data frame output from the \code{procSanger} function.
-#'
-#' @return A single collection dataframe with variables descriped in the data dictionary.
-#' @export
-#'
-
-joinFulcGeno <- function(fulc, geno, blast = NULL) {
-  if(is.null(blast)){
-  # Join genotyping sheet with collection and isolation data
-    # Join genotyping sheet with collection and isolation data
-    out_dat <- fulc %>%
-      dplyr::full_join(geno) %>%
-      # Rename variables
-      dplyr::rename(project_fulc = project,
-                    collection_id = c_label,
-                    isolation_id = s_label) %>%
-      # Reorder variables
-      dplyr::select(project_geno,
-                    project_fulc,
-                  collection_id,
-                  isolation_id,
-                  species_id,
-                  ECA_dirty,
-                  ECA_clean,
-                  collection_by,
-                  collection_datetime_UTC,
-                  collection_date_UTC,
-                  collection_local_time,
-                  collection_island,
-                  collection_location,
-                  collection_trail,
-                  collection_latitude,
-                  collection_longitude,
-                  collection_fulcrum_latitude,
-                  collection_fulcrum_longitude,
-                  collection_lat_long_method,
-                  collection_lat_long_method_diff,
-                  ambient_temperature,
-                  flag_ambient_temperature_run,
-                  ambient_humidity,
-                  substrate_temperature,
-                  altitude,
-                  altitude_method,
-                  #altitude_methods_range,
-                  landscape,
-                  sky_view,
-                  substrate,
-                  substrate_other,
-                  substrate_notes,
-                  sample_photo_url,
-                  gridsect,
-                  gridsect_index,
-                  grid_sect_direction,
-                  gridsect_radius,
-                  isolation_by,
-                  isolation_datetime_UTC,
-                  isolation_date_UTC,
-                  isolation_local_time,
-                  isolation_latitude,
-                  isolation_longitude,
-                  worms_on_sample,
-                  proliferation_48,
-                  proliferation_168,
-                  proliferating,
-                  approximate_number_of_worms,
-                  shipment_number,
-                  pcr_product_its2,
-                  pcr_product_ssu,
-                  general_notes,
-                  manual_blast_notes,
-                  possible_new_caeno_sp,
-                  make_strain_name,
-                  reason_strain_not_named)
-  }
-  else{
-  # load blast results
-  blast_results <- read_tsv(blast)
-  print(paste0("loading blast results from", blast))
-
-  # Join genotyping sheet with collection and isolation data
-  out_dat <- fulc %>%
-    dplyr::full_join(geno) %>%
-    # Rename variables
-    dplyr::rename(project_fulc = project,
-                  collection_id = c_label,
-                  isolation_id = s_label) %>%
-    # Reorder variables
-    dplyr::select(project_geno,
-                  project_fulc,
-                  collection_id,
-                  isolation_id,
-                  species_id,
-                  ECA_dirty,
-                  ECA_clean,
-                  collection_by,
-                  collection_datetime_UTC,
-                  collection_date_UTC,
-                  collection_local_time,
-                  collection_island,
-                  collection_location,
-                  collection_trail,
-                  collection_latitude,
-                  collection_longitude,
-                  collection_fulcrum_latitude,
-                  collection_fulcrum_longitude,
-                  collection_lat_long_method,
-                  collection_lat_long_method_diff,
-                  ambient_temperature,
-                  flag_ambient_temperature_run,
-                  ambient_humidity,
-                  substrate_temperature,
-                  altitude,
-                  altitude_method,
-                  #altitude_methods_range,
-                  landscape,
-                  sky_view,
-                  substrate,
-                  substrate_other,
-                  substrate_notes,
-                  sample_photo_url,
-                  gridsect,
-                  gridsect_index,
-                  grid_sect_direction,
-                  gridsect_radius,
-                  isolation_by,
-                  isolation_datetime_UTC,
-                  isolation_date_UTC,
-                  isolation_local_time,
-                  isolation_latitude,
-                  isolation_longitude,
-                  worms_on_sample,
-                  proliferation_48,
-                  proliferation_168,
-                  proliferating,
-                  approximate_number_of_worms,
-                  shipment_number,
-                  pcr_product_its2,
-                  pcr_product_ssu,
-                  general_notes,
-                  manual_blast_notes,
-                  possible_new_caeno_sp,
-                  make_strain_name,
-                  reason_strain_not_named)
-  }
-  return(out_dat)
-}
 
 #' readGenotypes
 #'
@@ -618,3 +464,266 @@ readGenotypes <- function(gsKey) {
 }
 
 
+#' joinFulcGeno
+#'
+#' \code{joinFulcGeno} joins the collection data output from the \code{procFulcrum} function
+#' with the genotyping data output from the \code{readGenotypes} function.
+#' Blast data output from the \code{procSanger} function can also be joined if desired.
+#'
+#' @param fulc a collection data frame output from the \code{procFulcrum} function.
+#' @param geno a genotyping data frame output from the \code{loadGenotypes} function.
+#' @param blast OPTIONAL, a blast results data frame output from the \code{procSanger} function.
+#'
+#' @return A single collection dataframe with variables descriped in the data dictionary.
+#' @export
+#'
+
+joinFulcGeno <- function(fulc, geno, blast = NULL) {
+  if(is.null(blast)){
+    # Join genotyping sheet with collection and isolation data
+    out_dat <- fulc %>%
+      dplyr::full_join(geno) %>%
+      # Rename variables
+      dplyr::rename(collection_id = c_label,
+                    isolation_id = s_label) %>%
+      # Reorder variables
+      dplyr::select(project_id,
+                    collection_id,
+                    isolation_id,
+                    species_id,
+                    ECA_name,
+                    collection_by,
+                    collection_datetime_UTC,
+                    collection_date_UTC,
+                    collection_local_time,
+                    collection_island,
+                    collection_location,
+                    collection_trail,
+                    collection_latitude,
+                    collection_longitude,
+                    collection_fulcrum_latitude,
+                    collection_fulcrum_longitude,
+                    collection_lat_long_method,
+                    collection_lat_long_method_diff,
+                    ambient_temperature,
+                    flag_ambient_temperature_run,
+                    ambient_humidity,
+                    substrate_temperature,
+                    altitude,
+                    altitude_method,
+                    #altitude_methods_range,
+                    landscape,
+                    sky_view,
+                    substrate,
+                    substrate_other,
+                    substrate_notes,
+                    sample_photo_url,
+                    gridsect,
+                    gridsect_index,
+                    grid_sect_direction,
+                    gridsect_radius,
+                    isolation_by,
+                    isolation_datetime_UTC,
+                    isolation_date_UTC,
+                    isolation_local_time,
+                    isolation_latitude,
+                    isolation_longitude,
+                    worms_on_sample,
+                    approximate_number_of_worms,
+                    shipment_sent_date,
+                    shipment_received_date,
+                    proliferation_48,
+                    proliferation_168,
+                    proliferating,
+                    lysis_date,
+                    pcr_product_its2,
+                    pcr_product_ssu,
+                    general_notes,
+                    manual_blast_notes,
+                    possible_new_caeno_sp,
+                    make_strain_name,
+                    reason_strain_not_named,)
+  }
+  else{
+    # load blast results
+    blast_results <- read_tsv(blast)
+    print(paste0("loading blast results from", blast))
+
+    # Join genotyping sheet with collection and isolation data
+    out_dat <- fulc %>%
+      dplyr::full_join(geno) %>%
+      # Rename variables
+      dplyr::rename(project_fulc = project,
+                    collection_id = c_label,
+                    isolation_id = s_label) %>%
+      # Reorder variables
+      dplyr::select(project_id,
+                    project_fulc,
+                    collection_id,
+                    isolation_id,
+                    species_id,
+                    ECA_dirty,
+                    ECA_clean,
+                    collection_by,
+                    collection_datetime_UTC,
+                    collection_date_UTC,
+                    collection_local_time,
+                    collection_island,
+                    collection_location,
+                    collection_trail,
+                    collection_latitude,
+                    collection_longitude,
+                    collection_fulcrum_latitude,
+                    collection_fulcrum_longitude,
+                    collection_lat_long_method,
+                    collection_lat_long_method_diff,
+                    ambient_temperature,
+                    flag_ambient_temperature_run,
+                    ambient_humidity,
+                    substrate_temperature,
+                    altitude,
+                    altitude_method,
+                    #altitude_methods_range,
+                    landscape,
+                    sky_view,
+                    substrate,
+                    substrate_other,
+                    substrate_notes,
+                    sample_photo_url,
+                    gridsect,
+                    gridsect_index,
+                    grid_sect_direction,
+                    gridsect_radius,
+                    isolation_by,
+                    isolation_datetime_UTC,
+                    isolation_date_UTC,
+                    isolation_local_time,
+                    isolation_latitude,
+                    isolation_longitude,
+                    worms_on_sample,
+                    proliferation_48,
+                    proliferation_168,
+                    proliferating,
+                    approximate_number_of_worms,
+                    shipment_number,
+                    pcr_product_its2,
+                    pcr_product_ssu,
+                    general_notes,
+                    manual_blast_notes,
+                    possible_new_caeno_sp,
+                    make_strain_name,
+                    reason_strain_not_named)
+  }
+  return(out_dat)
+}
+
+#' readFulcrum
+#'
+#' \code{readFulcrum} reads .csv files exported from Fulcrum into R
+#'
+#' @param dir The path of the directory with five Fulcrum .csv files:
+#' nematode_field_sampling.csv,
+#' nematode_field_sampling_sample_photo.csv,
+#' nematode_isolation.csv,
+#' nematode_isolation_s_labeled_plates.csv,
+#' nematode_isolation_photos.csv
+#' @return A list of five named data frames generated from the .csv files.
+#' \tabular{ll}{
+#' nematode_field_sampling \tab nematode_field_sampling.csv\cr
+#' nematode_field_sampling_sample_photo \tab nematode_field_sampling_sample_photo.csv\cr
+#' nematode_isolation \tab nematode_isolation.csv\cr
+#' nematode_isolation_s_labeled_plates \tab nematode_isolation_s_labeled_plates.csv\cr
+#' nematode_isolation_photos \tab nematode_isolation_photos.csv\cr
+#' }
+#' @export
+
+readFulcrum <- function(dir) {
+  # make file list
+  files <- list(glue::glue("{dir}/nematode_field_sampling_sample_photo.csv"),
+                glue::glue("{dir}/nematode_field_sampling.csv"),
+                glue::glue("{dir}/nematode_isolation_photos.csv"),
+                glue::glue("{dir}/nematode_isolation_s_labeled_plates.csv"),
+                glue::glue("{dir}/nematode_isolation.csv"))
+
+  #read files
+  fulc_data <- lapply(files, readr::read_csv)
+
+  # set names
+  names(fulc_data) <- c("nematode_field_sampling_sample_photo",
+                        "nematode_field_sampling",
+                        "nematode_isolation_photos",
+                        "nematode_isolation_s_labeled_plates.csv",
+                        "nematode_isolation.csv")
+
+  # return data
+  return(fulc_data)
+}
+
+
+readFulcrum <- function(dir) {
+  fulcrum <- NULL
+  # Read collection data
+  nematode_field_sampling <- readr::read_csv(glue::glue("{dir}/nematode_field_sampling.csv")) %>%
+    dplyr::mutate(c_label = stringr::str_to_upper(c_label)) %>%
+    # name created_by to specify who picked up the sample
+    dplyr::rename(collection_by = created_by) %>%
+    dplyr::select(-updated_at,
+                  -system_created_at,
+                  -system_updated_at,
+                  -date) %>%
+    # choose one sample photo only. This takes the first sample photo and warns if additional photos are discarded
+    tidyr::separate(col = sample_photo, into = "sample_photo", sep = ",", extra = "warn") %>%
+    # this is UTC time (very important if you want to convert to local time)
+    dplyr::mutate(collection_datetime_UTC = lubridate::ymd_hms(created_at, tz = "UTC")) %>%
+    # again this is UTC date (very important if you want to convert to local date)
+    dplyr::mutate(collection_date_UTC = lubridate::date(created_at)) %>%
+    dplyr::select(-created_at) %>%
+    # Fix Fahrenheit observations to Celcius
+    dplyr::mutate(substrate_temperature = ifelse(substrate_temperature > 40,
+                                                 FtoC(substrate_temperature),
+                                                 substrate_temperature)) %>%
+    # Fix ambient temp Fahrenheit to Celcius
+    dplyr::mutate(ambient_temperature = ifelse(ambient_temperature_c > 40,
+                                               FtoC(ambient_temperature_c),
+                                               ambient_temperature_c)) %>%
+    # force ambient temp to numeric
+    dplyr::mutate(ambient_temperature = as.numeric(ambient_temperature)) %>%
+    # drop ambient temp c
+    dplyr::select(-ambient_temperature_c) %>%
+    # add flags for runs of temperature data
+    dplyr::arrange(collection_datetime_UTC) %>%
+    dplyr::mutate(flag_ambient_temperature_run = (ambient_humidity == dplyr::lag(ambient_humidity)) &
+                    (ambient_temperature == dplyr::lag(ambient_temperature))
+                  & (gridsect == "no"))
+
+  # Read collection photo position data (exif)
+  nematode_field_sampling_sample_photo <<- readr::read_csv(glue::glue("{dir}/nematode_field_sampling_sample_photo.csv")) %>%
+    dplyr::select(fulcrum_id, exif_gps_latitude, exif_gps_longitude, exif_gps_altitude)
+
+  # Read isolation data
+  nematode_isolation <- readr::read_csv(glue::glue("{dir}/nematode_isolation.csv")) %>%
+    dplyr::select(c_label_id = c_label,
+                  isolation_id = fulcrum_id,
+                  isolation_datetime_UTC = system_created_at,
+                  isolation_by = created_by,
+                  worms_on_sample,
+                  approximate_number_of_worms,
+                  isolation_date_UTC = date,
+                  isolation_local_time = time, # Is this actually local time? or is it UTC?
+                  isolation_latitude = latitude,
+                  isolation_longitude = longitude)
+
+  # Read S-plate data
+  nematode_isolation_s_labeled_plates <- readr::read_csv(glue::glue("{dir}/nematode_isolation_s_labeled_plates.csv")) %>%
+    dplyr::select(fulcrum_parent_id, s_label)
+
+  nematode_isolation_photos <- readr::read_csv(glue::glue("{dir}/nematode_isolation_photos.csv"))
+
+  fulcrum <- list(nematode_field_sampling, nematode_field_sampling_sample_photo, nematode_isolation, nematode_isolation_s_labeled_plates, nematode_isolation_photos)
+  return(fulcrum)
+}
+
+##################
+testing
+
+dir = "/Users/tim/repos/easyfulcrum/test_data/2020FebruaryAustralia/data/fulcrum"

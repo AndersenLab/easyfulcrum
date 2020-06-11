@@ -2,6 +2,7 @@
 
 export(joinFulcGeno)
 export(loadFulcrum)
+export(readFulcrum)
 export(loadGenotypes)
 export(procFulcrum)
 export(readGenotypes)
