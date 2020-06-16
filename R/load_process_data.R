@@ -24,9 +24,9 @@ FtoC <- function(F) {
    (F - 32) * (5 / 9)
 }
 
-#' loadFulcrum
+#' readFulcrum
 #'
-#' \code{loadFulcrum} loads .csv files exported from Fulcrum into R and names variables correctly
+#' \code{readFulcrum} reads .csv files exported from Fulcrum into R
 #'
 #' @param dir The path of the directory with five Fulcrum .csv files:
 #' nematode_field_sampling.csv,
@@ -34,98 +34,65 @@ FtoC <- function(F) {
 #' nematode_isolation.csv,
 #' nematode_isolation_s_labeled_plates.csv,
 #' nematode_isolation_photos.csv
-#' @return five named data frames generated from the .csv files.
-#' Each data frame has a shortened name.
+#' @return A list of five named data frames generated from the .csv files.
 #' \tabular{ll}{
-#' collection \tab nematode_field_sampling.csv\cr
-#' collection_photo \tab nematode_field_sampling_sample_photo.csv\cr
-#' isolation \tab nematode_isolation.csv\cr
-#' isolation_slab \tab nematode_isolation_s_labeled_plates.csv\cr
-#' isolation_photo \tab nematode_isolation_photos.csv\cr
+#' nematode_field_sampling \tab nematode_field_sampling.csv\cr
+#' nematode_field_sampling_sample_photo \tab nematode_field_sampling_sample_photo.csv\cr
+#' nematode_isolation \tab nematode_isolation.csv\cr
+#' nematode_isolation_s_labeled_plates \tab nematode_isolation_s_labeled_plates.csv\cr
+#' nematode_isolation_photos \tab nematode_isolation_photos.csv\cr
 #' }
 #' @export
 
-loadFulcrum <- function(dir) {
+readFulcrum <- function(dir) {
+  # make file list
+  files <- list(glue::glue("{dir}/nematode_field_sampling.csv"),
+                glue::glue("{dir}/nematode_field_sampling_sample_photo.csv"),
+                glue::glue("{dir}/nematode_isolation.csv"),
+                glue::glue("{dir}/nematode_isolation_s_labeled_plates.csv"),
+                glue::glue("{dir}/nematode_isolation_photos.csv"))
 
-  # Read collection data
-  collection <<- readr::read_csv(glue::glue("{dir}/nematode_field_sampling.csv")) %>%
-    dplyr::mutate(c_label = stringr::str_to_upper(c_label)) %>%
-    # name created_by to specify who picked up the sample
-    dplyr::rename(collection_by = created_by) %>%
-    dplyr::select(-updated_at,
-                  -system_created_at,
-                  -system_updated_at,
-                  -date) %>%
-    # choose one sample photo only. This takes the first sample photo and warns if additional photos are discarded
-    tidyr::separate(col = sample_photo, into = "sample_photo", sep = ",", extra = "warn") %>%
-    # this is UTC time (very important if you want to convert to local time)
-    dplyr::mutate(collection_datetime_UTC = lubridate::ymd_hms(created_at, tz = "UTC")) %>%
-    # again this is UTC date (very important if you want to convert to local date)
-    dplyr::mutate(collection_date_UTC = lubridate::date(created_at)) %>%
-    dplyr::select(-created_at) %>%
-    # Fix Fahrenheit observations
-    dplyr::mutate(substrate_temperature = ifelse(substrate_temperature > 40,
-                                                 FtoC(substrate_temperature),
-                                                 substrate_temperature)) %>%
-    # Fix ambient temp F to C
-    dplyr::mutate(ambient_temperature = ifelse(ambient_temperature_c > 40,
-                                               FtoC(ambient_temperature_c),
-                                               ambient_temperature_c)) %>%
-    # force ambient temp to numeric
-    dplyr::mutate(ambient_temperature = as.numeric(ambient_temperature)) %>%
-    # drop ambient temp c
-    dplyr::select(-ambient_temperature_c) %>%
-    # add flags for runs of temperature data
-    dplyr::arrange(collection_datetime_UTC) %>%
-    dplyr::mutate(flag_ambient_temperature_run = (ambient_humidity == dplyr::lag(ambient_humidity)) &
-                    (ambient_temperature == dplyr::lag(ambient_temperature))
-                  & (gridsect == "no"))
+  #read files
+  fulc_data <- lapply(files, readr::read_csv)
 
-  # Read collection photo position data (exif)
-  collection_photo <<- readr::read_csv(glue::glue("{dir}/nematode_field_sampling_sample_photo.csv")) %>%
-    dplyr::select(fulcrum_id, exif_gps_latitude, exif_gps_longitude, exif_gps_altitude)
+  # set names
+  names(fulc_data) <- c("nematode_field_sampling",
+                        "nematode_field_sampling_sample_photo",
+                        "nematode_isolation",
+                        "nematode_isolation_s_labeled_plates",
+                        "nematode_isolation_photos")
 
-  # Read isolation data
-  isolation <<- readr::read_csv(glue::glue("{dir}/nematode_isolation.csv")) %>%
-    dplyr::select(c_label_id = c_label,
-                  isolation_id = fulcrum_id,
-                  isolation_datetime_UTC = system_created_at,
-                  isolation_by = created_by,
-                  worms_on_sample,
-                  approximate_number_of_worms,
-                  isolation_date_UTC = date,
-                  isolation_local_time = time, # Is this actually local time? or is it UTC?
-                  isolation_latitude = latitude,
-                  isolation_longitude = longitude)
-
-  # Read S-plate data
-  isolation_slab <<- readr::read_csv(glue::glue("{dir}/nematode_isolation_s_labeled_plates.csv")) %>%
-    dplyr::select(fulcrum_parent_id, s_label)
-
-  isolation_photo <<- readr::read_csv(glue::glue("{dir}/nematode_isolation_photos.csv"))
+  # return list
+  return(fulc_data)
 }
 
 #' procFulcrum
 #'
-#' \code{procFulcrum} loads Fulcrum .csv files, joins collection and isolation data, and adds collection variables
+#' \code{procFulcrum} processes raw Fulcrum data read into R with the \code{readFulcrum} function.
+#' Processing consists of dropping unused variables, renaming variables for joining, and adding flags to collection data.
 #'
-#' @param dir The path of the directory with five Fulcrum .csv files:
-#' nematode_field_sampling.csv,
-#' nematode_field_sampling_sample_photo.csv,
-#' nematode_isolation.csv,
-#' nematode_isolation_s_labeled_plates.csv,
-#' nematode_isolation_photos.csv
-#' @return A dataframe generated from the .csv files.
-#' This data frame contains all necessary variables from Fulcrum. It also contains data quality flags. The variable names match the data dictionary.
+#' @param data A list of dataframes generated by the \code{readFulcrum} function.
+#' @return A list of five named data frames.
+#' \tabular{ll}{
+#' nematode_field_sampling \tab a processed dataframe from the nematode_field_sampling.csv\cr
+#' nematode_field_sampling_sample_photo \tab a processed dataframe from the nematode_field_sampling_sample_photo.csv\cr
+#' nematode_isolation \tab a processed dataframe from the nematode_isolation.csv\cr
+#' nematode_isolation_s_labeled_plates \tab a processed dataframe from the nematode_isolation_s_labeled_plates.csv\cr
+#' nematode_isolation_photos \tab a processed dataframe from the nematode_isolation_photos.csv\cr
+#' }
 #' @export
 
-procFulcrum <- function(dir) {
-
+procFulcrum <- function(data) {
+  proc_data <- NULL
   # Read collection data
-  collection <- readr::read_csv(glue::glue("{dir}/nematode_field_sampling.csv")) %>%
+  nematode_field_sampling_proc <- data[[1]] %>%
     dplyr::mutate(c_label = stringr::str_to_upper(c_label)) %>%
     # name created_by to specify who picked up the sample
-    dplyr::rename(collection_by = created_by) %>%
+    dplyr::rename(collection_by = created_by,
+                  collection_fulcrum_latitude = latitude,
+                  collection_fulcrum_longitude = longitude,
+                  fulcrum_altitude = gps_altitude,
+                  collection_local_time = time) %>%
     dplyr::select(-updated_at,
                   -system_created_at,
                   -system_updated_at,
@@ -137,30 +104,38 @@ procFulcrum <- function(dir) {
     # again this is UTC date (very important if you want to convert to local date)
     dplyr::mutate(collection_date_UTC = lubridate::date(created_at)) %>%
     dplyr::select(-created_at) %>%
-    # Fix Fahrenheit observations
-    dplyr::mutate(substrate_temperature = ifelse(substrate_temperature > 40,
-                                                 FtoC(substrate_temperature),
-                                                 substrate_temperature)) %>%
+    # Flag Fahrenheit observations and fix in proc
+    dplyr::mutate(flag_substrate_temperature = ifelse(substrate_temperature > 40, TRUE, FALSE),
+                  proc_substrate_temperature = ifelse(substrate_temperature > 40,
+                                                      FtoC(substrate_temperature),
+                                                      substrate_temperature)) %>%
+    # Rename sub_temp with raw prefix
+    dplyr::rename(raw_substrate_temperature = substrate_temperature) %>%
     # Fix ambient temp F to C
-    dplyr::mutate(ambient_temperature = ifelse(ambient_temperature_c > 40,
-                                               FtoC(ambient_temperature_c),
-                                               ambient_temperature_c)) %>%
+    dplyr::mutate(flag_ambient_temperature = ifelse(ambient_temperature_c > 40, TRUE, FALSE),
+                  proc_ambient_temperature = ifelse(ambient_temperature_c > 40,
+                                                    FtoC(ambient_temperature_c),
+                                                    ambient_temperature_c)) %>%
+    # Rename ambient_temp with raw prefix
+    dplyr::rename(raw_ambient_temperature = ambient_temperature_c) %>%
     # force ambient temp to numeric
-    dplyr::mutate(ambient_temperature = as.numeric(ambient_temperature)) %>%
-    # drop ambient temp c
-    dplyr::select(-ambient_temperature_c) %>%
+    dplyr::mutate(raw_ambient_temperature = as.numeric(raw_ambient_temperature)) %>%
     # add flags for runs of temperature data
     dplyr::arrange(collection_datetime_UTC) %>%
     dplyr::mutate(flag_ambient_temperature_run = (ambient_humidity == dplyr::lag(ambient_humidity)) &
-                    (ambient_temperature == dplyr::lag(ambient_temperature))
-                  & (gridsect == "no"))
+                    (raw_ambient_temperature == dplyr::lag(raw_ambient_temperature))
+                  & (gridsect == "no")) %>%
+    # flag duplicated C-labels
+    dplyr::group_by(c_label) %>%
+    dplyr::mutate(flag_duplicated_c_label_field_sampling = ifelse(n() > 1, TRUE, FALSE)) %>%
+    dplyr::ungroup()
 
   # Read collection photo position data (exif)
-  collection_photo <- readr::read_csv(glue::glue("{dir}/nematode_field_sampling_sample_photo.csv")) %>%
+  nematode_field_sampling_sample_photo_proc <- data[[2]] %>%
     dplyr::select(fulcrum_id, exif_gps_latitude, exif_gps_longitude, exif_gps_altitude)
 
   # Read isolation data
-  isolation <- readr::read_csv(glue::glue("{dir}/nematode_isolation.csv")) %>%
+  nematode_isolation_proc <- data[[3]] %>%
     dplyr::select(c_label_id = c_label,
                   isolation_id = fulcrum_id,
                   isolation_datetime_UTC = system_created_at,
@@ -173,50 +148,151 @@ procFulcrum <- function(dir) {
                   isolation_longitude = longitude)
 
   # Read S-plate data
-  isolation_slab <- readr::read_csv(glue::glue("{dir}/nematode_isolation_s_labeled_plates.csv")) %>%
-    dplyr::select(fulcrum_parent_id, s_label)
+  nematode_isolation_s_labeled_plates_proc <- data[[4]] %>%
+    dplyr::select(fulcrum_parent_id, s_label) %>%
+    # flag duplicated S-labels
+    dplyr::group_by(s_label) %>%
+    dplyr::mutate(flag_duplicated_s_label_isolation_s_labeled_plates = ifelse(n() > 1, TRUE, FALSE)) %>%
+    dplyr::ungroup() %>%
+    # flag missing S-labels
+    dplyr::mutate(flag_missing_s_label_isolation_s_labeled_plates = ifelse(is.na(s_label), TRUE, FALSE))
+
+  # read in isolation photos dataframe
+  nematode_isolation_photos_proc <- data[[5]]
+
+  # make proc_data list
+  proc_data <- list("nematode_field_sampling_proc" = nematode_field_sampling_proc,
+                    "nematode_field_sampling_sample_photo_proc" = nematode_field_sampling_sample_photo_proc,
+                    "nematode_isolation_proc" = nematode_isolation_proc,
+                    "nematode_isolation_s_labeled_plates_proc" = nematode_isolation_s_labeled_plates_proc,
+                    "nematode_isolation_photos_proc" = nematode_isolation_photos_proc)
+  # return list
+  return(proc_data)
+}
+
+#' joinFulcrum
+#'
+#' \code{joinFulcrum} joins the processed Fulcrum dataframes from the procFulcrum function, selects latitude, longitude, and altitude methods with simple priority algorithm.
+#'
+#' @param data A list of dataframes generated by the \code{procFulcrum} function.
+#' @return A single dataframe containing all Fulcrum data sources.
+#' @export
+
+joinFulcrum <- function(data) {
 
   #prevent scientific notation
   options(scipen = 999)
 
-  # join collection, isolation, and location data
-  joined_data <- dplyr::full_join(isolation, collection, by = c("c_label_id" = "fulcrum_id")) %>%
-    #rename the lat and long from fulcrum to collection_fulcrum_latitude and collection_fulcrum_longitude so that we can specify lat and long from exif tool
-    dplyr::rename(collection_fulcrum_latitude = latitude, collection_fulcrum_longitude = longitude) %>%
+  # join data[[1]] (nematode_field_sampling) to data [[3]] (nematode_isolation)
+  joined_data <- dplyr::full_join(data[[3]], data[[1]], by = c("c_label_id" = "fulcrum_id")) %>%
     dplyr::select(c_label,
                   everything(),
                   -c_label_id) %>%
-    # Join position data from exif by sample_photo. in some cases there is not position data from the photos
-    dplyr::left_join(collection_photo, by = c("sample_photo" = "fulcrum_id")) %>%
+    # Join data[[2]] (nematode_field_sampling_sample_photo) to above. In some cases there is not position data from the photos
+    dplyr::left_join(data[[2]], by = c("sample_photo" = "fulcrum_id")) %>%
     # Create flag to track if lat and long come from record or photo
     dplyr::mutate(collection_lat_long_method = ifelse(is.na(exif_gps_latitude), "fulcrum", "photo")) %>%
     # In cases where lat/lon are not available from photo set to collection_fulcrum_latitude and collection_fulcrum_longitude
-    dplyr::mutate(latitude = ifelse(is.na(exif_gps_latitude), collection_fulcrum_latitude, exif_gps_latitude)) %>%
-    dplyr::mutate(longitude = ifelse(is.na(exif_gps_longitude), collection_fulcrum_longitude, exif_gps_longitude)) %>%
-    dplyr::rename(fulcrum_altitude = gps_altitude) %>%
-    dplyr::mutate(worms_on_sample = ifelse(is.na(worms_on_sample), "?", worms_on_sample)) %>%
-    dplyr::filter(!is.na(c_label)) %>%
+    dplyr::mutate(collection_latitude = ifelse(is.na(exif_gps_latitude), collection_fulcrum_latitude, exif_gps_latitude)) %>%
+    dplyr::mutate(collection_longitude = ifelse(is.na(exif_gps_longitude), collection_fulcrum_longitude, exif_gps_longitude)) %>%
+    # Add flag for worms on sample not recorded
+    dplyr::mutate(worms_on_sample = ifelse(is.na(worms_on_sample), "?", worms_on_sample),
+                  flag_worms_on_sample_not_recorded = ifelse(worms_on_sample == "?", TRUE, FALSE),
+                  flag_missing_isolation_record = ifelse(is.na(isolation_by), TRUE, FALSE)) %>%
     # Calculate the Haversine distance between fulcrum record_latitude and record_longitue and photo latitude and longitude
     dplyr::rowwise() %>%
-    dplyr::mutate(collection_lat_long_method_diff = geosphere::distHaversine(c(longitude, latitude),
+    dplyr::mutate(collection_lat_long_method_diff = geosphere::distHaversine(c(collection_longitude, collection_latitude),
                                                                              c(collection_fulcrum_longitude, collection_fulcrum_latitude)),
                   # adjust collection_lat_long_method_diff to NA if there is only a fulcrum GPS postion
                   collection_lat_long_method_diff = ifelse(collection_lat_long_method == "fulcrum", NA, collection_lat_long_method_diff)) %>%
     # fix altitude method and altitude
-    dplyr::mutate(altitude = ifelse(collection_lat_long_method == "photo" & !(is.na(exif_gps_altitude)), exif_gps_altitude,
+    dplyr::mutate(collection_altitude = ifelse(collection_lat_long_method == "photo" & !(is.na(exif_gps_altitude)), exif_gps_altitude,
                                     ifelse(is.na(exif_gps_altitude) & !(is.na(fulcrum_altitude)), fulcrum_altitude,
                                            ifelse(is.na(exif_gps_altitude) & is.na(fulcrum_altitude), NA))),
-                  altitude_method = ifelse(collection_lat_long_method == "photo" & !(is.na(exif_gps_altitude)), "photo",
+                  collection_altitude_method = ifelse(collection_lat_long_method == "photo" & !(is.na(exif_gps_altitude)), "photo",
                                            ifelse(is.na(exif_gps_altitude) & !(is.na(fulcrum_altitude)), "fulcrum",
                                                   ifelse(is.na(exif_gps_altitude) & is.na(fulcrum_altitude), NA, NA)))) %>%
-    # rename the latitude and longitude to include 'collection_' prefix
     dplyr::ungroup() %>%
-    dplyr::rename(collection_latitude = latitude,
-                  collection_longitude = longitude,
-                  collection_local_time = time) %>%
-    # join c-plates to s-plates
-    dplyr::full_join(isolation_slab, .,  by = c("fulcrum_parent_id" = "isolation_id")) %>%
-    dplyr::select(-fulcrum_parent_id, -updated_by, -version, -geometry)
+    # join c-plates to s-plates data[[4]] = nematode_isolation_s_labeled_plates
+    dplyr::full_join(data[[4]], .,  by = c("fulcrum_parent_id" = "isolation_id")) %>%
+    dplyr::select(-fulcrum_parent_id, -updated_by, -version, -geometry, -assigned_to, -status) %>%
+    # set varible order
+    dplyr::select(project,
+                  c_label,
+                  s_label,
+                  flag_ambient_temperature,
+                  flag_ambient_temperature_run,
+                  flag_duplicated_c_label_field_sampling,
+                  flag_duplicated_s_label_isolation_s_labeled_plates,
+                  flag_missing_isolation_record,
+                  flag_missing_s_label_isolation_s_labeled_plates,
+                  flag_substrate_temperature,
+                  flag_worms_on_sample_not_recorded,
+                  collection_by,
+                  collection_datetime_UTC,
+                  collection_date_UTC,
+                  collection_local_time,
+                  collection_fulcrum_latitude,
+                  collection_fulcrum_longitude,
+                  exif_gps_latitude,
+                  exif_gps_longitude,
+                  collection_latitude,
+                  collection_longitude,
+                  collection_lat_long_method,
+                  collection_lat_long_method_diff,
+                  fulcrum_altitude,
+                  exif_gps_altitude,
+                  collection_altitude,
+                  collection_altitude_method,
+                  landscape,
+                  sky_view,
+                  ambient_humidity,
+                  substrate,
+                  substrate_notes,
+                  substrate_other,
+                  raw_ambient_temperature,
+                  proc_ambient_temperature,
+                  raw_substrate_temperature,
+                  proc_substrate_temperature,
+                  gridsect,
+                  gridsect_index,
+                  gridsect_radius,
+                  grid_sect_direction,
+                  sample_photo,
+                  sample_photo_caption,
+                  sample_photo_url,
+                  gps_course,
+                  gps_horizontal_accuracy,
+                  gps_speed,
+                  gps_vertical_accuracy,
+                  isolation_by,
+                  isolation_datetime_UTC,
+                  isolation_date_UTC,
+                  isolation_local_time,
+                  isolation_latitude,
+                  isolation_longitude,
+                  worms_on_sample,
+                  approximate_number_of_worms)
+
+  # return data
+  return(joined_data)
+}
+
+
+#' annotateFulcrum
+#'
+#' \code{annotateFulcrum} Adds additional collection location information to the final Fulcrum dataframe
+#'
+#' @param data A single dataframe generated with the joinFulcrum function.
+#' @return A single dataframe containing all Fulcrum data sources.
+#' This data frame contains all necessary variables from Fulcrum. It also contains data quality flags. The variable names match the data dictionary.
+#' @export
+#'
+
+annotateFulcrum <- function(data) {
+
+  # assign data to joined_data
+  joined_data <- data
 
   # Create Island Column
   joined_data$collection_island <- NA_character_
@@ -281,59 +357,59 @@ procFulcrum <- function(dir) {
   # Create trail polygon object from trail_coordinates dataframe. Can be looped if gets too long
   trail_polygons <-  sp::SpatialPolygons(list(
     sp::Polygons(list(sp::Polygon(cbind(trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][1]}")) %>% .$longitudes,
-                                trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][1]}")) %>% .$latitudes))),
-             ID = glue::glue("{list(unique(trail_coordinates$trail))[[1]][1]}")),
+                                        trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][1]}")) %>% .$latitudes))),
+                 ID = glue::glue("{list(unique(trail_coordinates$trail))[[1]][1]}")),
     sp::Polygons(list(sp::Polygon(cbind(trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][2]}")) %>% .$longitudes,
-                                trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][2]}")) %>% .$latitudes))),
-             ID = glue::glue("{list(unique(trail_coordinates$trail))[[1]][2]}")),
+                                        trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][2]}")) %>% .$latitudes))),
+                 ID = glue::glue("{list(unique(trail_coordinates$trail))[[1]][2]}")),
     sp::Polygons(list(sp::Polygon(cbind(trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][3]}")) %>% .$longitudes,
-                                trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][3]}")) %>% .$latitudes))),
-             ID = glue::glue("{list(unique(trail_coordinates$trail))[[1]][3]}")),
+                                        trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][3]}")) %>% .$latitudes))),
+                 ID = glue::glue("{list(unique(trail_coordinates$trail))[[1]][3]}")),
     sp::Polygons(list(sp::Polygon(cbind(trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][4]}")) %>% .$longitudes,
-                                trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][4]}")) %>% .$latitudes))),
-             ID = glue::glue("{list(unique(trail_coordinates$trail))[[1]][4]}")),
+                                        trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][4]}")) %>% .$latitudes))),
+                 ID = glue::glue("{list(unique(trail_coordinates$trail))[[1]][4]}")),
     sp::Polygons(list(sp::Polygon(cbind(trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][5]}")) %>% .$longitudes,
-                                trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][5]}")) %>% .$latitudes))),
-             ID = glue::glue("{list(unique(trail_coordinates$trail))[[1]][5]}")),
+                                        trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][5]}")) %>% .$latitudes))),
+                 ID = glue::glue("{list(unique(trail_coordinates$trail))[[1]][5]}")),
     sp::Polygons(list(sp::Polygon(cbind(trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][6]}")) %>% .$longitudes,
-                                trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][6]}")) %>% .$latitudes))),
-             ID = glue::glue("{list(unique(trail_coordinates$trail))[[1]][6]}")),
+                                        trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][6]}")) %>% .$latitudes))),
+                 ID = glue::glue("{list(unique(trail_coordinates$trail))[[1]][6]}")),
     sp::Polygons(list(sp::Polygon(cbind(trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][7]}")) %>% .$longitudes,
-                                trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][7]}")) %>% .$latitudes))),
-             ID = glue::glue("{list(unique(trail_coordinates$trail))[[1]][7]}")),
+                                        trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][7]}")) %>% .$latitudes))),
+                 ID = glue::glue("{list(unique(trail_coordinates$trail))[[1]][7]}")),
     sp::Polygons(list(sp::Polygon(cbind(trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][8]}")) %>% .$longitudes,
-                                trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][8]}")) %>% .$latitudes))),
-             ID = glue::glue("{list(unique(trail_coordinates$trail))[[1]][8]}")),
+                                        trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][8]}")) %>% .$latitudes))),
+                 ID = glue::glue("{list(unique(trail_coordinates$trail))[[1]][8]}")),
     sp::Polygons(list(sp::Polygon(cbind(trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][9]}")) %>% .$longitudes,
-                                trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][9]}")) %>% .$latitudes))),
-             ID = glue::glue("{list(unique(trail_coordinates$trail))[[1]][9]}")),
+                                        trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][9]}")) %>% .$latitudes))),
+                 ID = glue::glue("{list(unique(trail_coordinates$trail))[[1]][9]}")),
     sp::Polygons(list(sp::Polygon(cbind(trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][10]}")) %>% .$longitudes,
-                                trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][10]}")) %>% .$latitudes))),
-             ID = glue::glue("{list(unique(trail_coordinates$trail))[[1]][10]}")),
+                                        trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][10]}")) %>% .$latitudes))),
+                 ID = glue::glue("{list(unique(trail_coordinates$trail))[[1]][10]}")),
     sp::Polygons(list(sp::Polygon(cbind(trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][11]}")) %>% .$longitudes,
-                                trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][11]}")) %>% .$latitudes))),
-             ID = glue::glue("{list(unique(trail_coordinates$trail))[[1]][11]}")),
+                                        trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][11]}")) %>% .$latitudes))),
+                 ID = glue::glue("{list(unique(trail_coordinates$trail))[[1]][11]}")),
     sp::Polygons(list(sp::Polygon(cbind(trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][12]}")) %>% .$longitudes,
-                                trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][12]}")) %>% .$latitudes))),
-             ID = glue::glue("{list(unique(trail_coordinates$trail))[[1]][12]}")),
+                                        trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][12]}")) %>% .$latitudes))),
+                 ID = glue::glue("{list(unique(trail_coordinates$trail))[[1]][12]}")),
     sp::Polygons(list(sp::Polygon(cbind(trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][13]}")) %>% .$longitudes,
-                                trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][13]}")) %>% .$latitudes))),
-             ID = glue::glue("{list(unique(trail_coordinates$trail))[[1]][13]}")),
+                                        trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][13]}")) %>% .$latitudes))),
+                 ID = glue::glue("{list(unique(trail_coordinates$trail))[[1]][13]}")),
     sp::Polygons(list(sp::Polygon(cbind(trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][14]}")) %>% .$longitudes,
-                                trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][14]}")) %>% .$latitudes))),
-             ID = glue::glue("{list(unique(trail_coordinates$trail))[[1]][14]}")),
+                                        trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][14]}")) %>% .$latitudes))),
+                 ID = glue::glue("{list(unique(trail_coordinates$trail))[[1]][14]}")),
     sp::Polygons(list(sp::Polygon(cbind(trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][15]}")) %>% .$longitudes,
-                                trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][15]}")) %>% .$latitudes))),
-             ID = glue::glue("{list(unique(trail_coordinates$trail))[[1]][15]}")),
+                                        trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][15]}")) %>% .$latitudes))),
+                 ID = glue::glue("{list(unique(trail_coordinates$trail))[[1]][15]}")),
     sp::Polygons(list(sp::Polygon(cbind(trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][16]}")) %>% .$longitudes,
-                                trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][16]}")) %>% .$latitudes))),
-             ID = glue::glue("{list(unique(trail_coordinates$trail))[[1]][16]}")),
+                                        trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][16]}")) %>% .$latitudes))),
+                 ID = glue::glue("{list(unique(trail_coordinates$trail))[[1]][16]}")),
     sp::Polygons(list(sp::Polygon(cbind(trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][17]}")) %>% .$longitudes,
-                                trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][17]}")) %>% .$latitudes))),
-             ID = glue::glue("{list(unique(trail_coordinates$trail))[[1]][17]}")),
+                                        trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][17]}")) %>% .$latitudes))),
+                 ID = glue::glue("{list(unique(trail_coordinates$trail))[[1]][17]}")),
     sp::Polygons(list(sp::Polygon(cbind(trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][18]}")) %>% .$longitudes,
-                                trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][18]}")) %>% .$latitudes))),
-             ID = glue::glue("{list(unique(trail_coordinates$trail))[[1]][18]}"))
+                                        trail_coordinates %>% dplyr::filter(trail == glue::glue("{list(unique(trail_coordinates$trail))[[1]][18]}")) %>% .$latitudes))),
+                 ID = glue::glue("{list(unique(trail_coordinates$trail))[[1]][18]}"))
   ))
   # find if collection locations fall within trail polygons
   pts <- sp::SpatialPoints(cbind(joined_data %>% dplyr::filter(!is.na(collection_longitude)) %>% .$collection_longitude,
@@ -341,74 +417,76 @@ procFulcrum <- function(dir) {
 
   # bind trails
   fulc_data <- cbind(unname(sp::over(pts, trail_polygons)), joined_data %>%
-                        dplyr::filter(!is.na(collection_longitude) & !is.na(collection_latitude))) %>%
+                       dplyr::filter(!is.na(collection_longitude) & !is.na(collection_latitude))) %>%
     dplyr::rename(collection_trail = 1) %>%
     dplyr::rowwise() %>%
     dplyr::mutate(collection_trail = glue::glue("{list(unique(trail_coordinates$trail))[[1]][{collection_trail}]}")) %>%
     dplyr::ungroup() %>%
     dplyr::mutate(collection_trail = ifelse(collection_trail == "NA", NA_character_, collection_trail)) %>% # fix NAs
-    dplyr::full_join(joined_data) # add back joined_data with NAs for complete collection
+    dplyr::full_join(joined_data) %>% # add back joined_data with NAs for complete collection
+    dplyr::select(project,
+                  c_label,
+                  s_label,
+                  flag_ambient_temperature,
+                  flag_ambient_temperature_run,
+                  flag_duplicated_c_label_field_sampling,
+                  flag_duplicated_s_label_isolation_s_labeled_plates,
+                  flag_missing_isolation_record,
+                  flag_missing_s_label_isolation_s_labeled_plates,
+                  flag_substrate_temperature,
+                  flag_worms_on_sample_not_recorded,
+                  collection_by,
+                  collection_datetime_UTC,
+                  collection_date_UTC,
+                  collection_local_time,
+                  collection_fulcrum_latitude,
+                  collection_fulcrum_longitude,
+                  exif_gps_latitude,
+                  exif_gps_longitude,
+                  collection_latitude,
+                  collection_longitude,
+                  collection_lat_long_method,
+                  collection_lat_long_method_diff,
+                  fulcrum_altitude,
+                  exif_gps_altitude,
+                  collection_altitude,
+                  collection_altitude_method,
+                  collection_location,
+                  collection_island,
+                  collection_trail,
+                  landscape,
+                  sky_view,
+                  ambient_humidity,
+                  substrate,
+                  substrate_notes,
+                  substrate_other,
+                  raw_ambient_temperature,
+                  proc_ambient_temperature,
+                  raw_substrate_temperature,
+                  proc_substrate_temperature,
+                  gridsect,
+                  gridsect_index,
+                  gridsect_radius,
+                  grid_sect_direction,
+                  sample_photo,
+                  sample_photo_caption,
+                  sample_photo_url,
+                  gps_course,
+                  gps_horizontal_accuracy,
+                  gps_speed,
+                  gps_vertical_accuracy,
+                  isolation_by,
+                  isolation_datetime_UTC,
+                  isolation_date_UTC,
+                  isolation_local_time,
+                  isolation_latitude,
+                  isolation_longitude,
+                  worms_on_sample,
+                  approximate_number_of_worms)
 
+  # return data
   return(fulc_data)
 }
-
-#' loadGenotypes
-#'
-#' \code{loadGenotypes} loads genotyping data from project specific genotyping Google sheets
-#'
-#' @param gsKey a vector containing the google sheet keys for the genotype data to load.
-#' Your Google Sheet keys are found in your Google sheets URL. Select the string
-#' found between the slashes after spreadsheets/d in your Google Sheet URL.
-#'
-#' @return A dataframe generated from the Google sheets \code{gsKey} argument. If multiple Google sheets
-#' are provided the data are appended using rbind. A \code{project_id} variable is assigned from the Google sheets name.
-#' The genotyping sheet must be named with the convention \code{YOUR_PROJECT_NAME}_wild_isolate_genotyping.
-#' @export
-#'
-
-loadGenotypes <- function(gsKey) {
-  # read genotyping sheet(s)
-  genotyping_sheet <- NULL
-
-    for(i in unique(gsKey)){
-      # get project from sheet name
-      project_geno <- stringr::str_replace(googlesheets4::gs4_get(i)$name,
-                                      pattern = "_wild_isolate_genotyping", replacement = "")
-
-      # get data from sheet
-      geno <- googlesheets4::read_sheet(i, range = "genotyping template") %>%
-        dplyr::filter(!is.na(s_label)) %>%
-        dplyr::mutate(project_geno = project_geno)
-
-    genotyping_sheet <- rbind(genotyping_sheet, geno)
-    }
-
-    # find s_labels in genotyping sheet
-    slabs <- str_subset(genotyping_sheet$s_label, pattern = "S-")
-
-    # filter genotyping sheet by s_labels matching "S-" pattern
-    unusual_slabs <- genotyping_sheet %>%
-      dplyr::filter(!(s_label %in% slabs)) %>%
-      dplyr::pull(s_label)
-
-    duplicated_slabs <- genotyping_sheet %>%
-      dplyr::group_by(s_label) %>%
-      dplyr::mutate(slab_n = n(),
-                    slab_duplicate = ifelse(slab_n > 1, 1, 0)) %>%
-      dplyr::ungroup() %>%
-      dplyr::distinct(s_label, .keep_all = T) %>%
-      dplyr::filter(slab_duplicate == 1) %>%
-      dplyr::pull(s_label)
-
-    # print warning if duplicates or unusual names found for S-labels
-    print(paste0("There are ", length(unusual_slabs), " unsual S-label names in genotyping sheet(s) ", unusual_slabs))
-
-    # print warning if duplicates or unusual names found for strain names
-    print(paste0("There are ", length(duplicated_slabs), " duplicated S-label names in genotyping sheet(s) ", duplicated_slabs))
-
-  return(genotyping_sheet)
-}
-
 
 #' readGenotypes
 #'
@@ -463,10 +541,9 @@ readGenotypes <- function(gsKey) {
   return(genotyping_sheet)
 }
 
-
-#' joinFulcGeno
+#' joinGenoFulc
 #'
-#' \code{joinFulcGeno} joins the collection data output from the \code{procFulcrum} function
+#' \code{joinGenoFulc} joins the collection data output from the \code{procFulcrum} function
 #' with the genotyping data output from the \code{readGenotypes} function.
 #' Blast data output from the \code{procSanger} function can also be joined if desired.
 #'
@@ -478,50 +555,62 @@ readGenotypes <- function(gsKey) {
 #' @export
 #'
 
-joinFulcGeno <- function(fulc, geno, blast = NULL) {
+joinGenoFulc <- function(geno, fulc, blast = NULL) {
   if(is.null(blast)){
     # Join genotyping sheet with collection and isolation data
     out_dat <- fulc %>%
       dplyr::full_join(geno) %>%
       # Rename variables
-      dplyr::rename(collection_id = c_label,
-                    isolation_id = s_label) %>%
+      #dplyr::rename(collection_id = c_label, # should probably keep c_label name
+       #             isolation_id = s_label) %>% # should probably keep s_label name
       # Reorder variables
-      dplyr::select(project_id,
-                    collection_id,
-                    isolation_id,
+      dplyr::select(project,
+                    c_label,
+                    s_label,
                     species_id,
                     ECA_name,
+                    flag_ambient_temperature,
+                    flag_ambient_temperature_run,
+                    flag_duplicated_c_label_field_sampling,
+                    flag_duplicated_s_label_isolation_s_labeled_plates,
+                    flag_missing_isolation_record,
+                    flag_missing_s_label_isolation_s_labeled_plates,
+                    flag_substrate_temperature,
+                    flag_worms_on_sample_not_recorded,
                     collection_by,
                     collection_datetime_UTC,
                     collection_date_UTC,
                     collection_local_time,
-                    collection_island,
-                    collection_location,
-                    collection_trail,
-                    collection_latitude,
-                    collection_longitude,
                     collection_fulcrum_latitude,
                     collection_fulcrum_longitude,
+                    exif_gps_latitude,
+                    exif_gps_longitude,
+                    collection_latitude,
+                    collection_longitude,
                     collection_lat_long_method,
                     collection_lat_long_method_diff,
-                    ambient_temperature,
-                    flag_ambient_temperature_run,
-                    ambient_humidity,
-                    substrate_temperature,
-                    altitude,
-                    altitude_method,
-                    #altitude_methods_range,
+                    fulcrum_altitude,
+                    exif_gps_altitude,
+                    collection_altitude,
+                    collection_altitude_method,
+                    collection_location,
+                    collection_island,
+                    collection_trail,
                     landscape,
                     sky_view,
+                    ambient_humidity,
                     substrate,
-                    substrate_other,
                     substrate_notes,
-                    sample_photo_url,
+                    substrate_other,
+                    raw_ambient_temperature,
+                    proc_ambient_temperature,
+                    raw_substrate_temperature,
+                    proc_substrate_temperature,
                     gridsect,
                     gridsect_index,
-                    grid_sect_direction,
                     gridsect_radius,
+                    grid_sect_direction,
+                    sample_photo_url,
                     isolation_by,
                     isolation_datetime_UTC,
                     isolation_date_UTC,
@@ -542,7 +631,7 @@ joinFulcGeno <- function(fulc, geno, blast = NULL) {
                     manual_blast_notes,
                     possible_new_caeno_sp,
                     make_strain_name,
-                    reason_strain_not_named,)
+                    reason_strain_not_named)
   }
   else{
     # load blast results
@@ -551,179 +640,7 @@ joinFulcGeno <- function(fulc, geno, blast = NULL) {
 
     # Join genotyping sheet with collection and isolation data
     out_dat <- fulc %>%
-      dplyr::full_join(geno) %>%
-      # Rename variables
-      dplyr::rename(project_fulc = project,
-                    collection_id = c_label,
-                    isolation_id = s_label) %>%
-      # Reorder variables
-      dplyr::select(project_id,
-                    project_fulc,
-                    collection_id,
-                    isolation_id,
-                    species_id,
-                    ECA_dirty,
-                    ECA_clean,
-                    collection_by,
-                    collection_datetime_UTC,
-                    collection_date_UTC,
-                    collection_local_time,
-                    collection_island,
-                    collection_location,
-                    collection_trail,
-                    collection_latitude,
-                    collection_longitude,
-                    collection_fulcrum_latitude,
-                    collection_fulcrum_longitude,
-                    collection_lat_long_method,
-                    collection_lat_long_method_diff,
-                    ambient_temperature,
-                    flag_ambient_temperature_run,
-                    ambient_humidity,
-                    substrate_temperature,
-                    altitude,
-                    altitude_method,
-                    #altitude_methods_range,
-                    landscape,
-                    sky_view,
-                    substrate,
-                    substrate_other,
-                    substrate_notes,
-                    sample_photo_url,
-                    gridsect,
-                    gridsect_index,
-                    grid_sect_direction,
-                    gridsect_radius,
-                    isolation_by,
-                    isolation_datetime_UTC,
-                    isolation_date_UTC,
-                    isolation_local_time,
-                    isolation_latitude,
-                    isolation_longitude,
-                    worms_on_sample,
-                    proliferation_48,
-                    proliferation_168,
-                    proliferating,
-                    approximate_number_of_worms,
-                    shipment_number,
-                    pcr_product_its2,
-                    pcr_product_ssu,
-                    general_notes,
-                    manual_blast_notes,
-                    possible_new_caeno_sp,
-                    make_strain_name,
-                    reason_strain_not_named)
+      dplyr::full_join(geno)
   }
   return(out_dat)
 }
-
-#' readFulcrum
-#'
-#' \code{readFulcrum} reads .csv files exported from Fulcrum into R
-#'
-#' @param dir The path of the directory with five Fulcrum .csv files:
-#' nematode_field_sampling.csv,
-#' nematode_field_sampling_sample_photo.csv,
-#' nematode_isolation.csv,
-#' nematode_isolation_s_labeled_plates.csv,
-#' nematode_isolation_photos.csv
-#' @return A list of five named data frames generated from the .csv files.
-#' \tabular{ll}{
-#' nematode_field_sampling \tab nematode_field_sampling.csv\cr
-#' nematode_field_sampling_sample_photo \tab nematode_field_sampling_sample_photo.csv\cr
-#' nematode_isolation \tab nematode_isolation.csv\cr
-#' nematode_isolation_s_labeled_plates \tab nematode_isolation_s_labeled_plates.csv\cr
-#' nematode_isolation_photos \tab nematode_isolation_photos.csv\cr
-#' }
-#' @export
-
-readFulcrum <- function(dir) {
-  # make file list
-  files <- list(glue::glue("{dir}/nematode_field_sampling_sample_photo.csv"),
-                glue::glue("{dir}/nematode_field_sampling.csv"),
-                glue::glue("{dir}/nematode_isolation_photos.csv"),
-                glue::glue("{dir}/nematode_isolation_s_labeled_plates.csv"),
-                glue::glue("{dir}/nematode_isolation.csv"))
-
-  #read files
-  fulc_data <- lapply(files, readr::read_csv)
-
-  # set names
-  names(fulc_data) <- c("nematode_field_sampling_sample_photo",
-                        "nematode_field_sampling",
-                        "nematode_isolation_photos",
-                        "nematode_isolation_s_labeled_plates.csv",
-                        "nematode_isolation.csv")
-
-  # return data
-  return(fulc_data)
-}
-
-
-readFulcrum <- function(dir) {
-  fulcrum <- NULL
-  # Read collection data
-  nematode_field_sampling <- readr::read_csv(glue::glue("{dir}/nematode_field_sampling.csv")) %>%
-    dplyr::mutate(c_label = stringr::str_to_upper(c_label)) %>%
-    # name created_by to specify who picked up the sample
-    dplyr::rename(collection_by = created_by) %>%
-    dplyr::select(-updated_at,
-                  -system_created_at,
-                  -system_updated_at,
-                  -date) %>%
-    # choose one sample photo only. This takes the first sample photo and warns if additional photos are discarded
-    tidyr::separate(col = sample_photo, into = "sample_photo", sep = ",", extra = "warn") %>%
-    # this is UTC time (very important if you want to convert to local time)
-    dplyr::mutate(collection_datetime_UTC = lubridate::ymd_hms(created_at, tz = "UTC")) %>%
-    # again this is UTC date (very important if you want to convert to local date)
-    dplyr::mutate(collection_date_UTC = lubridate::date(created_at)) %>%
-    dplyr::select(-created_at) %>%
-    # Fix Fahrenheit observations to Celcius
-    dplyr::mutate(substrate_temperature = ifelse(substrate_temperature > 40,
-                                                 FtoC(substrate_temperature),
-                                                 substrate_temperature)) %>%
-    # Fix ambient temp Fahrenheit to Celcius
-    dplyr::mutate(ambient_temperature = ifelse(ambient_temperature_c > 40,
-                                               FtoC(ambient_temperature_c),
-                                               ambient_temperature_c)) %>%
-    # force ambient temp to numeric
-    dplyr::mutate(ambient_temperature = as.numeric(ambient_temperature)) %>%
-    # drop ambient temp c
-    dplyr::select(-ambient_temperature_c) %>%
-    # add flags for runs of temperature data
-    dplyr::arrange(collection_datetime_UTC) %>%
-    dplyr::mutate(flag_ambient_temperature_run = (ambient_humidity == dplyr::lag(ambient_humidity)) &
-                    (ambient_temperature == dplyr::lag(ambient_temperature))
-                  & (gridsect == "no"))
-
-  # Read collection photo position data (exif)
-  nematode_field_sampling_sample_photo <<- readr::read_csv(glue::glue("{dir}/nematode_field_sampling_sample_photo.csv")) %>%
-    dplyr::select(fulcrum_id, exif_gps_latitude, exif_gps_longitude, exif_gps_altitude)
-
-  # Read isolation data
-  nematode_isolation <- readr::read_csv(glue::glue("{dir}/nematode_isolation.csv")) %>%
-    dplyr::select(c_label_id = c_label,
-                  isolation_id = fulcrum_id,
-                  isolation_datetime_UTC = system_created_at,
-                  isolation_by = created_by,
-                  worms_on_sample,
-                  approximate_number_of_worms,
-                  isolation_date_UTC = date,
-                  isolation_local_time = time, # Is this actually local time? or is it UTC?
-                  isolation_latitude = latitude,
-                  isolation_longitude = longitude)
-
-  # Read S-plate data
-  nematode_isolation_s_labeled_plates <- readr::read_csv(glue::glue("{dir}/nematode_isolation_s_labeled_plates.csv")) %>%
-    dplyr::select(fulcrum_parent_id, s_label)
-
-  nematode_isolation_photos <- readr::read_csv(glue::glue("{dir}/nematode_isolation_photos.csv"))
-
-  fulcrum <- list(nematode_field_sampling, nematode_field_sampling_sample_photo, nematode_isolation, nematode_isolation_s_labeled_plates, nematode_isolation_photos)
-  return(fulcrum)
-}
-
-##################
-testing
-
-dir = "/Users/tim/repos/easyfulcrum/test_data/2020FebruaryAustralia/data/fulcrum"
