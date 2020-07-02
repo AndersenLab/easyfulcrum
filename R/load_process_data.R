@@ -147,7 +147,7 @@ procFulcrum <- function(data) {
                   isolation_latitude = latitude,
                   isolation_longitude = longitude)
 
-  # Read S-plate data
+  # Read s_labeled plate data
   nematode_isolation_s_labeled_plates_proc <- data[[4]] %>%
     dplyr::select(fulcrum_parent_id, s_label) %>%
     # flag duplicated S-labels
@@ -611,6 +611,7 @@ joinGenoFulc <- function(geno, fulc, blast = NULL) {
                     gridsect_radius,
                     grid_sect_direction,
                     sample_photo_url,
+                    sample_photo,
                     isolation_by,
                     isolation_datetime_UTC,
                     isolation_date_UTC,
@@ -643,4 +644,31 @@ joinGenoFulc <- function(geno, fulc, blast = NULL) {
       dplyr::full_join(geno)
   }
   return(out_dat)
+}
+
+#' procPhotos
+#'
+#' \code{procPhotos} copies raw sample photos from the Fulcrum export and renames them to strain_name_C-label for use with CeNDR.
+#' Also makes thumbs.
+#'
+#' @param dir a directory with sample photos.
+#' @param data a data frame output from the \code{joinGenoFulc} function.
+#'
+#' @return A subfolder with the photos export folder containing renamed collection images and thumbs for named strains
+#' @export
+#'
+
+procPhotos <- function(dir, data) {
+  # find file names for sampling photos of samples with strain names
+  to_change <- data %>%
+    dplyr::filter(!is.na(ECA_name)) %>%
+    dplyr::mutate(orig_file_name = glue::glue("{dir}/{sample_photo}.jpg"),
+                  new_file_name = glue::glue("{dir}/processed_photos/{ECA_name}_{collection_id}.jpg")) %>%
+    dplyr::select(orig_file_name, new_file_name)
+
+  # make processed subdirectory in dir
+  fs::dir_create(glue::glue("{dir}/processed_photos"))
+
+  # copy files to new directory and rename
+  fs::file_copy(to_change$orig_file_name, to_change$new_file_name, overwrite = F)
 }
