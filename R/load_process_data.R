@@ -648,27 +648,48 @@ joinGenoFulc <- function(geno, fulc, blast = NULL) {
 
 #' procPhotos
 #'
-#' \code{procPhotos} copies raw sample photos from the Fulcrum export and renames them to strain_name_C-label for use with CeNDR.
-#' Also makes thumbs.
+#' \code{procPhotos} copies raw sample photos from the Fulcrum export and renames them to strain_name_C-label for use with CeNDR. The function also makes thumbnails.
 #'
 #' @param dir a directory with sample photos.
 #' @param data a data frame output from the \code{joinGenoFulc} function.
+#' @param size This value sets the size of the thumbnail image relative to the original image. Maintians aspect ratio.
 #'
-#' @return A subfolder with the photos export folder containing renamed collection images and thumbs for named strains
+#' @return A subfolder within the photos export folder containing renamed collection images and thumbnails for named strains
 #' @export
 #'
 
-procPhotos <- function(dir, data) {
-  # find file names for sampling photos of samples with strain names
+procPhotos <- function(dir, data, size = 0.2) {
+  # Make message
+  message("Processing collection photos: This can take up to a minute to process 100 photos.")
+
+  # find file names for photos where nematodes with strain names were isolated
   to_change <- data %>%
     dplyr::filter(!is.na(ECA_name)) %>%
     dplyr::mutate(orig_file_name = glue::glue("{dir}/{sample_photo}.jpg"),
-                  new_file_name = glue::glue("{dir}/processed_photos/{ECA_name}_{collection_id}.jpg")) %>%
-    dplyr::select(orig_file_name, new_file_name)
+                  new_file_name = glue::glue("{dir}/processed_photos/{ECA_name}_{c_label}.jpg"),
+                  thumb_file_name = glue::glue("{dir}/processed_photos/{ECA_name}_{c_label}_thumbnail.jpg")) %>%
+    dplyr::select(ECA_name, species_id, c_label, orig_file_name, new_file_name, thumb_file_name)
+
 
   # make processed subdirectory in dir
   fs::dir_create(glue::glue("{dir}/processed_photos"))
 
   # copy files to new directory and rename
   fs::file_copy(to_change$orig_file_name, to_change$new_file_name, overwrite = F)
+
+  # loop through renamed images to make thumbnails
+  for(i in unique(to_change$new_file_name)) {
+    # setup image in R
+    img <- jpeg::readJPEG(i)
+    h<-dim(img)[1] # image height
+    w<-dim(img)[2] # image width
+
+    #make thumbnail
+    jpeg(file = glue::glue("{to_change %>% dplyr::filter(new_file_name == i) %>% dplyr::pull(thumb_file_name)}"), height = h*size, width = w*size)
+    par(mar=c(0,0,0,0), xaxs="i", yaxs="i", ann=FALSE)
+    plot(1:2, type='n', xaxt = "n", yaxt = "n", xlab = "", ylab = "")
+    lim <- par()
+    rasterImage(img, lim$usr[1], lim$usr[3], lim$usr[2], lim$usr[4])
+    dev.off()
+  }
 }
