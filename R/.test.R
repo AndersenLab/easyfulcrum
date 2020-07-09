@@ -22,7 +22,6 @@ geno_data1 <- readGenotypes(gsKey = c("1CxKJHM6mEu4VvnN2T1ioXiJNZmmmpeosmECP2zeA
 # test joinGenoFulc function to join genotype data to fulcrum data
 joingeno_data1 <- joinGenoFulc(geno = geno_data1, fulc = anno_data1,)
 
-# test the procPhotos function
+# test the procPhotos function. Output is final dataframe
 photodir <- "test_data/2020FebruaryAustralia/data/fulcrum/photos"
-
-procPhotos(photodir, joingeno_data1)
+final_data1 <- procPhotos(photodir, joingeno_data1)

@@ -6,4 +6,3 @@ export(annotateFulcrum)
 export(readGenotypes)
 export(joinGenoFulc)
 export(procPhotos)
-

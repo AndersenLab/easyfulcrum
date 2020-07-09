@@ -22,5 +22,6 @@ Imports:
     glue,
     readr,
     sp,
-    googlesheets4
+    googlesheets4,
+    rebus
 
