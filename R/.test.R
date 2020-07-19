@@ -13,6 +13,11 @@ proc_data1 <- procFulcrum(raw_data1)
 # test joinFulcrum function
 join_data1 <- joinFulcrum(proc_data1)
 
+# test initial_data_check function
+initial_data_check(join_data1)
+# test initial_data_check function with optional parameters set to TRUE
+test1 <- initial_data_check(join_data1, save = TRUE, return = TRUE)
+
 # test annotateFulcrum fuction
 anno_data1 <- annotateFulcrum(join_data1)
 
