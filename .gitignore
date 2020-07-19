@@ -3,3 +3,4 @@
 .DS_Store.orig
 ~$collection_data_dictionary_v2.xlsx
 .Rhistory
+.RData
