@@ -12,6 +12,7 @@ proc_data1 <- procFulcrum(raw_data1)
 
 # test parameter_check function
 parameter_check(proc_data1)
+
 # test parameter_check function with optional parameters set to TRUE
 test1 <- parameter_check(proc_data1, save = TRUE, return = TRUE)
 

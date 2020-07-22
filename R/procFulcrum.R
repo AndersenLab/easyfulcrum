@@ -12,6 +12,7 @@
 #' nematode_isolation_s_labeled_plates \tab a processed dataframe from the nematode_isolation_s_labeled_plates.csv\cr
 #' nematode_isolation_photos \tab a processed dataframe from the nematode_isolation_photos.csv\cr
 #' }
+#' @import dplyr
 #' @export
 
 procFulcrum <- function(data) {
@@ -59,7 +60,7 @@ procFulcrum <- function(data) {
                   & (gridsect == "no")) %>%
     # flag duplicated C-labels
     dplyr::group_by(c_label) %>%
-    dplyr::mutate(flag_duplicated_c_label_field_sampling = ifelse(n() > 1, TRUE, FALSE)) %>%
+    dplyr::mutate(flag_duplicated_c_label_field_sampling = ifelse(dplyr::n() > 1, TRUE, FALSE)) %>%
     dplyr::ungroup()
 
   # Read collection photo position data (exif)
