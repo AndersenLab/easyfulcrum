@@ -23,3 +23,5 @@ filter_box <- function(longitude, latitude, coords) {
 FtoC <- function(F) {
   (F - 32) * (5 / 9)
 }
+
+

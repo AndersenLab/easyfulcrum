@@ -66,7 +66,7 @@ parameter_check <- function(data, save = FALSE, return = FALSE) {
               "rows with flagged ambient run temperature:", sep = " "))
   if(sum(ambient_temperature_run$flag_ambient_temperature_run) > 0){
     to_return <- ambient_temperature_run %>%
-    dplyr::select(raw_ambient_temperature, ambient_humidity,
+    dplyr::select(c_label, raw_ambient_temperature, ambient_humidity,
                   flag_ambient_temperature_run, collection_local_time, collection_datetime_UTC)
     return(as.data.frame(to_return))}
 

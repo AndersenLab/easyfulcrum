@@ -8,99 +8,201 @@
 
 joinFulcrum <- function(data) {
 
-  #prevent scientific notation
+
+  # prevent scientific notation
   options(scipen = 999)
 
-  # join data[[1]] (nematode_field_sampling) to data [[3]] (nematode_isolation)
-  joined_data <- dplyr::full_join(data[[3]], data[[1]], by = c("c_label_id" = "fulcrum_id")) %>%
-    dplyr::select(c_label,
-                  everything(),
-                  -c_label_id) %>%
-    # Join data[[2]] (nematode_field_sampling_sample_photo) to above. In some cases there is not position data from the photos
-    dplyr::left_join(data[[2]], by = c("sample_photo" = "fulcrum_id")) %>%
-    # Create flag to track if lat and long come from record or photo
-    dplyr::mutate(collection_lat_long_method = ifelse(is.na(exif_gps_latitude), "fulcrum", "photo")) %>%
-    # In cases where lat/lon are not available from photo set to collection_fulcrum_latitude and collection_fulcrum_longitude
-    dplyr::mutate(collection_latitude = ifelse(is.na(exif_gps_latitude), collection_fulcrum_latitude, exif_gps_latitude)) %>%
-    dplyr::mutate(collection_longitude = ifelse(is.na(exif_gps_longitude), collection_fulcrum_longitude, exif_gps_longitude)) %>%
-    # Add flag for worms on sample not recorded
-    dplyr::mutate(worms_on_sample = ifelse(is.na(worms_on_sample), "?", worms_on_sample),
-                  flag_worms_on_sample_not_recorded = ifelse(worms_on_sample == "?", TRUE, FALSE),
-                  flag_missing_isolation_record = ifelse(is.na(isolation_by), TRUE, FALSE)) %>%
-    # Calculate the Haversine distance between fulcrum record_latitude and record_longitue and photo latitude and longitude
-    dplyr::rowwise() %>%
-    dplyr::mutate(collection_lat_long_method_diff = geosphere::distHaversine(c(collection_longitude, collection_latitude),
-                                                                             c(collection_fulcrum_longitude, collection_fulcrum_latitude)),
-                  # adjust collection_lat_long_method_diff to NA if there is only a fulcrum GPS postion
-                  collection_lat_long_method_diff = ifelse(collection_lat_long_method == "fulcrum", NA, collection_lat_long_method_diff)) %>%
-    # fix altitude method and altitude
-    dplyr::mutate(collection_altitude = ifelse(collection_lat_long_method == "photo" & !(is.na(exif_gps_altitude)), exif_gps_altitude,
-                                               ifelse(is.na(exif_gps_altitude) & !(is.na(fulcrum_altitude)), fulcrum_altitude,
-                                                      ifelse(is.na(exif_gps_altitude) & is.na(fulcrum_altitude), NA))),
-                  collection_altitude_method = ifelse(collection_lat_long_method == "photo" & !(is.na(exif_gps_altitude)), "photo",
-                                                      ifelse(is.na(exif_gps_altitude) & !(is.na(fulcrum_altitude)), "fulcrum",
-                                                             ifelse(is.na(exif_gps_altitude) & is.na(fulcrum_altitude), NA, NA)))) %>%
-    dplyr::ungroup() %>%
-    # join c-plates to s-plates data[[4]] = nematode_isolation_s_labeled_plates
-    dplyr::full_join(data[[4]], .,  by = c("fulcrum_parent_id" = "isolation_id")) %>%
-    dplyr::select(-fulcrum_parent_id, -updated_by, -version, -geometry, -assigned_to, -status) %>%
-    # set varible order
-    dplyr::select(project,
-                  c_label,
-                  s_label,
-                  flag_ambient_temperature,
-                  flag_ambient_temperature_run,
-                  flag_duplicated_c_label_field_sampling,
-                  flag_duplicated_s_label_isolation_s_labeled_plates,
-                  flag_missing_isolation_record,
-                  flag_missing_s_label_isolation_s_labeled_plates,
-                  flag_substrate_temperature,
-                  flag_worms_on_sample_not_recorded,
-                  collection_by,
-                  collection_datetime_UTC,
-                  collection_date_UTC,
-                  collection_local_time,
-                  collection_fulcrum_latitude,
-                  collection_fulcrum_longitude,
-                  exif_gps_latitude,
-                  exif_gps_longitude,
-                  collection_latitude,
-                  collection_longitude,
-                  collection_lat_long_method,
-                  collection_lat_long_method_diff,
-                  fulcrum_altitude,
-                  exif_gps_altitude,
-                  collection_altitude,
-                  collection_altitude_method,
-                  landscape,
-                  sky_view,
-                  ambient_humidity,
-                  substrate,
-                  substrate_notes,
-                  substrate_other,
-                  raw_ambient_temperature,
-                  proc_ambient_temperature,
-                  raw_substrate_temperature,
-                  proc_substrate_temperature,
-                  gridsect,
-                  gridsect_index,
-                  gridsect_radius,
-                  grid_sect_direction,
-                  sample_photo,
-                  sample_photo_caption,
-                  sample_photo_url,
-                  gps_course,
-                  gps_horizontal_accuracy,
-                  gps_speed,
-                  gps_vertical_accuracy,
-                  isolation_by,
-                  isolation_datetime_UTC,
-                  isolation_date_UTC,
-                  isolation_local_time,
-                  isolation_latitude,
-                  isolation_longitude,
-                  worms_on_sample,
-                  approximate_number_of_worms)
+  # check which data is present in processed data list and send message
+  data_names <- as.data.frame(names(data)) %>%
+    dplyr::rename(data_name = `names(data)`)
+  message("Attempting to join:")
+  for (i in unique(data_names$data_name)) {
+    message(glue::glue("{substitute(data)}${i}"))
+  }
+
+  # join just sampling data
+  if(c("nematode_field_sampling_proc", "nematode_field_sampling_sample_photo_proc") %in% data_names$data_name &
+     !(c("data$nematode_isolation_proc", "data$nematode_isolation_s_labeled_plates_proc", "data$nematode_isolation_photos_proc") %in% data_names$data_name) &
+     nrow(data_names) == 2) {
+    # send message
+    message("Complete fulcrum isoaltion data not detected, joining sampling data only.")
+
+    # join sampling data only
+    # join nematode_field_sampling_proc with nematode_isolation_proc
+    joined_data <- data$nematode_field_sampling_proc %>%
+      # Join nematode_field_sampling_sample_photo to above. In some cases there is not position data from the photos
+      dplyr::left_join(data$nematode_field_sampling_sample_photo_proc, by = c("sample_photo" = "fulcrum_id")) %>%
+      # Create flag to track if lat and long come from record or photo
+      dplyr::mutate(collection_lat_long_method = ifelse(is.na(exif_gps_latitude), "fulcrum", "photo")) %>%
+      # In cases where lat/lon are not available from photo set to collection_fulcrum_latitude and collection_fulcrum_longitude
+      dplyr::mutate(collection_latitude = ifelse(is.na(exif_gps_latitude), collection_fulcrum_latitude, exif_gps_latitude)) %>%
+      dplyr::mutate(collection_longitude = ifelse(is.na(exif_gps_longitude), collection_fulcrum_longitude, exif_gps_longitude)) %>%
+      # Add flag for worms on sample not recorded
+      dplyr::mutate(worms_on_sample = ifelse(is.na(worms_on_sample), "?", worms_on_sample),
+                    flag_worms_on_sample_not_recorded = ifelse(worms_on_sample == "?", TRUE, FALSE),
+                    flag_missing_isolation_record = ifelse(is.na(isolation_by), TRUE, FALSE)) %>%
+      # Calculate the Haversine distance between fulcrum record_latitude and record_longitue and photo latitude and longitude
+      dplyr::rowwise() %>%
+      dplyr::mutate(collection_lat_long_method_diff = geosphere::distHaversine(c(collection_longitude, collection_latitude),
+                                                                               c(collection_fulcrum_longitude, collection_fulcrum_latitude)),
+                    # adjust collection_lat_long_method_diff to NA if there is only a fulcrum GPS postion
+                    collection_lat_long_method_diff = ifelse(collection_lat_long_method == "fulcrum", NA, collection_lat_long_method_diff)) %>%
+      # fix altitude method and altitude
+      dplyr::mutate(collection_altitude = ifelse(collection_lat_long_method == "photo" & !(is.na(exif_gps_altitude)), exif_gps_altitude,
+                                                 ifelse(is.na(exif_gps_altitude) & !(is.na(fulcrum_altitude)), fulcrum_altitude,
+                                                        ifelse(is.na(exif_gps_altitude) & is.na(fulcrum_altitude), NA))),
+                    collection_altitude_method = ifelse(collection_lat_long_method == "photo" & !(is.na(exif_gps_altitude)), "photo",
+                                                        ifelse(is.na(exif_gps_altitude) & !(is.na(fulcrum_altitude)), "fulcrum",
+                                                               ifelse(is.na(exif_gps_altitude) & is.na(fulcrum_altitude), NA, NA)))) %>%
+      dplyr::ungroup() %>%
+      # set varible order
+      dplyr::select(project,
+                    c_label,
+                    flag_ambient_temperature,
+                    flag_ambient_temperature_run,
+                    flag_duplicated_c_label_field_sampling,
+                    flag_duplicated_s_label_isolation_s_labeled_plates,
+
+
+                    flag_substrate_temperature,
+                    flag_worms_on_sample_not_recorded,
+                    collection_by,
+                    collection_datetime_UTC,
+                    collection_date_UTC,
+                    collection_local_time,
+                    collection_fulcrum_latitude,
+                    collection_fulcrum_longitude,
+                    exif_gps_latitude,
+                    exif_gps_longitude,
+                    collection_latitude,
+                    collection_longitude,
+                    collection_lat_long_method,
+                    collection_lat_long_method_diff,
+                    fulcrum_altitude,
+                    exif_gps_altitude,
+                    collection_altitude,
+                    collection_altitude_method,
+                    landscape,
+                    sky_view,
+                    ambient_humidity,
+                    substrate,
+                    substrate_notes,
+                    substrate_other,
+                    raw_ambient_temperature,
+                    proc_ambient_temperature,
+                    raw_substrate_temperature,
+                    proc_substrate_temperature,
+                    gridsect,
+                    gridsect_index,
+                    gridsect_radius,
+                    grid_sect_direction,
+                    sample_photo,
+                    sample_photo_caption,
+                    sample_photo_url,
+                    gps_course,
+                    gps_horizontal_accuracy,
+                    gps_speed,
+                    gps_vertical_accuracy)
+  }
+
+  # join all data
+  if(c("nematode_field_sampling_proc", "nematode_field_sampling_sample_photo_proc", "data$nematode_isolation_proc",
+       "data$nematode_isolation_s_labeled_plates_proc", "data$nematode_isolation_photos_proc") %in% data_names$data_name &
+     nrow(data_names) == 5) {
+    # send message
+    message("Complete fulcrum data detected, joining all data.")
+
+    # join nematode_field_sampling_proc with nematode_isolation_proc
+    joined_data <- dplyr::full_join(data$nematode_isolation_proc, data$nematode_field_sampling_proc, by = c("c_label_id" = "fulcrum_id")) %>%
+      dplyr::select(c_label,
+                    everything(),
+                    -c_label_id) %>%
+      # Join nematode_field_sampling_sample_photo to above. In some cases there is not position data from the photos
+      dplyr::left_join(data$nematode_field_sampling_sample_photo_proc, by = c("sample_photo" = "fulcrum_id")) %>%
+      # Create flag to track if lat and long come from record or photo
+      dplyr::mutate(collection_lat_long_method = ifelse(is.na(exif_gps_latitude), "fulcrum", "photo")) %>%
+      # In cases where lat/lon are not available from photo set to collection_fulcrum_latitude and collection_fulcrum_longitude
+      dplyr::mutate(collection_latitude = ifelse(is.na(exif_gps_latitude), collection_fulcrum_latitude, exif_gps_latitude)) %>%
+      dplyr::mutate(collection_longitude = ifelse(is.na(exif_gps_longitude), collection_fulcrum_longitude, exif_gps_longitude)) %>%
+      # Add flag for worms on sample not recorded
+      dplyr::mutate(worms_on_sample = ifelse(is.na(worms_on_sample), "?", worms_on_sample),
+                    flag_worms_on_sample_not_recorded = ifelse(worms_on_sample == "?", TRUE, FALSE),
+                    flag_missing_isolation_record = ifelse(is.na(isolation_by), TRUE, FALSE)) %>%
+      # Calculate the Haversine distance between fulcrum record_latitude and record_longitue and photo latitude and longitude
+      dplyr::rowwise() %>%
+      dplyr::mutate(collection_lat_long_method_diff = geosphere::distHaversine(c(collection_longitude, collection_latitude),
+                                                                               c(collection_fulcrum_longitude, collection_fulcrum_latitude)),
+                    # adjust collection_lat_long_method_diff to NA if there is only a fulcrum GPS postion
+                    collection_lat_long_method_diff = ifelse(collection_lat_long_method == "fulcrum", NA, collection_lat_long_method_diff)) %>%
+      # fix altitude method and altitude
+      dplyr::mutate(collection_altitude = ifelse(collection_lat_long_method == "photo" & !(is.na(exif_gps_altitude)), exif_gps_altitude,
+                                                 ifelse(is.na(exif_gps_altitude) & !(is.na(fulcrum_altitude)), fulcrum_altitude,
+                                                        ifelse(is.na(exif_gps_altitude) & is.na(fulcrum_altitude), NA))),
+                    collection_altitude_method = ifelse(collection_lat_long_method == "photo" & !(is.na(exif_gps_altitude)), "photo",
+                                                        ifelse(is.na(exif_gps_altitude) & !(is.na(fulcrum_altitude)), "fulcrum",
+                                                               ifelse(is.na(exif_gps_altitude) & is.na(fulcrum_altitude), NA, NA)))) %>%
+      dplyr::ungroup() %>%
+      # join c-plates to s-plates data[[4]] = nematode_isolation_s_labeled_plates
+      dplyr::full_join(data$nematode_isolation_s_labeled_plates_proc, .,  by = c("fulcrum_parent_id" = "isolation_id")) %>%
+      dplyr::select(-fulcrum_parent_id, -updated_by, -version, -geometry, -assigned_to, -status) %>%
+      # set varible order
+      dplyr::select(project,
+                    c_label,
+                    s_label,
+                    flag_ambient_temperature,
+                    flag_ambient_temperature_run,
+                    flag_duplicated_c_label_field_sampling,
+                    flag_duplicated_s_label_isolation_s_labeled_plates,
+                    flag_missing_isolation_record,
+                    flag_missing_s_label_isolation_s_labeled_plates,
+                    flag_substrate_temperature,
+                    flag_worms_on_sample_not_recorded,
+                    collection_by,
+                    collection_datetime_UTC,
+                    collection_date_UTC,
+                    collection_local_time,
+                    collection_fulcrum_latitude,
+                    collection_fulcrum_longitude,
+                    exif_gps_latitude,
+                    exif_gps_longitude,
+                    collection_latitude,
+                    collection_longitude,
+                    collection_lat_long_method,
+                    collection_lat_long_method_diff,
+                    fulcrum_altitude,
+                    exif_gps_altitude,
+                    collection_altitude,
+                    collection_altitude_method,
+                    landscape,
+                    sky_view,
+                    ambient_humidity,
+                    substrate,
+                    substrate_notes,
+                    substrate_other,
+                    raw_ambient_temperature,
+                    proc_ambient_temperature,
+                    raw_substrate_temperature,
+                    proc_substrate_temperature,
+                    gridsect,
+                    gridsect_index,
+                    gridsect_radius,
+                    grid_sect_direction,
+                    sample_photo,
+                    sample_photo_caption,
+                    sample_photo_url,
+                    gps_course,
+                    gps_horizontal_accuracy,
+                    gps_speed,
+                    gps_vertical_accuracy,
+                    isolation_by,
+                    isolation_datetime_UTC,
+                    isolation_date_UTC,
+                    isolation_local_time,
+                    isolation_latitude,
+                    isolation_longitude,
+                    worms_on_sample,
+                    approximate_number_of_worms)
+  }
 
   # return data
   return(joined_data)

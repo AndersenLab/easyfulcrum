@@ -7,15 +7,17 @@
 readFulcrum(dir)
 }
 \arguments{
-\item{dir}{The path of the directory with five Fulcrum .csv files:
+\item{dir}{The path of the directory with up to five Fulcrum .csv files:
 nematode_field_sampling.csv,
 nematode_field_sampling_sample_photo.csv,
 nematode_isolation.csv,
 nematode_isolation_s_labeled_plates.csv,
-nematode_isolation_photos.csv}
+nematode_isolation_photos.csv
+
+All five files are not required but it is recommended to use all exported files when possible.}
 }
 \value{
-A list of five named data frames generated from the .csv files.
+A list of dataframes named from the .csv files.
 \tabular{ll}{
 nematode_field_sampling \tab nematode_field_sampling.csv\cr
 nematode_field_sampling_sample_photo \tab nematode_field_sampling_sample_photo.csv\cr
