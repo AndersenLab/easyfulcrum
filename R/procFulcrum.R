@@ -13,6 +13,7 @@
 #' nematode_isolation_photos_proc \tab a processed dataframe from the nematode_isolation_photos.csv\cr
 #' }
 #' @import dplyr
+#' @importFrom runner streak_run
 #' @export
 
 procFulcrum <- function(data) {
@@ -36,9 +37,9 @@ procFulcrum <- function(data) {
       dplyr::select(-updated_at,
                     -system_created_at,
                     -system_updated_at,
-                    -date) %>%
-      # choose one sample photo only. This takes the first sample photo and warns if additional photos are discarded
-      tidyr::separate(col = sample_photo, into = "sample_photo", sep = ",", extra = "warn") %>%
+                    -date,
+                    -sample_photo_caption, # not needed here, can bring in from photo export
+                    -sample_photo_url) %>% # make custom urls later with function
       # this is UTC time (very important if you want to convert to local time)
       dplyr::mutate(collection_datetime_UTC = lubridate::ymd_hms(created_at, tz = "UTC")) %>%
       # again this is UTC date (very important if you want to convert to local date)
@@ -62,13 +63,33 @@ procFulcrum <- function(data) {
       dplyr::mutate(raw_ambient_temperature = as.numeric(raw_ambient_temperature)) %>%
       # add flags for runs of temperature data
       dplyr::arrange(collection_datetime_UTC) %>%
-      dplyr::mutate(flag_ambient_temperature_run = (ambient_humidity == dplyr::lag(ambient_humidity)) &
-                      (raw_ambient_temperature == dplyr::lag(raw_ambient_temperature))
-                    & (gridsect == "no")) %>%
+      dplyr::mutate(flag_ambient_temperature_run = ifelse(ambient_humidity == dplyr::lag(ambient_humidity) &
+                                                            raw_ambient_temperature == dplyr::lag(raw_ambient_temperature) & gridsect == "no", TRUE, FALSE),
+                    run_length = runner::streak_run(flag_ambient_temperature_run),
+                    flag_ambient_temperature_run = ifelse((run_length > 3 & flag_ambient_temperature_run == TRUE) |
+                                     (lead(run_length, n = 2L) >= 3 & flag_ambient_temperature_run == TRUE), TRUE, FALSE)) %>%
+      dplyr::select(-run_length) %>%
       # flag duplicated C-labels
       dplyr::group_by(c_label) %>%
       dplyr::mutate(flag_duplicated_c_label_field_sampling = ifelse(dplyr::n() > 1, TRUE, FALSE)) %>%
-      dplyr::ungroup()
+      dplyr::ungroup() %>%
+      dplyr::mutate(flag_unusual_sample_photo_num = ifelse(is.na(stringr::str_count(sample_photo, pattern = ",")) |
+                                                             stringr::str_count(sample_photo, pattern = ",") != 0, TRUE, FALSE)) %>%
+      # break apart mutliple sample photos. This takes the first sample photo and warns if additional photos are discarded
+      tidyr::separate(col = sample_photo, into = c("sample_photo1", "sample_photo2", "sample_photo3"), sep = ",", extra = "drop", fill = "right")
+
+
+    # message for multiple sample photos found
+    photo_count_df <- data$nematode_field_sampling %>%
+      dplyr::mutate(n_photos = stringr::str_count(sample_photo, pattern = ",")) %>%
+      dplyr::filter(n_photos != 0 | is.na(n_photos)) %>%
+      dplyr::mutate(print = glue::glue("{c_label} has {n_photos + 1} photos"))
+
+    if(nrow(photo_count_df) != 0) {
+      # print message
+      print(glue::glue(">>>{photo_count_df %>% dplyr::pull(print)}"))
+      print(glue::glue(">>>{nrow(photo_count_df)} c_lables flagged with flag_unusual_sample_photo_num"))
+    }
 
     # add to processed list
     proc_data["nematode_field_sampling_proc"] <- list(nematode_field_sampling_proc)
@@ -78,7 +99,12 @@ procFulcrum <- function(data) {
   if("nematode_field_sampling_sample_photo" %in% data_names) {
     message("Processing nematode_field_sampling_sample_photo")
     nematode_field_sampling_sample_photo_proc <- data$nematode_field_sampling_sample_photo %>%
-      dplyr::select(fulcrum_id, exif_gps_latitude, exif_gps_longitude, exif_gps_altitude)
+      dplyr::group_by(fulcrum_parent_id) %>% # group to find best percision among photos
+      dplyr::arrange(exif_gps_dop) %>%
+      dplyr::ungroup() %>%
+      dplyr::distinct(fulcrum_parent_id, .keep_all = T) %>%
+      dplyr::mutate(best_exif_gps_dop = TRUE) %>%
+      dplyr::select(fulcrum_id, exif_gps_latitude, exif_gps_longitude, exif_gps_altitude, best_exif_gps_dop, exif_gps_dop, best_sample_photo_caption = caption)
 
     # add to list
     proc_data["nematode_field_sampling_sample_photo_proc"] <- list(nematode_field_sampling_sample_photo_proc)
@@ -88,7 +114,11 @@ procFulcrum <- function(data) {
   if("nematode_isolation" %in% data_names) {
     message("Processing nematode_isolation")
     nematode_isolation_proc <- data$nematode_isolation %>%
+      dplyr::group_by(c_label) %>%
+      dplyr::mutate(flag_duplicated_isolation_for_c_label = ifelse(dplyr::n() > 1, TRUE, FALSE)) %>% # could use count here without grouping?
+      dplyr::ungroup() %>%
       dplyr::select(c_label_id = c_label,
+                    flag_duplicated_isolation_for_c_label,
                     isolation_id = fulcrum_id,
                     isolation_datetime_UTC = system_created_at,
                     isolation_by = created_by,
@@ -109,7 +139,9 @@ procFulcrum <- function(data) {
       dplyr::select(fulcrum_parent_id, s_label) %>%
       # flag duplicated S-labels
       dplyr::group_by(s_label) %>%
-      dplyr::mutate(flag_duplicated_s_label_isolation_s_labeled_plates = ifelse(n() > 1, TRUE, FALSE)) %>%
+      dplyr::mutate(flag_duplicated_s_label_isolation_s_labeled_plates = ifelse(dplyr::n() > 1, TRUE, FALSE),
+                    flag_duplicated_s_label_isolation_s_labeled_plates = ifelse(flag_duplicated_s_label_isolation_s_labeled_plates == TRUE &
+                                                                                  is.na(s_label), FALSE, flag_duplicated_s_label_isolation_s_labeled_plates)) %>%
       dplyr::ungroup() %>%
       # flag missing S-labels
       dplyr::mutate(flag_missing_s_label_isolation_s_labeled_plates = ifelse(is.na(s_label), TRUE, FALSE))
