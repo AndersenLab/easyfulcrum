@@ -199,7 +199,6 @@ joinFulcrum <- function(data) {
                     sample_photo3,
                     best_exif_dop_photo = best_photo,
                     best_sample_photo_caption,
-                    best_sample_photo_caption,
                     gps_course,
                     gps_horizontal_accuracy,
                     gps_speed,

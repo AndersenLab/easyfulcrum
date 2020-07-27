@@ -1,5 +1,3 @@
-library(tidyverse)
-
 # set working directory
 setwd(glue::glue("{dirname(rstudioapi::getActiveDocumentContext()$path)}/.."))
 
