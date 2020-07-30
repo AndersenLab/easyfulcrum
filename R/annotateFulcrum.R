@@ -12,9 +12,8 @@ annotateFulcrum <- function(data) {
 
   # assign data to joined_data
   joined_data <- data
-
   # import island csv, this will have to change once we implement CI
-  island <- read.csv("~/repos/easyfulcrum/test_data/island.csv", header = TRUE)
+  island <- read.csv("test_data/island.csv", header = TRUE)
 
   # Create Island Column
   joined_data$collection_island <- NA_character_
@@ -25,7 +24,7 @@ annotateFulcrum <- function(data) {
   }
 
   # import location csv, this will have to change once we implement CI
-  location <- read.csv("~/repos/easyfulcrum/test_data/location.csv", header = TRUE)
+  location <- read.csv("test_data/location.csv", header = TRUE)
 
   # Create location Column
   joined_data$collection_location <- NA_character_
@@ -38,7 +37,7 @@ annotateFulcrum <- function(data) {
   # These polygons are manually curated by using the polygon tool.
 
   # import trails csv, this will have to change once we implement CI
-  trails_df <- read.csv("~/repos/easyfulcrum/test_data/trails.csv", header = TRUE)
+  trails_df <- read.csv("test_data/trails.csv", header = TRUE)
 
   trails <- as.list(trails_df$coordinates)
   names(trails) <- trails_df$trail_name
@@ -132,7 +131,7 @@ annotateFulcrum <- function(data) {
                   sample_photo1,
                   sample_photo2,
                   sample_photo3,
-                  best_exif_dop_photo = best_photo,
+                  best_exif_dop_photo,
                   best_sample_photo_caption,
                   gps_course,
                   gps_horizontal_accuracy,
