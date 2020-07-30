@@ -10,29 +10,26 @@
 #'
 
 checkParameters <- function(data, return = FALSE) {
-  nematode_field_sampling_proc <- data[[1]]
 
   message(">>> Checking substrate temperature")
-  substrate_temperature <- nematode_field_sampling_proc %>%
-    dplyr::filter(flag_substrate_temperature == TRUE)
-  print(paste("There are", nrow(substrate_temperature),
-              "rows with flagged substrate temperature:", sep = " "))
+  substrate_temperature <- data[[1]] %>% dplyr::filter(flag_substrate_temperature == TRUE)
+  print(paste("There are", nrow(substrate_temperature), "rows with flagged substrate temperature:", sep = " "))
+  
   if(nrow(substrate_temperature) > 0){to_return <- substrate_temperature %>%
     dplyr::select(fulcrum_id ,raw_substrate_temperature, proc_substrate_temperature)
-    return(as.data.frame(to_return))}
+  print.data.frame(as.data.frame(to_return))}
 
   message(">>> Checking ambient temperature")
-  ambient_temperature <- nematode_field_sampling_proc %>%
-    dplyr::filter(flag_ambient_temperature == TRUE)
-  print(paste("There are", nrow(ambient_temperature),
-              "rows with flagged ambient temperature:", sep = " "))
+  ambient_temperature <- data[[1]] %>% dplyr::filter(flag_ambient_temperature == TRUE)
+  print(paste("There are", nrow(ambient_temperature), "rows with flagged ambient temperature:", sep = " "))
+  
   if(nrow(ambient_temperature) > 0){to_return <- ambient_temperature %>%
     dplyr::select(fulcrum_id ,raw_ambient_temperature, proc_ambient_temperature)
-    return(as.data.frame(to_return))}
+  print.data.frame(as.data.frame(to_return))}
 
   message(">>> Checking ambient run temperature")
   #arrange by collection_datetime
-  ambient_temperature_run <- nematode_field_sampling_proc %>%
+  ambient_temperature_run <- data[[1]] %>%
     dplyr::arrange(collection_datetime_UTC)
   #replace NA values in the flag with FALSE, doesn't matter for this purpose
   ambient_temperature_run$flag_ambient_temperature_run <-
@@ -59,18 +56,25 @@ checkParameters <- function(data, return = FALSE) {
     }
   }
   ambient_temperature_run <- ambient_temperature_run %>%
-    dplyr::filter(temp == TRUE) %>% dplyr::select(-matches("drop"))
-  print(paste("There are",
-              sum(ambient_temperature_run$flag_ambient_temperature_run),
+    dplyr::filter(temp == TRUE) %>% dplyr::select(-temp)
+  print(paste("There are", sum(ambient_temperature_run$flag_ambient_temperature_run),
               "rows with flagged ambient run temperature:", sep = " "))
+  
   if(sum(ambient_temperature_run$flag_ambient_temperature_run) > 0){
     to_return <- ambient_temperature_run %>%
-    dplyr::select(fulcrum_id, raw_ambient_temperature, ambient_humidity,
-                  flag_ambient_temperature_run, collection_local_time, collection_datetime_UTC)
-    return(as.data.frame(to_return))}
+    dplyr::select(fulcrum_id, 
+                  c_label, 
+                  raw_ambient_temperature, 
+                  proc_ambient_temperature, 
+                  ambient_humidity,
+                  flag_ambient_temperature_run, 
+                  collection_local_time, 
+                  collection_datetime_UTC)
+    print.data.frame(as.data.frame(to_return))}
 
   if(return){
-    return(list("substrate_temperature" = substrate_temperature, "ambient_temperature" = ambient_temperature,
+    return(list("substrate_temperature" = substrate_temperature, 
+                "ambient_temperature" = ambient_temperature,
                 "ambient_temperature_run" = ambient_temperature_run))
   }
 }
@@ -100,7 +104,8 @@ fixParameters <- function(data,
       data[[1]]$proc_ambient_temperature[i] = data[[1]]$raw_ambient_temperature[i]}
     #replace proc_ambient_temperature with NA
     if(data[[1]]$fulcrum_id[i] %in% ambient_temperature_run_ids){
-      data[[1]]$proc_ambient_temperature[i] = NA}
+      data[[1]]$proc_ambient_temperature[i] = NA
+      data[[1]]$ambient_humidity[i] = NA}
   }
   return(data)
 }
@@ -126,11 +131,6 @@ checkProc <- function(data, return = FALSE) {
   print(paste("There are", nrow(unusual_sample_photo_num), "rows with unusual sample photo numbers, their c labels are:", sep = " "))
   if(nrow(unusual_sample_photo_num) > 0){print(unusual_sample_photo_num$c_label)}
   
-  message(">>> Checking duplicated c label (field sampling)")
-  duplicated_c_label_field_sampling <- data[[1]] %>% dplyr::filter(flag_duplicated_c_label_field_sampling == TRUE)
-  print(paste("There are", nrow(duplicated_c_label_field_sampling), "rows with duplicated c labels (field sampling), their c labels are:", sep = " "))
-  if(nrow(duplicated_c_label_field_sampling) > 0){print(duplicated_c_label_field_sampling$c_label)}
-  
   message(">>> Checking duplicated isolation for c label")
   duplicated_isolation_for_c_label <- data[[3]] %>% dplyr::filter(flag_duplicated_isolation_for_c_label == TRUE)
   print(paste("There are", nrow(duplicated_isolation_for_c_label), "rows with duplicated isolation for c label, their c labels ids are:", sep = " "))
@@ -149,7 +149,6 @@ checkProc <- function(data, return = FALSE) {
   if(return){
     return(list("duplicated_c_label" = duplicated_c_label, 
                 "unusual_sample_photo_num" = unusual_sample_photo_num,
-                "duplicated_c_label_field_sampling" = duplicated_c_label_field_sampling,
                 "duplicated_isolation_for_c_label" = duplicated_isolation_for_c_label,
                 "duplicated_s_label" = duplicated_s_label,
                 "missing_s_label" = missing_s_label))

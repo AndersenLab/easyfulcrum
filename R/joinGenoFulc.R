@@ -71,7 +71,7 @@ joinGenoFulc <- function(geno, fulc, blast = NULL) {
                     sample_photo1,
                     sample_photo2,
                     sample_photo3,
-                    best_exif_dop_photo = best_photo,
+                    best_exif_dop_photo,
                     best_sample_photo_caption,
                     isolation_by,
                     isolation_datetime_UTC,
