@@ -78,19 +78,6 @@ procFulcrum <- function(data) {
       # break apart mutliple sample photos. This takes the first sample photo and warns if additional photos are discarded
       tidyr::separate(col = sample_photo, into = c("sample_photo1", "sample_photo2", "sample_photo3"), sep = ",", extra = "drop", fill = "right")
 
-
-    # message for multiple sample photos found
-    photo_count_df <- data$nematode_field_sampling %>%
-      dplyr::mutate(n_photos = stringr::str_count(sample_photo, pattern = ",")) %>%
-      dplyr::filter(n_photos != 0 | is.na(n_photos)) %>%
-      dplyr::mutate(print = glue::glue("{c_label} has {n_photos + 1} photos"))
-
-    if(nrow(photo_count_df) != 0) {
-      # print message
-      print(glue::glue(">>>{photo_count_df %>% dplyr::pull(print)}"))
-      print(glue::glue(">>>{nrow(photo_count_df)} c_lables flagged with flag_unusual_sample_photo_num"))
-    }
-
     # add to processed list
     proc_data["nematode_field_sampling_proc"] <- list(nematode_field_sampling_proc)
   }
