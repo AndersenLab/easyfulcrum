@@ -2,7 +2,8 @@
 #'
 #' \code{procGenotypes} adds flags to genotyping dataframe
 #'
-#' @param data a dataframe resulting from \code{readGenotypes} function.
+#' @param geno_data a dataframe resulting from the \code{readGenotypes} function.
+#' @param fulc_data a checked dataframe resulting from the \code{joinFulcrum} function.
 #' @param target_sp a vector of target species names with full genus and species names. Default target species names are:
 #' Caenorhabditis briggsae, Caenorhabditis elegans, Caenorhabditis tropicalis.
 #' @return A dataframe with flags for common errors in Genotyping dataframe.
@@ -10,14 +11,15 @@
 #' @export
 #'
 
-procGenotypes <- function(data, target_sp = c("Caenorhabditis briggsae", "Caenorhabditis elegans", "Caenorhabditis tropicalis")) {
+procGenotypes <- function(geno_data, fulc_data, target_sp = c("Caenorhabditis briggsae", "Caenorhabditis elegans", "Caenorhabditis tropicalis")) {
   # Find usual S-labels in genotyping dataframe
-  usual_s_labels <- stringr::str_subset(data$s_label, pattern = "S-" %R% DGT %R% DGT %R% DGT %R% DGT %R% optional(DGT) %R% optional(DGT))
+  usual_s_labels <- stringr::str_subset(geno_data$s_label, pattern = "S-" %R% DGT %R% DGT %R% DGT %R% DGT %R% optional(DGT) %R% optional(DGT))
 
   # add s_label flags to genotyping dataframe
-  flag <- data %>%
+  flag <- geno_data %>%
     dplyr::mutate(flag_unusual_s_label_genotyping = ifelse(!(s_label %in% usual_s_labels), TRUE, FALSE),
-                  flag_missing_s_label_genotyping = ifelse(is.na(s_label), TRUE, FALSE)) %>%
+                  flag_missing_s_label_genotyping = ifelse(is.na(s_label), TRUE, FALSE),
+                  flag_s_label_not_in_fulcrum = ifelse(!(s_label %in% fulc_data$s_label), TRUE, FALSE)) %>%
     dplyr::group_by(s_label) %>%
     dplyr::mutate(flag_duplicated_s_label_genotyping = ifelse(dplyr::n() > 1, TRUE, FALSE)) %>%
     dplyr::ungroup() %>%
@@ -31,6 +33,6 @@ procGenotypes <- function(data, target_sp = c("Caenorhabditis briggsae", "Caenor
                   flag_ECA_name_expected = ifelse(is.na(flag_ECA_name_expected), FALSE, flag_ECA_name_expected))
 
   # return raw genotyping sheet
-  message(glue::glue("processed {unique(data$project_id)} genotyping data"))
+  message(glue::glue("processed {unique(geno_data$project_id)} genotyping data"))
   return(flag)
 }

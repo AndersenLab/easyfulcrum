@@ -1,5 +1,5 @@
 # setup test directory for multi project Fulcrum export
-dir1 <- "test_data/2020FebruaryAustralia/data/fulcrum"
+dir1 <- "test_data/2020FebruaryAustralia/data/raw/fulcrum"
 dir2 <- "test_data/2018OctoberHawaii/data/fulcrum"
 dir3 <- "test_data/2019DecemberHawaii/data/fulcrum"
 dir4 <- "test_data/2019OctoberHawaii/data/fulcrum"
@@ -45,7 +45,7 @@ anno_data1 <- annotateFulcrum(join_data1)
 geno_data1 <- readGenotypes(gsKey = c("1CxKJHM6mEu4VvnN2T1ioXiJNZmmmpeosmECP2zeAPmY"))
 
 # test procGenotypes function
-proc_geno_data1 <- procGenotypes(geno_data1)
+proc_geno_data1 <- procGenotypes(geno_data = geno_data1, fulc_data = anno_data1)
 
 #test checkGenotypes function
 checkGenotypes(proc_geno_data1)
