@@ -13,7 +13,7 @@ annotateFulcrum <- function(data) {
   # assign data to joined_data
   joined_data <- data
   # import island csv, this will have to change once we implement CI
-  island <- read.csv("test_data/island.csv", header = TRUE)
+  island <- readr::read_csv("test_data/island.csv")
 
   # Create Island Column
   joined_data$collection_island <- NA_character_
@@ -24,7 +24,7 @@ annotateFulcrum <- function(data) {
   }
 
   # import location csv, this will have to change once we implement CI
-  location <- read.csv("test_data/location.csv", header = TRUE)
+  location <- readr::read_csv("test_data/location.csv")
 
   # Create location Column
   joined_data$collection_location <- NA_character_
@@ -37,7 +37,7 @@ annotateFulcrum <- function(data) {
   # These polygons are manually curated by using the polygon tool.
 
   # import trails csv, this will have to change once we implement CI
-  trails_df <- read.csv("test_data/trails.csv", header = TRUE)
+  trails_df <- readr::read_csv("test_data/trails.csv")
 
   trails <- as.list(trails_df$coordinates)
   names(trails) <- trails_df$trail_name
@@ -46,15 +46,15 @@ annotateFulcrum <- function(data) {
   trail_coordinates <- NULL
 
   for(i in 1:length(trails)){
-    longs <- as_tibble(str_match_all(trails,  "(?<=\\[).+?(?=,)")[[i]]) %>%
+    longs <- tibble::as_tibble(stringr::str_match_all(trails,  "(?<=\\[).+?(?=,)")[[i]]) %>%
       dplyr::rename(longitudes = V1) %>%
       dplyr::mutate(longitudes = as.numeric(longitudes))
 
-    lats <- as_tibble(str_match_all(trails,  "(?<=[0-9],).+?(?=\\])")[[i]]) %>%
+    lats <- tibble::as_tibble(stringr::str_match_all(trails,  "(?<=[0-9],).+?(?=\\])")[[i]]) %>%
       dplyr::rename(latitudes = V1) %>%
       dplyr::mutate(latitudes = as.numeric(latitudes))
 
-    long_lats <- bind_cols(longs, lats) %>%
+    long_lats <- dplyr::bind_cols(longs, lats) %>%
       dplyr::mutate(trail = names(trails)[i])
 
     trail_coordinates <- rbind(trail_coordinates, long_lats)

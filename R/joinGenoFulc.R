@@ -17,24 +17,12 @@ joinGenoFulc <- function(geno, fulc, blast = NULL) {
     # Join genotyping sheet with collection and isolation data
     out_dat <- fulc %>%
       dplyr::full_join(geno) %>%
-      # Rename variables
-      #dplyr::rename(collection_id = c_label, # should probably keep c_label name
-      #             isolation_id = s_label) %>% # should probably keep s_label name
       # Reorder variables
       dplyr::select(project,
                     c_label,
                     s_label,
                     species_id,
                     ECA_name,
-                    flag_ambient_temperature,
-                    flag_ambient_temperature_run,
-                    flag_substrate_temperature,
-                    flag_unusual_sample_photo_num,
-                    flag_duplicated_c_label_field_sampling,
-                    flag_duplicated_isolation_for_c_label,
-                    flag_duplicated_s_label_isolation_s_labeled_plates,
-                    flag_missing_s_label_isolation_s_labeled_plates,
-                    flag_missing_isolation_record,
                     collection_by,
                     collection_datetime_UTC,
                     collection_date_UTC,
@@ -93,12 +81,25 @@ joinGenoFulc <- function(geno, fulc, blast = NULL) {
                     manual_blast_notes,
                     possible_new_caeno_sp,
                     make_strain_name,
-                    reason_strain_not_named)
+                    reason_strain_not_named,
+                    flag_ambient_temperature,
+                    flag_ambient_temperature_run,
+                    flag_substrate_temperature,
+                    flag_unusual_sample_photo_num,
+                    flag_duplicated_c_label_field_sampling,
+                    flag_duplicated_isolation_for_c_label,
+                    flag_duplicated_s_label_isolation_s_labeled_plates,
+                    flag_missing_s_label_isolation_s_labeled_plates,
+                    flag_missing_isolation_record,
+                    flag_unusual_s_label_genotyping,
+                    flag_missing_s_label_genotyping,
+                    flag_duplicated_s_label_genotyping,
+                    flag_unusual_target_species_name)
   }
   else{
     # load blast results
-    blast_results <- read_tsv(blast)
-    print(paste0("loading blast results from", blast))
+    blast_results <- readr::read_tsv(blast)
+    message(glue::glue("loading blast results from {blast}"))
 
     # Join genotyping sheet with collection and isolation data
     out_dat <- fulc %>%

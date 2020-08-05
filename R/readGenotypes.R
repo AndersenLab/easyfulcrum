@@ -24,29 +24,6 @@ readGenotypes <- function(gsKey) {
 
     genotyping_sheet <- rbind(genotyping_sheet, geno)
   }
-
-  # find s_labels in genotyping sheet
-  slabs <- str_subset(genotyping_sheet$s_label, pattern = "S-")
-
-  # filter genotyping sheet by s_labels matching "S-" pattern
-  unusual_slabs <- genotyping_sheet %>%
-    dplyr::filter(!(s_label %in% slabs)) %>%
-    dplyr::pull(s_label)
-
-  duplicated_slabs <- genotyping_sheet %>%
-    dplyr::group_by(s_label) %>%
-    dplyr::mutate(slab_n = n(),
-                  slab_duplicate = ifelse(slab_n > 1, 1, 0)) %>%
-    dplyr::ungroup() %>%
-    dplyr::distinct(s_label, .keep_all = T) %>%
-    dplyr::filter(slab_duplicate == 1) %>%
-    dplyr::pull(s_label)
-
-  # print warning if duplicates or unusual names found for S-labels
-  print(paste0("There are ", length(unusual_slabs), " unsual S-label names in genotyping sheet(s) ", unusual_slabs))
-
-  # print warning if duplicates or unusual names found for strain names
-  print(paste0("There are ", length(duplicated_slabs), " duplicated S-label names in genotyping sheet(s) ", duplicated_slabs))
-
+  # return raw genotyping sheet
   return(genotyping_sheet)
 }
