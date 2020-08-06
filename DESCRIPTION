@@ -22,10 +22,10 @@ Imports:
     glue,
     readr,
     sp,
-    sf,
     lutz,
     googlesheets4,
     rebus,
-    stringr,
+    stringr
+Suggests:
     imager
 
