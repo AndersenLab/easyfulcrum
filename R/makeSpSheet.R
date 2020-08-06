@@ -82,6 +82,19 @@ makeSpSheet <- function(data, target_sp = c("Caenorhabditis briggsae", "Caenorha
                   flag_isolated_by_is_email_address = ifelse(stringr::str_detect(isolated_by, pattern = "@") == TRUE, TRUE, FALSE),
                   flag_species_not_in_target_species = ifelse(!(species %in% target_sp), TRUE, FALSE))
 
+  # message about flags
+  sampled_by_is_email_address <- flag_sp %>% dplyr::filter(flag_sampled_by_is_email_address == TRUE)
+  print(paste("There are", nrow(sampled_by_is_email_address), "strains with an email address for sampled_by:", sep = " "))
+  if(nrow(sampled_by_is_email_address) > 0){print(sampled_by_is_email_address$strain)}
+
+  isolated_by_is_email_address <- flag_sp %>% dplyr::filter(flag_isolated_by_is_email_address == TRUE)
+  print(paste("There are", nrow(isolated_by_is_email_address), "strains with an email address for isolated_by:", sep = " "))
+  if(nrow(isolated_by_is_email_address) > 0){print(isolated_by_is_email_address$strain)}
+
+  species_not_in_target_species <- flag_sp %>% dplyr::filter(flag_species_not_in_target_species == TRUE)
+  print(paste("There are", nrow(species_not_in_target_species), "strains with a species name not in the target species list:", sep = " "))
+  if(nrow(species_not_in_target_species) > 0){print(species_not_in_target_species$strain)}
+
   # return
   return(flag_sp)
 }
