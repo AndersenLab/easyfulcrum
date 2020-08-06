@@ -5,23 +5,26 @@ dir3 <- "test_data/2019DecemberHawaii/data/fulcrum"
 dir4 <- "test_data/2019OctoberHawaii/data/fulcrum"
 
 ### TEST 1 ###
-
+
 # test readFulcrum function
 raw_data1 <- readFulcrum(dir1)
-
+
 # test procFulcrum function
 proc_data1 <- procFulcrum(raw_data1)
-
+
 # test checkParameters function, will output rows with flags/rows related to those w flags
 checkParameters(proc_data1)
+
 # test checkParameters function, saves the output as a list of three dataframes of flagged rows
 flag1.1 <- checkParameters(proc_data1, return = TRUE)
+
 # easier to see which rows we might want to edit
 View(flag1.1)
+
 # upon further inspection we select two rows for ambient_temperature_run to be set to NA
 to_change <- c("c5b0cabf-ded8-4c3d-9915-b3c94b913686", "fb975ace-0036-4a80-b073-8ff638f35786")
 proc_data1_clean <- fixParameters(proc_data1, ambient_temperature_run_ids = to_change)
-
+
 # Recheck to see if fixParameters worked
 checkParameters(proc_data1_clean)
 

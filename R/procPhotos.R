@@ -10,6 +10,7 @@
 #' A thumbnails subfolder is also returned within the processed_photos folder. This folder contains image thumbnails. A dataframe identical to input \code{data}
 #' with md5 hash values and file names for all photos.
 #' @importFrom rebus ALPHA
+#' @importFrom imager load.image resize save.image
 #' @export
 #'
 
