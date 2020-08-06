@@ -26,5 +26,6 @@ Imports:
     lutz,
     googlesheets4,
     rebus,
-    stringr
+    stringr,
+    imager
 
