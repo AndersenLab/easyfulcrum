@@ -9,7 +9,7 @@
 #' @export
 #'
 
-makeSpSheet <- function(data, target_sp = c("Caenorhabditis briggsae", "Caenorhabditis elegans", "Caenorhabditis tropicalis"), save = TRUE) {
+makeSpSheet <- function(data, target_sp = c("Caenorhabditis briggsae", "Caenorhabditis elegans", "Caenorhabditis tropicalis")) {
   # select and rename data
   sp_data <- data %>%
     dplyr::filter(!is.na(ECA_name)) %>%

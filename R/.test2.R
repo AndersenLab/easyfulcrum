@@ -67,6 +67,7 @@ joingeno_data1 <- joinGenoFulc(geno = proc_geno_data1, fulc = anno_data1)
 # test the procPhotos function, output is final dataframe
 final_data1 <- procPhotos(dir = "test_data/2020FebruaryAustralia/data/raw/fulcrum/photos", data = joingeno_data1, percentage = 20, overwrite = T)
 
+test <- make
 ### TEST 2 ###
 
 # test readFulcrum function
