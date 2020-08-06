@@ -4,10 +4,20 @@
 \alias{procGenotypes}
 \title{procGenotypes}
 \usage{
-procGenotypes(data)
+procGenotypes(
+  geno_data,
+  fulc_data,
+  target_sp = c("Caenorhabditis briggsae", "Caenorhabditis elegans",
+    "Caenorhabditis tropicalis")
+)
 }
 \arguments{
-\item{data}{a dataframe resulting from \code{readGenotypes} function.}
+\item{geno_data}{a dataframe resulting from the \code{readGenotypes} function.}
+
+\item{fulc_data}{a checked dataframe resulting from the \code{joinFulcrum} function.}
+
+\item{target_sp}{a vector of target species names with full genus and species names. Default target species names are:
+Caenorhabditis briggsae, Caenorhabditis elegans, Caenorhabditis tropicalis.}
 }
 \value{
 A dataframe with flags for common errors in Genotyping dataframe.

@@ -23,6 +23,10 @@ checkGenotypes <- function(data, return = FALSE) {
   unusual_s_label_genotyping <- data %>% dplyr::filter(flag_unusual_s_label_genotyping == TRUE)
   print(paste("There are", nrow(unusual_s_label_genotyping), "rows with unusual s labels, these s labels are:", sep = " "))
   if(nrow(unusual_s_label_genotyping) > 0){print(unusual_s_label_genotyping$s_label)}
+  # s_labels not in fulcrum
+  s_label_not_in_fulcrum <- data %>% dplyr::filter(flag_s_label_not_in_fulcrum == TRUE)
+  print(paste("There are", nrow(s_label_not_in_fulcrum), "rows with unusual s labels, these s labels are:", sep = " "))
+  if(nrow(s_label_not_in_fulcrum) > 0){print(s_label_not_in_fulcrum$s_label)}
   # report unusual target species names
   message(">>> Checking genotyping process")
   proliferation_missing <- data %>% dplyr::filter(flag_proliferation_missing == TRUE)
@@ -50,6 +54,7 @@ checkGenotypes <- function(data, return = FALSE) {
     return(list("missing_s_label_genotyping" = missing_s_label_genotyping,
                 "duplicated_s_label_genotyping" = duplicated_s_label_genotyping,
                 "unusual_s_label_genotyping" = unusual_s_label_genotyping,
+                "s_label_not_in_fulcrum" = s_label_not_in_fulcrum,
                 "proliferation_missing" = proliferation_missing,
                 "its2_genotype_expected" = its2_genotype_expected,
                 "species_id_expected" = species_id_expected,
