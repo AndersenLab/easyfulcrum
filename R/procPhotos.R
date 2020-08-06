@@ -9,7 +9,7 @@
 #' @return A folder named processed_photos in the data/processed/fulcrum directory. The folder contains full size sample photos renamed with strain names.
 #' A thumbnails subfolder is also returned within the processed_photos folder. This folder contains image thumbnails. A dataframe identical to input \code{data}
 #' with md5 hash values and file names for all photos.
-#' @importFrom rebus ALPHA
+#' @importFrom rebus ALPHA one_or_more %R% DGT optional
 #' @importFrom imager load.image resize save.image
 #' @export
 #'
