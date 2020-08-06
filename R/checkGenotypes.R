@@ -25,7 +25,7 @@ checkGenotypes <- function(data, return = FALSE) {
   if(nrow(unusual_s_label_genotyping) > 0){print(unusual_s_label_genotyping$s_label)}
   # s_labels not in fulcrum
   s_label_not_in_fulcrum <- data %>% dplyr::filter(flag_s_label_not_in_fulcrum == TRUE)
-  print(paste("There are", nrow(s_label_not_in_fulcrum), "rows with unusual s labels, these s labels are:", sep = " "))
+  print(paste("There are", nrow(s_label_not_in_fulcrum), "rows with s labels not found in the Fulcrum data, these s labels are:", sep = " "))
   if(nrow(s_label_not_in_fulcrum) > 0){print(s_label_not_in_fulcrum$s_label)}
   # report unusual target species names
   message(">>> Checking genotyping process")
