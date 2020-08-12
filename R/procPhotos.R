@@ -4,7 +4,7 @@
 #'
 #' @param dir a directory with sample photos.
 #' @param data a data frame output from the \code{joinGenoFulc} function.
-#' @param percentage This value sets the size of the thumbnail image relative to the original image. Maintians aspect ratio. default is 20.
+#' @param max_dim This value sets the maximum dimension of the thumbnail images in pixels. The default value is 500.
 #' @param overwrite Logical, passed to fs::file_copy. If \code{TRUE} then existing files with similar names will be written over. Default is \code{FALSE}.
 #' @return A folder named processed_photos in the data/processed/fulcrum directory. The folder contains full size sample photos renamed with strain names.
 #' A thumbnails subfolder is also returned within the processed_photos folder. This folder contains image thumbnails. A dataframe identical to input \code{data}
@@ -14,7 +14,7 @@
 #' @export
 #'
 
-procPhotos <- function(dir, data, percentage = 20, overwrite = FALSE) {
+procPhotos <- function(dir, data, max_dim = 500, overwrite = FALSE) {
   # make processed dir path
   processed_dir <- stringr::str_replace(dir, pattern = "raw/fulcrum/photos", replacement = "processed/fulcrum")
 
@@ -58,6 +58,9 @@ procPhotos <- function(dir, data, percentage = 20, overwrite = FALSE) {
     message(glue::glue("Processing collection photo:{to_change1 %>% dplyr::filter(new_file_name == i) %>% dplyr::pull(orig_file_name)}"))
     # setup image in R
     img <- imager::load.image(i)
+    # get raw img dimesions
+    raw_max_dim <- max(dim(img))
+    percentage <- 100*(max_dim/raw_max_dim)
 
     # resize to make thumbnail
     thumb <- imager::resize(img, -percentage, -percentage) # need negative for resize function
@@ -72,6 +75,9 @@ procPhotos <- function(dir, data, percentage = 20, overwrite = FALSE) {
 
     # setup image in R
     img <- imager::load.image(i)
+    # get raw img dimesions
+    raw_max_dim <- max(dim(img))
+    percentage <- 100*(max_dim/raw_max_dim)
 
     # resize to make thumbnail
     thumb <- imager::resize(img, -percentage, -percentage) # need negative for resize function
@@ -86,6 +92,9 @@ procPhotos <- function(dir, data, percentage = 20, overwrite = FALSE) {
 
     # setup image in R
     img <- imager::load.image(i)
+    # get raw img dimesions
+    raw_max_dim <- max(dim(img))
+    percentage <- 100*(max_dim/raw_max_dim)
 
     # resize to make thumbnail
     thumb <- imager::resize(img, -percentage, -percentage) # need negative for resize function
