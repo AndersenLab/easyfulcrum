@@ -46,7 +46,8 @@ makeSpSheet <- function(data, target_sp = c("Caenorhabditis briggsae", "Caenorha
                   isotype_ref_strain = NA_character_,
                   wgs_seq = NA_character_,
                   substrate_comments = glue::glue("{substrate_notes}{substrate_other}", .na = "", .sep = ","),
-                  locality_description = glue::glue("{collection_location}{collection_island}{collection_trail}", .na = "", .sep = ",")) %>%
+                  locality_description = glue::glue("{collection_location}, {collection_island}, {collection_trail}"),
+                  locality_description = stringr::str_replace_all(locality_description, pattern = "NA, |, NA", replacement = "")) %>%
     dplyr::select(species = species_id,
                   species_id_method,
                   strain = ECA_name,

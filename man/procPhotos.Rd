@@ -4,14 +4,14 @@
 \alias{procPhotos}
 \title{procPhotos}
 \usage{
-procPhotos(dir, data, percentage = 20, overwrite = FALSE)
+procPhotos(dir, data, max_dim = 500, overwrite = FALSE)
 }
 \arguments{
 \item{dir}{a directory with sample photos.}
 
 \item{data}{a data frame output from the \code{joinGenoFulc} function.}
 
-\item{percentage}{This value sets the size of the thumbnail image relative to the original image. Maintians aspect ratio. default is 20.}
+\item{max_dim}{This value sets the maximum dimension of the thumbnail images in pixels. The default value is 500.}
 
 \item{overwrite}{Logical, passed to fs::file_copy. If \code{TRUE} then existing files with similar names will be written over. Default is \code{FALSE}.}
 }

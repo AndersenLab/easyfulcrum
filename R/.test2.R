@@ -1,5 +1,5 @@
 # setup test directory for multi project Fulcrum export
-dir1 <- "test_data/2020FebruaryAustralia/data/raw/fulcrum"
+dir1 <- "~/repos/test_easyfulcrum/test_data/2020FebruaryAustralia/data/raw/fulcrum"
 dir2 <- "test_data/2018OctoberHawaii/data/fulcrum"
 dir3 <- "test_data/2019DecemberHawaii/data/fulcrum"
 dir4 <- "test_data/2019OctoberHawaii/data/fulcrum"
@@ -17,9 +17,6 @@ checkParameters(proc_data1)
 
 # test checkParameters function, saves the output as a list of three dataframes of flagged rows
 flag1.1 <- checkParameters(proc_data1, return = TRUE)
-
-# easier to see which rows we might want to edit
-View(flag1.1)
 
 # upon further inspection we select two rows for ambient_temperature_run to be set to NA
 to_change <- c("c5b0cabf-ded8-4c3d-9915-b3c94b913686", "fb975ace-0036-4a80-b073-8ff638f35786")
@@ -65,7 +62,7 @@ flag1.4 <- checkGenotypes(proc_geno_data1, return = TRUE)
 joingeno_data1 <- joinGenoFulc(geno = proc_geno_data1, fulc = anno_data1)
 
 # test the procPhotos function, output is final dataframe
-final_data1 <- procPhotos(dir = "test_data/2020FebruaryAustralia/data/raw/fulcrum/photos", data = joingeno_data1, percentage = 20, overwrite = T)
+final_data1 <- procPhotos(dir = "~/repos/test_easyfulcrum/test_data/2020FebruaryAustralia/data/raw/fulcrum/photos", data = joingeno_data1, max_dim = 500, overwrite = T)
 
 test <- makeSpSheet(joingeno_data1)
 
