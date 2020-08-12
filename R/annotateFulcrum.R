@@ -13,7 +13,7 @@ annotateFulcrum <- function(data) {
   # assign data to joined_data
   joined_data <- data
   # import island csv, this will have to change once we implement CI
-  island <- island
+  island <- easyfulcrum::island
 
   # Create Island Column
   joined_data$collection_island <- NA_character_
@@ -24,7 +24,7 @@ annotateFulcrum <- function(data) {
   }
 
   # import location csv, this will have to change once we implement CI
-  location <- location
+  location <- easyfulcrum::location
 
   # Create location Column
   joined_data$collection_location <- NA_character_
@@ -37,7 +37,7 @@ annotateFulcrum <- function(data) {
   # These polygons are manually curated by using the polygon tool.
 
   # import trails csv, this will have to change once we implement CI
-  trails_df <- trails
+  trails_df <- easyfulcrum::trails
 
   trails <- as.list(trails_df$coordinates)
   names(trails) <- trails_df$trail_name
