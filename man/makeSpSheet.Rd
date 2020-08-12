@@ -7,8 +7,7 @@
 makeSpSheet(
   data,
   target_sp = c("Caenorhabditis briggsae", "Caenorhabditis elegans",
-    "Caenorhabditis tropicalis"),
-  save = TRUE
+    "Caenorhabditis tropicalis")
 )
 }
 \arguments{
