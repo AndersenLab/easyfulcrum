@@ -14,7 +14,7 @@ checkParameters <- function(data, return = FALSE) {
   message(">>> Checking substrate temperature")
   substrate_temperature <- data[[1]] %>% dplyr::filter(flag_substrate_temperature == TRUE)
   print(paste("There are", nrow(substrate_temperature), "rows with flagged substrate temperature:", sep = " "))
-  
+
   if(nrow(substrate_temperature) > 0){to_return <- substrate_temperature %>%
     dplyr::select(fulcrum_id ,raw_substrate_temperature, proc_substrate_temperature)
   print.data.frame(as.data.frame(to_return))}
@@ -22,7 +22,7 @@ checkParameters <- function(data, return = FALSE) {
   message(">>> Checking ambient temperature")
   ambient_temperature <- data[[1]] %>% dplyr::filter(flag_ambient_temperature == TRUE)
   print(paste("There are", nrow(ambient_temperature), "rows with flagged ambient temperature:", sep = " "))
-  
+
   if(nrow(ambient_temperature) > 0){to_return <- ambient_temperature %>%
     dplyr::select(fulcrum_id ,raw_ambient_temperature, proc_ambient_temperature)
   print.data.frame(as.data.frame(to_return))}
@@ -59,21 +59,21 @@ checkParameters <- function(data, return = FALSE) {
     dplyr::filter(temp == TRUE) %>% dplyr::select(-temp)
   print(paste("There are", sum(ambient_temperature_run$flag_ambient_temperature_run),
               "rows with flagged ambient run temperature:", sep = " "))
-  
+
   if(sum(ambient_temperature_run$flag_ambient_temperature_run) > 0){
     to_return <- ambient_temperature_run %>%
-    dplyr::select(fulcrum_id, 
-                  c_label, 
-                  raw_ambient_temperature, 
-                  proc_ambient_temperature, 
+    dplyr::select(fulcrum_id,
+                  c_label,
+                  raw_ambient_temperature,
+                  proc_ambient_temperature,
                   ambient_humidity,
-                  flag_ambient_temperature_run, 
-                  collection_local_time, 
+                  flag_ambient_temperature_run,
+                  collection_local_time,
                   collection_datetime_UTC)
     print.data.frame(as.data.frame(to_return))}
 
   if(return){
-    return(list("substrate_temperature" = substrate_temperature, 
+    return(list("substrate_temperature" = substrate_temperature,
                 "ambient_temperature" = ambient_temperature,
                 "ambient_temperature_run" = ambient_temperature_run))
   }
@@ -124,30 +124,40 @@ checkProc <- function(data, return = FALSE) {
   message(">>> Checking duplicated c labels")
   duplicated_c_label <- data[[1]] %>% dplyr::filter(flag_duplicated_c_label_field_sampling == TRUE)
   print(paste("There are", nrow(duplicated_c_label), "rows with duplicated c labels, these c labels are:", sep = " "))
-  if(nrow(duplicated_c_label) > 0){print(duplicated_c_label$c_label)}
+  if(nrow(duplicated_c_label) > 0){
+    print(duplicated_c_label$c_label)
+    print("Duplicated c labels are found in nematode_field_sampling.csv")}
 
   message(">>> Checking unusual sample photo number")
   unusual_sample_photo_num <- data[[1]] %>% dplyr::filter(flag_unusual_sample_photo_num == TRUE)
   print(paste("There are", nrow(unusual_sample_photo_num), "rows with unusual sample photo numbers, their c labels are:", sep = " "))
-  if(nrow(unusual_sample_photo_num) > 0){print(unusual_sample_photo_num$c_label)}
-  
+  if(nrow(unusual_sample_photo_num) > 0){
+    print(unusual_sample_photo_num$c_label)
+    print("Unusual sample photo number are found in nematode_field_sampling.csv")}
+
   message(">>> Checking duplicated isolation for c label")
   duplicated_isolation_for_c_label <- data[[3]] %>% dplyr::filter(flag_duplicated_isolation_for_c_label == TRUE)
   print(paste("There are", nrow(duplicated_isolation_for_c_label), "rows with duplicated isolation for c label, their c labels ids are:", sep = " "))
-  if(nrow(duplicated_isolation_for_c_label) > 0){print(duplicated_isolation_for_c_label$c_label_id)}
-  
+  if(nrow(duplicated_isolation_for_c_label) > 0){
+    print(duplicated_isolation_for_c_label$c_label_id)
+    print("Duplicated isolation for c label are found in nematode_isolation.csv")}
+
   message(">>> Checking duplicated s labels")
   duplicated_s_label <- data[[4]] %>% dplyr::filter(flag_duplicated_s_label_isolation_s_labeled_plates == TRUE)
   print(paste("There are", nrow(duplicated_s_label), "rows with duplicated s labels, their s labels are:", sep = " "))
-  if(nrow(duplicated_s_label) > 0){print(duplicated_s_label$s_label)}
+  if(nrow(duplicated_s_label) > 0){
+    print(duplicated_s_label$s_label)
+    print("Duplicated s labels are found in nematode_isolation_s_labeled_plates.csv")}
 
   message(">>> Checking missing s labels")
   missing_s_label <- data[[4]] %>% dplyr::filter(flag_missing_s_label_isolation_s_labeled_plates == TRUE)
   print(paste("There are", nrow(missing_s_label), "rows with missing s labels, their fulcrum parent ids are:", sep = " "))
-  if(nrow(missing_s_label) > 0){print(missing_s_label$fulcrum_parent_id)}
+  if(nrow(missing_s_label) > 0){
+    print(missing_s_label$fulcrum_parent_id)
+    print("Missing s labels are found in nematode_isolation_s_labeled_plates.csv")}
 
   if(return){
-    return(list("duplicated_c_label" = duplicated_c_label, 
+    return(list("duplicated_c_label" = duplicated_c_label,
                 "unusual_sample_photo_num" = unusual_sample_photo_num,
                 "duplicated_isolation_for_c_label" = duplicated_isolation_for_c_label,
                 "duplicated_s_label" = duplicated_s_label,
@@ -170,6 +180,6 @@ checkJoin <- function(data, return = FALSE) {
   missing_isolation_record <- data %>% dplyr::filter(flag_missing_isolation_record == TRUE)
   print(paste("There are", nrow(missing_isolation_record), "rows with missing isolation records, their c labels are:", sep = " "))
   if(nrow(missing_isolation_record) > 0){print(missing_isolation_record$c_label)}
-  
+
   if(return){return(missing_isolation_record)}
 }
