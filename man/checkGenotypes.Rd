@@ -4,15 +4,17 @@
 \alias{checkGenotypes}
 \title{checkGenotypes}
 \usage{
-checkGenotypes(data, return = FALSE)
+checkGenotypes(geno_data, fulc_data, return = FALSE)
 }
 \arguments{
-\item{data}{a genotyping dataframe generated from the \code{readGenotypes} function.}
+\item{geno_data}{a genotyping dataframe generated from the \code{procGenotypes} function.}
+
+\item{fulc_data}{a single, joined fulcrum dataframe with all collection data.}
 
 \item{return}{logical, if \code{TRUE} the rows of data for specific flags are returned.}
 }
 \value{
-a list of flagged rows in genptyping dataframe for each flag.
+a list of flagged rows in genptyping and fulcrum dataframes for each flag.
 }
 \description{
 \code{checkGenotypes} checks genotyping data for common errors

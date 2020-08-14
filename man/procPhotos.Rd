@@ -11,15 +11,15 @@ procPhotos(dir, data, max_dim = 500, overwrite = FALSE)
 
 \item{data}{a data frame output from the \code{joinGenoFulc} function.}
 
-\item{max_dim}{This value sets the maximum dimension of the thumbnail images in pixels. The default value is 500.}
+\item{max_dim}{This value sets the maximum dimension of the resized images in pixels. The default value is 500.}
 
 \item{overwrite}{Logical, passed to fs::file_copy. If \code{TRUE} then existing files with similar names will be written over. Default is \code{FALSE}.}
 }
 \value{
 A folder named processed_photos in the data/processed/fulcrum directory. The folder contains full size sample photos renamed with strain names.
-A thumbnails subfolder is also returned within the processed_photos folder. This folder contains image thumbnails. A dataframe identical to input \code{data}
+A thumbnails subfolder is also returned within the processed_photos folder. This folder contains resized images. A dataframe identical to input \code{data}
 with md5 hash values and file names for all photos.
 }
 \description{
-\code{procPhotos} copies raw sample photos from the Fulcrum export and renames them to strain_name_C-label for use with CeNDR. The function also makes thumbnails.
+\code{procPhotos} copies raw sample photos from the Fulcrum export and renames them to strain_name for use with CeNDR. The function also resizes images.
 }

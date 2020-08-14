@@ -2,13 +2,14 @@
 #'
 #' \code{checkGenotypes} checks genotyping data for common errors
 #'
-#' @param data a genotyping dataframe generated from the \code{readGenotypes} function.
+#' @param geno_data a genotyping dataframe generated from the \code{procGenotypes} function.
+#' @param fulc_data a single, joined fulcrum dataframe with all collection data.
 #' @param return logical, if \code{TRUE} the rows of data for specific flags are returned.
-#' @return a list of flagged rows in genptyping dataframe for each flag.
+#' @return a list of flagged rows in genptyping and fulcrum dataframes for each flag.
 #' @export
 #'
 
-checkGenotypes <- function(data, return = FALSE) {
+checkGenotypes <- function(geno_data, fulc_data, return = FALSE) {
   # report s_label check
   message(">>> Checking s labels")
   # missing s_labels
@@ -48,6 +49,11 @@ checkGenotypes <- function(data, return = FALSE) {
   ECA_name_expected <- data %>% dplyr::filter(flag_ECA_name_expected == TRUE)
   print(paste("There are", nrow(ECA_name_expected), "rows missing expected ECA_name, these s labels are:", sep = " "))
   if(nrow(ECA_name_expected) > 0){print(ECA_name_expected$s_label)}
+  # Make a dataframe for s_labels in Fulcrum but not in the genotyping sheet
+  s_label_in_geno_not_in_fulcrum <- fulc_data %>%
+    dplyr::filter(!(s_label %in% geno_data$s_label))
+  print(paste("There are", nrow(s_label_in_geno_not_in_fulcrum), "rows in the fulc_data with s labels not in the geno_data, these s labels are:", sep = " "))
+  if(nrow(s_label_in_geno_not_in_fulcrum) > 0){print(s_label_in_geno_not_in_fulcrum$s_label)}
 
   # return
   if(return){
@@ -59,6 +65,7 @@ checkGenotypes <- function(data, return = FALSE) {
                 "its2_genotype_expected" = its2_genotype_expected,
                 "species_id_expected" = species_id_expected,
                 "unusual_target_species_name" = unusual_target_species_name,
-                "ECA_name_expected" = ECA_name_expected))
+                "ECA_name_expected" = ECA_name_expected,
+                "s_label_in_geno_not_in_fulcrum" = s_label_in_geno_not_in_fulcrum))
   }
 }
