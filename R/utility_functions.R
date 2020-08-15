@@ -29,7 +29,7 @@ generateReport <- function(data){
                         c_label,
                         s_label,
                         species_id,
-                        ECA_name,
+                        strain_name,
                         flag_ambient_temperature,
                         flag_ambient_temperature_run,
                         flag_substrate_temperature,

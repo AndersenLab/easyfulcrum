@@ -23,14 +23,14 @@ procGenotypes <- function(geno_data, fulc_data, target_sp = c("Caenorhabditis br
     dplyr::group_by(s_label) %>%
     dplyr::mutate(flag_duplicated_s_label_genotyping = ifelse(dplyr::n() > 1, TRUE, FALSE)) %>%
     dplyr::ungroup() %>%
-    dplyr::mutate(flag_unusual_target_species_name = ifelse(make_strain_name == 1 & !(is.na(ECA_name)) & is.na(possible_new_caeno_sp) &
-                                                              !(species_id %in% c("Caenorhabditis elegans", "Caenorhabditis briggsae", "Caenorhabditis tropicalis")), TRUE, FALSE),
+    dplyr::mutate(flag_unusual_target_species_name = ifelse(make_strain_name == 1 & !(is.na(strain_name)) & is.na(possible_new_caeno_sp) &
+                                                              !(species_id %in% target_sp), TRUE, FALSE),
                   flag_proliferation_missing = ifelse(is.na(proliferating), TRUE, FALSE),
                   flag_its2_genotype_expected = ifelse(proliferating == 1 & is.na(pcr_product_its2), TRUE, FALSE),
                   flag_species_id_expected = ifelse(pcr_product_its2 == 1 & is.na(species_id), TRUE, FALSE),
                   flag_species_id_expected = ifelse(is.na(flag_species_id_expected), FALSE, flag_species_id_expected),
-                  flag_ECA_name_expected = ifelse((make_strain_name == 1 & is.na(reason_strain_not_named) & is.na(ECA_name)) | ((species_id %in% target_sp) & is.na(ECA_name)), TRUE, FALSE),
-                  flag_ECA_name_expected = ifelse(is.na(flag_ECA_name_expected), FALSE, flag_ECA_name_expected))
+                  flag_strain_name_expected = ifelse((make_strain_name == 1 & is.na(reason_strain_not_named) & is.na(strain_name)) | ((species_id %in% target_sp) & is.na(strain_name)), TRUE, FALSE),
+                  flag_strain_name_expected = ifelse(is.na(flag_strain_name_expected), FALSE, flag_strain_name_expected))
 
   # return raw genotyping sheet
   message(glue::glue("processed {unique(geno_data$project_id)} genotyping data"))

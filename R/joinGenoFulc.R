@@ -22,7 +22,7 @@ joinGenoFulc <- function(geno, fulc, blast = NULL) {
                     c_label,
                     s_label,
                     species_id,
-                    ECA_name,
+                    strain_name,
                     collection_by,
                     collection_datetime_UTC,
                     collection_date_UTC,

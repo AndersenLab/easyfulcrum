@@ -20,17 +20,17 @@ procPhotos <- function(dir, data, max_dim = 500, overwrite = FALSE) {
 
   # find file names for photos where nematodes with strain names were isolated
   to_change <- data %>%
-    dplyr::filter(!is.na(ECA_name)) %>%
+    dplyr::filter(!is.na(strain_name)) %>%
     dplyr::mutate(orig_file_name = glue::glue("{dir}/{sample_photo1}.jpg"),
-                  new_file_name = glue::glue("{processed_dir}/processed_photos/{ECA_name}.jpg"),
-                  thumb_file_name = glue::glue("{processed_dir}/processed_photos/thumbnails/{ECA_name}.jpg")) %>%
+                  new_file_name = glue::glue("{processed_dir}/processed_photos/{strain_name}.jpg"),
+                  thumb_file_name = glue::glue("{processed_dir}/processed_photos/thumbnails/{strain_name}.jpg")) %>%
     dplyr::mutate(orig_file_name2 = glue::glue("{dir}/{sample_photo2}.jpg"),
-                  new_file_name2 = glue::glue("{processed_dir}/processed_photos/{ECA_name}_2.jpg"),
-                  thumb_file_name2 = glue::glue("{processed_dir}/processed_photos/thumbnails/{ECA_name}_2.jpg")) %>%
+                  new_file_name2 = glue::glue("{processed_dir}/processed_photos/{strain_name}_2.jpg"),
+                  thumb_file_name2 = glue::glue("{processed_dir}/processed_photos/thumbnails/{strain_name}_2.jpg")) %>%
     dplyr::mutate(orig_file_name3 = glue::glue("{dir}/{sample_photo3}.jpg"),
-                  new_file_name3 = glue::glue("{processed_dir}/processed_photos/{ECA_name}_3.jpg"),
-                  thumb_file_name3 = glue::glue("{processed_dir}/processed_photos/thumbnails/{ECA_name}_3.jpg")) %>%
-    dplyr::select(ECA_name, species_id, c_label, sample_photo1, sample_photo2, sample_photo3, orig_file_name:thumb_file_name3)
+                  new_file_name3 = glue::glue("{processed_dir}/processed_photos/{strain_name}_3.jpg"),
+                  thumb_file_name3 = glue::glue("{processed_dir}/processed_photos/thumbnails/{strain_name}_3.jpg")) %>%
+    dplyr::select(strain_name, species_id, c_label, sample_photo1, sample_photo2, sample_photo3, orig_file_name:thumb_file_name3)
 
   to_change1 <- to_change %>%
     dplyr::filter(!is.na(sample_photo1))
@@ -124,18 +124,18 @@ procPhotos <- function(dir, data, max_dim = 500, overwrite = FALSE) {
   thumb_hash <- dplyr::as_tibble(as.list(tools::md5sum(fs::dir_ls(glue::glue("{processed_dir}/processed_photos/thumbnails"))))) %>%
     tidyr::gather(key = thumb_file, value = sample_photo_resized_hash) %>%
     dplyr::mutate(sample_photo_resized_file_name = stringr::str_extract(thumb_file, pattern = one_or_more(WRD) %R% optional("_") %R% optional(DGT) %R% ".jpg"),
-                  ECA_name = stringr::str_extract(sample_photo_resized_file_name, pattern = ALPHA %R% ALPHA %R% optional(ALPHA) %R% optional(ALPHA) %R% DGT %R% optional(DGT) %R% optional(DGT) %R% optional(DGT) %R% optional(DGT)),
+                  strain_name = stringr::str_extract(sample_photo_resized_file_name, pattern = ALPHA %R% ALPHA %R% optional(ALPHA) %R% optional(ALPHA) %R% DGT %R% optional(DGT) %R% optional(DGT) %R% optional(DGT) %R% optional(DGT)),
                   sample_photo_processed_file_name = sample_photo_resized_file_name)
 
   # get hash 1
   thumb_hash1 <- thumb_hash %>%
-    dplyr::filter(ECA_name %in% to_change1$ECA_name)
+    dplyr::filter(strain_name %in% to_change1$strain_name)
   # get hash 2
   thumb_hash2 <- thumb_hash %>%
-    dplyr::filter(ECA_name %in% to_change2$ECA_name)
+    dplyr::filter(strain_name %in% to_change2$strain_name)
   # get hash 3
   thumb_hash3 <- thumb_hash %>%
-    dplyr::filter(ECA_name %in% to_change3$ECA_name)
+    dplyr::filter(strain_name %in% to_change3$strain_name)
 
   # join hash to data frame
   data_out <- data %>%
@@ -147,13 +147,13 @@ procPhotos <- function(dir, data, max_dim = 500, overwrite = FALSE) {
                                    sample_photo3_raw_file_name = sample_photo_raw_file_name, sample_photo), by = c("sample_photo3" = "sample_photo")) %>%
     dplyr::left_join(dplyr::select(thumb_hash1, sample_photo1_resized_hash = sample_photo_resized_hash,
                                    sample_photo1_processed_file_name = sample_photo_processed_file_name,
-                                   sample_photo1_resized_file_name = sample_photo_resized_file_name, ECA_name), by = c("ECA_name" = "ECA_name")) %>%
+                                   sample_photo1_resized_file_name = sample_photo_resized_file_name, strain_name), by = c("strain_name" = "strain_name")) %>%
     dplyr::left_join(dplyr::select(thumb_hash2, sample_photo2_resized_hash = sample_photo_resized_hash,
                                    sample_photo2_processed_file_name = sample_photo_processed_file_name,
-                                   sample_photo2_resized_file_name = sample_photo_resized_file_name, ECA_name), by = c("ECA_name" = "ECA_name")) %>%
+                                   sample_photo2_resized_file_name = sample_photo_resized_file_name, strain_name), by = c("strain_name" = "strain_name")) %>%
     dplyr::left_join(dplyr::select(thumb_hash3, sample_photo3_resized_hash = sample_photo_resized_hash,
                                    sample_photo3_processed_file_name = sample_photo_processed_file_name,
-                                   sample_photo3_resized_file_name = sample_photo_resized_file_name, ECA_name), by = c("ECA_name" = "ECA_name")) %>%
+                                   sample_photo3_resized_file_name = sample_photo_resized_file_name, strain_name), by = c("strain_name" = "strain_name")) %>%
     dplyr::select(project:sample_photo1, sample_photo1_raw_file_name, sample_photo1_processed_file_name, sample_photo1_hash, sample_photo1_resized_file_name, sample_photo1_resized_hash,
                   sample_photo2, sample_photo2_raw_file_name, sample_photo2_processed_file_name, sample_photo2_hash, sample_photo2_resized_file_name, sample_photo2_resized_hash,
                   sample_photo3, sample_photo3_raw_file_name, sample_photo3_processed_file_name, sample_photo3_hash, sample_photo3_resized_file_name, sample_photo3_resized_hash,

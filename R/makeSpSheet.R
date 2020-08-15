@@ -12,10 +12,10 @@
 makeSpSheet <- function(data, target_sp = c("Caenorhabditis briggsae", "Caenorhabditis elegans", "Caenorhabditis tropicalis")) {
   # select and rename data
   sp_data <- data %>%
-    dplyr::filter(!is.na(ECA_name)) %>%
-    dplyr::distinct(ECA_name, .keep_all = TRUE) %>%
+    dplyr::filter(!is.na(strain_name)) %>%
+    dplyr::distinct(strain_name, .keep_all = TRUE) %>%
     dplyr::select(species_id,
-                  ECA_name,
+                  strain_name,
                   collection_latitude,
                   collection_longitude,
                   landscape,
@@ -35,7 +35,7 @@ makeSpSheet <- function(data, target_sp = c("Caenorhabditis briggsae", "Caenorha
                   isotype = NA_character_,
                   previous_names = NA_character_,
                   release = as.numeric(NA),
-                  source_lab = stringr::str_extract(ECA_name, pattern = "^[A-Z]{2,4}"),
+                  source_lab = stringr::str_extract(strain_name, pattern = "^[A-Z]{2,4}"),
                   associated_organism = NA_character_,
                   inbreeding_state = NA_character_,
                   sampling_date_comments = NA_character_,
@@ -50,7 +50,7 @@ makeSpSheet <- function(data, target_sp = c("Caenorhabditis briggsae", "Caenorha
                   locality_description = stringr::str_replace_all(locality_description, pattern = "NA, |, NA", replacement = "")) %>%
     dplyr::select(species = species_id,
                   species_id_method,
-                  strain = ECA_name,
+                  strain = strain_name,
                   isotype,
                   previous_names,
                   release,
