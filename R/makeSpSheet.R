@@ -80,6 +80,7 @@ makeSpSheet <- function(data, target_sp = c("Caenorhabditis briggsae", "Caenorha
 
   # make flags
   flag_sp <- sp_data %>%
+    dplyr::arrange(strain) %>%
     dplyr::mutate(flag_sampled_by_is_email_address = ifelse(stringr::str_detect(sampled_by, pattern = "@") == TRUE, TRUE, FALSE),
                   flag_isolated_by_is_email_address = ifelse(stringr::str_detect(isolated_by, pattern = "@") == TRUE, TRUE, FALSE),
                   flag_species_not_in_target_species = ifelse(!(species %in% target_sp), TRUE, FALSE),
