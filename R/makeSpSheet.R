@@ -16,6 +16,7 @@ makeSpSheet <- function(data, target_sp = c("Caenorhabditis briggsae", "Caenorha
     dplyr::distinct(strain_name, .keep_all = TRUE) %>%
     dplyr::select(species_id,
                   strain_name,
+                  previous_names = s_label,
                   collection_latitude,
                   collection_longitude,
                   landscape,
@@ -33,7 +34,6 @@ makeSpSheet <- function(data, target_sp = c("Caenorhabditis briggsae", "Caenorha
                   collection_date_UTC) %>%
     dplyr::mutate(species_id_method = "ITS2",
                   isotype = NA_character_,
-                  previous_names = NA_character_,
                   release = as.numeric(NA),
                   source_lab = stringr::str_extract(strain_name, pattern = "^[A-Z]{2,4}"),
                   associated_organism = NA_character_,
