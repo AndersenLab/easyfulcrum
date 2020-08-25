@@ -111,20 +111,10 @@ makeSpSheet <- function(data, target_sp = c("Caenorhabditis briggsae", "Caenorha
   unusual_substrate_class <- flag_sp %>% dplyr::filter(flag_unusual_substrate_class == TRUE)
   print(paste("There are", nrow(unusual_substrate_class), "strains with an unusual substrate class:", sep = " "))
   if(nrow(unusual_substrate_class) > 0) {print(unusual_substrate_class$strain)}
-  if(nrow(unusual_substrate_class) > 0) {print("please classify substrate as one of the following:\n
-                                              Arthropod\n
-                                              Bait\n
-                                              Compost\n
-                                              Fungus\n
-                                              Mollusk\n
-                                              Moss\n
-                                              NA\n
-                                              Rotting_flower\n
-                                              Rotting_nut/pod/seed/fruit\n
-                                              Rotting_stem\n
-                                              Rotting_wood\n
-                                              Soil\n
-                                              Vegetal_litter/mix\n")}
+  if(nrow(unusual_substrate_class) > 0) {print("please classify substrate as one of the following: ", c("Arthropod"
+                                              "Bait", "Compost", "Fungus", "Mollusk", "Moss", "NA", "Rotting_flower",
+                                              "Rotting_nut/pod/seed/fruit", "Rotting_stem", "Rotting_wood", "Soil",
+                                              "Vegetal_litter/mix")}
   # return
   return(flag_sp)
 
