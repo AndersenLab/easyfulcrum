@@ -81,7 +81,19 @@ makeSpSheet <- function(data, target_sp = c("Caenorhabditis briggsae", "Caenorha
   flag_sp <- sp_data %>%
     dplyr::mutate(flag_sampled_by_is_email_address = ifelse(stringr::str_detect(sampled_by, pattern = "@") == TRUE, TRUE, FALSE),
                   flag_isolated_by_is_email_address = ifelse(stringr::str_detect(isolated_by, pattern = "@") == TRUE, TRUE, FALSE),
-                  flag_species_not_in_target_species = ifelse(!(species %in% target_sp), TRUE, FALSE))
+                  flag_species_not_in_target_species = ifelse(!(species %in% target_sp), TRUE, FALSE),
+                  flag_unusual_substrate_class = ifelse(substrate %in% c("Soil",
+                                                                        "Rotting_nut/pod/seed/fruit",
+                                                                        "Rotting_flower",
+                                                                        "Vegetal_litter/mix",
+                                                                        "Fungus",
+                                                                        "Arthropod",
+                                                                        "Bait",
+                                                                        "Compost",
+                                                                        "Mollusk",
+                                                                        "Moss",
+                                                                        "Rotting_stem",
+                                                                        "Rotting_wood"), FALSE, TRUE))
 
   # message about flags
   sampled_by_is_email_address <- flag_sp %>% dplyr::filter(flag_sampled_by_is_email_address == TRUE)
@@ -96,6 +108,24 @@ makeSpSheet <- function(data, target_sp = c("Caenorhabditis briggsae", "Caenorha
   print(paste("There are", nrow(species_not_in_target_species), "strains with a species name not in the target species list:", sep = " "))
   if(nrow(species_not_in_target_species) > 0){print(species_not_in_target_species$strain)}
 
+  unusual_substrate_class <- flag_sp %>% dplyr::filter(flag_unusual_substrate_class == TRUE)
+  print(paste("There are", nrow(unusual_substrate_class), "strains with an unusual substrate class:", sep = " "))
+  if(nrow(unusual_substrate_class) > 0) {print(unusual_substrate_class$strain)}
+  if(nrow(unusual_substrate_class) > 0) {print("please classify substrate as one of the following:\n
+                                              Arthropod\n
+                                              Bait\n
+                                              Compost\n
+                                              Fungus\n
+                                              Mollusk\n
+                                              Moss\n
+                                              NA\n
+                                              Rotting_flower\n
+                                              Rotting_nut/pod/seed/fruit\n
+                                              Rotting_stem\n
+                                              Rotting_wood\n
+                                              Soil\n
+                                              Vegetal_litter/mix\n")}
   # return
   return(flag_sp)
-}
+
+  }
