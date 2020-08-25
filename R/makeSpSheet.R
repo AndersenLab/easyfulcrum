@@ -14,7 +14,8 @@ makeSpSheet <- function(data, target_sp = c("Caenorhabditis briggsae", "Caenorha
   sp_data <- data %>%
     dplyr::filter(!is.na(strain_name)) %>%
     dplyr::distinct(strain_name, .keep_all = TRUE) %>%
-    dplyr::select(species_id,
+    dplyr::select(project,
+                  species_id,
                   strain_name,
                   previous_names = s_label,
                   collection_latitude,
@@ -39,7 +40,7 @@ makeSpSheet <- function(data, target_sp = c("Caenorhabditis briggsae", "Caenorha
                   associated_organism = NA_character_,
                   inbreeding_state = NA_character_,
                   sampling_date_comments = NA_character_,
-                  notes = NA_character_,
+                  notes = glue::glue("Fulcrum collection {project}"),
                   set = as.numeric(NA),
                   issues = NA_character_,
                   issue_notes = NA_character_,
