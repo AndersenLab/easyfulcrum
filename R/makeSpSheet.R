@@ -95,7 +95,18 @@ makeSpSheet <- function(data, target_sp = c("Caenorhabditis briggsae", "Caenorha
                                                                         "Mollusk",
                                                                         "Moss",
                                                                         "Rotting_stem",
-                                                                        "Rotting_wood"), FALSE, TRUE))
+                                                                        "Rotting_wood"), FALSE, TRUE),
+                  flag_unusual_landscape_class = ifelse(landscape %in% c("Agricultural_land",
+                                                                         "Forest",
+                                                                         "Rural_garden",
+                                                                         "Urban_garden",
+                                                                         "Botanical_garden_or_zoo",
+                                                                         "Beach",
+                                                                         "Dry_shrubland",
+                                                                         "Wet_shrubland",
+                                                                         "Riverside",
+                                                                         "Grassland"), FALSE, TRUE)) %>%
+
 
   # message about flags
   sampled_by_is_email_address <- flag_sp %>% dplyr::filter(flag_sampled_by_is_email_address == TRUE)
@@ -116,6 +127,13 @@ makeSpSheet <- function(data, target_sp = c("Caenorhabditis briggsae", "Caenorha
   if(nrow(unusual_substrate_class) > 0) {print("please classify substrate as one of the following:")
                                          print(cat(paste("Arthropod", "Bait", "Compost", "Fungus", "Mollusk", "Moss", "NA", "Rotting_flower",
                                               "Rotting_nut/pod/seed/fruit", "Rotting_stem", "Rotting_wood", "Soil", "Vegetal_litter/mix", sep = "\n")))}
+
+  unusual_landscape_class <- flag_sp %>% dplyr::filter(flag_unusual_landscape_class == TRUE)
+  print(paste("There are", nrow(unusual_landscape_class), "strains with an unusual landscape class:", sep = " "))
+  if(nrow(unusual_landscape_class) > 0) {print(unusual_landscape_class$strain)}
+  if(nrow(unusual_landscape_class) > 0) {print("please classify landscape as one of the following:")
+                                         print(cat(paste("Agricultural_land", "Forest", "Rural_garden", "Urban_garden", "Botanical_garden_or_zoo", "Beach",
+                                                         "Dry_shrubland", "Wet_shrubland", "Riverside", "Grassland", sep = "\n")))}
   # return
   return(flag_sp)
 
