@@ -50,11 +50,11 @@ checkGenotypes <- function(geno_data, fulc_data, return = FALSE) {
   print(paste("There are", nrow(strain_name_expected), "rows missing expected strain_name, these s labels are:", sep = " "))
   if(nrow(strain_name_expected) > 0){print(strain_name_expected$s_label)}
   # Make a dataframe for s_labels in Fulcrum but not in the genotyping sheet
-  s_label_in_geno_not_in_fulcrum <- fulc_data %>%
+  s_label_in_fulcdata_not_in_genodata <- fulc_data %>%
     dplyr::filter(!is.na(s_label)) %>%
     dplyr::filter(!(s_label %in% geno_data$s_label))
-  print(paste("There are", nrow(s_label_in_geno_not_in_fulcrum), "s labels in the fulc_data not in the geno_data, these s labels are:", sep = " "))
-  if(nrow(s_label_in_geno_not_in_fulcrum) > 0){print(s_label_in_geno_not_in_fulcrum$s_label)}
+  print(paste("There are", nrow(s_label_in_fulcdata_not_in_genodata), "s labels in the fulc_data not in the geno_data, these s labels are:", sep = " "))
+  if(nrow(s_label_in_fulcdata_not_in_genodata) > 0){print(s_label_in_fulcdata_not_in_genodata$s_label)}
 
   # return
   if(return){
@@ -67,6 +67,6 @@ checkGenotypes <- function(geno_data, fulc_data, return = FALSE) {
                 "species_id_expected" = species_id_expected,
                 "unusual_target_species_name" = unusual_target_species_name,
                 "strain_name_expected" = strain_name_expected,
-                "s_label_in_geno_not_in_fulcrum" = s_label_in_geno_not_in_fulcrum))
+                "s_label_in_fulcdata_not_in_genodata" = s_label_in_fulcdata_not_in_genodata))
   }
 }
