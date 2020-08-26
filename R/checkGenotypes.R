@@ -80,6 +80,5 @@ checkGenotypes <- function(geno_data, fulc_data, return = FALSE) {
                 "species_id_expected" = species_id_expected,
                 "unusual_target_species_name" = unusual_target_species_name,
                 "strain_name_expected" = strain_name_expected))
-                )
   }
 }
