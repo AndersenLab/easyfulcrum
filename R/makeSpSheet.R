@@ -105,7 +105,8 @@ makeSpSheet <- function(data, target_sp = c("Caenorhabditis briggsae", "Caenorha
                                                                          "Dry_shrubland",
                                                                          "Wet_shrubland",
                                                                          "Riverside",
-                                                                         "Grassland"), FALSE, TRUE))
+                                                                         "Grassland"), FALSE, TRUE)) %>%
+
 
   # message about flags
   sampled_by_is_email_address <- flag_sp %>% dplyr::filter(flag_sampled_by_is_email_address == TRUE)
