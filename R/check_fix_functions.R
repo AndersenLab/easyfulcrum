@@ -127,7 +127,7 @@ fixParameters <- function(data,
 
 #' checkJoin
 #'
-#' \code{checkJoin} checks for flags (6) in \code{joinFulcrum} output
+#' \code{checkJoin} checks for flags (9) in \code{joinFulcrum} output
 #'
 #' This check function will return c_labels and s_labels for various flags relating to missing or duplicated data
 #' Messages regarding what checks are being done, and where they lie in the raw dataframes is also provided
@@ -169,6 +169,27 @@ checkJoin <- function(data, return = FALSE) {
     print(missing_isolation_record$c_label)
     print("Missing isolation records are found in nematode_isolation.csv")}
 
+  message(">>> Checking extreme substrate temperatures")
+  extreme_substrate_temperature <- data %>% dplyr::filter(flag_substrate_temperature_extreme == TRUE)
+  print(paste("There are", nrow(extreme_substrate_temperature), "rows with extreme substrate temperatures, their c labels are:", sep = " "))
+  if(nrow(extreme_substrate_temperature) > 0){
+    print(extreme_substrate_temperature$c_label)
+    print("Extreme substrate temperatures are found in nematode_field_sampling.csv")}
+
+  message(">>> Checking extreme ambient temperatures")
+  extreme_ambient_temperature <- data %>% dplyr::filter(flag_ambient_temperature_extreme == TRUE)
+  print(paste("There are", nrow(extreme_ambient_temperature), "rows with extreme ambient temperatures, their c labels are:", sep = " "))
+  if(nrow(extreme_ambient_temperature) > 0){
+    print(extreme_ambient_temperature$c_label)
+    print("Extreme ambient temperatures are found in nematode_field_sampling.csv")}
+
+  message(">>> Checking extreme collection altitude")
+  extreme_collection_altitude <- data %>% dplyr::filter(flag_collection_altitude_extreme == TRUE)
+  print(paste("There are", nrow(extreme_collection_altitude), "rows with extreme collection altitudes, their c labels are:", sep = " "))
+  if(nrow(extreme_collection_altitude) > 0){
+    print(extreme_collection_altitude$c_label)
+    print("Extreme collection altitudes are found in nematode_field_sampling.csv")}
+
   message(">>> Checking missing s labels")
   missing_s_label <- data %>% dplyr::filter(flag_missing_s_label_isolation_s_labeled_plates == TRUE)
   print(paste("There are", nrow(missing_s_label), "rows with missing s labels, their c labels are:", sep = " "))
@@ -188,6 +209,9 @@ checkJoin <- function(data, return = FALSE) {
                 "unusual_sample_photo_num" = unusual_sample_photo_num,
                 "duplicated_isolation_for_c_label" = duplicated_isolation_for_c_label,
                 "missing_isolation_record" = missing_isolation_record,
+                "extreme_substrate_temperature" = extreme_substrate_temperature,
+                "extreme_ambient_temperature" = extreme_ambient_temperature,
+                "extreme_collection_altitude" = extreme_collection_altitude,
                 "missing_s_label" = missing_s_label,
                 "duplicated_s_label" = duplicated_s_label))
   }
