@@ -105,7 +105,7 @@ makeSpSheet <- function(data, target_sp = c("Caenorhabditis briggsae", "Caenorha
                                                                          "Dry_shrubland",
                                                                          "Wet_shrubland",
                                                                          "Riverside",
-                                                                         "Grassland"), FALSE, TRUE)) %>%
+                                                                         "Grassland"), FALSE, TRUE))
 
 
   # message about flags
