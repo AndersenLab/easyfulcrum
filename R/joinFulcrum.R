@@ -147,14 +147,6 @@ joinFulcrum <- function(data) {
                     collection_altitude_method = ifelse(collection_lat_long_method == "photo" & !(is.na(exif_gps_altitude)), "photo",
                                                         ifelse(is.na(exif_gps_altitude) & !(is.na(fulcrum_altitude)), "fulcrum",
                                                                ifelse(is.na(exif_gps_altitude) & is.na(fulcrum_altitude), NA, NA)))) %>%
-      # Flag extreme altitude values
-      dplyr::mutate(flag_collection_altitude_extreme = ifelse(collection_altitude > 10000 | collection_altitude < 0,
-                                                              TRUE, FALSE)) %>%
-      # Flag extreme temperature values
-      dplyr::mutate(flag_substrate_temperature_extreme = ifelse(proc_substrate_temperature > 40 | proc_substrate_temperature < 0,
-                                                                TRUE, FALSE),
-                    flag_ambient_temperature_extreme = ifelse(proc_ambient_temperature > 40 | proc_ambient_temperature < 0,
-                                                              TRUE, FALSE)) %>%
       dplyr::ungroup() %>%
       # join c-plates to s-plates with nematode_isolation_s_labeled_plates
       dplyr::full_join(data$nematode_isolation_s_labeled_plates_proc, .,  by = c("fulcrum_parent_id" = "isolation_id")) %>%
@@ -164,10 +156,8 @@ joinFulcrum <- function(data) {
                     c_label,
                     s_label,
                     flag_ambient_temperature,
-                    flag_ambient_temperature_extreme,
                     flag_ambient_temperature_run,
                     flag_substrate_temperature,
-                    flag_substrate_temperature_extreme,
                     flag_unusual_sample_photo_num,
                     flag_duplicated_c_label_field_sampling,
                     flag_duplicated_isolation_for_c_label,
@@ -190,7 +180,6 @@ joinFulcrum <- function(data) {
                     exif_gps_altitude,
                     collection_altitude,
                     collection_altitude_method,
-                    flag_collection_altitude_extreme,
                     landscape,
                     sky_view,
                     ambient_humidity,
