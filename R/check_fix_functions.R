@@ -112,7 +112,7 @@ fixParameters <- function(data,
 
 #' checkProc
 #'
-#' \code{checkProc} checks for six flags of duplicated and missing parameters in processed data
+#' \code{checkJoin} checks for flags (9) in \code{joinFulcrum} output
 #'
 #' @param data dataframe output of procFulcrum function
 #' @param return set to TRUE if flagged rows are to be returned in list format
@@ -142,6 +142,41 @@ checkProc <- function(data, return = FALSE) {
     print(duplicated_isolation_for_c_label$c_label_id)
     print("Duplicated isolation for c label are found in nematode_isolation.csv")}
 
+  message(">>> Checking missing isolation records")
+  missing_isolation_record <- data %>% dplyr::filter(flag_missing_isolation_record == TRUE)
+  print(paste("There are", nrow(missing_isolation_record), "rows with missing isolation records, their c labels are:", sep = " "))
+  if(nrow(missing_isolation_record) > 0){
+    print(missing_isolation_record$c_label)
+    print("Missing isolation records are found in nematode_isolation.csv")}
+
+  message(">>> Checking extreme substrate temperatures")
+  extreme_substrate_temperature <- data %>% dplyr::filter(flag_substrate_temperature_extreme == TRUE)
+  print(paste("There are", nrow(extreme_substrate_temperature), "rows with extreme substrate temperatures, their c labels are:", sep = " "))
+  if(nrow(extreme_substrate_temperature) > 0){
+    print(extreme_substrate_temperature$c_label)
+    print("Extreme substrate temperatures are found in nematode_field_sampling.csv")}
+
+  message(">>> Checking extreme ambient temperatures")
+  extreme_ambient_temperature <- data %>% dplyr::filter(flag_ambient_temperature_extreme == TRUE)
+  print(paste("There are", nrow(extreme_ambient_temperature), "rows with extreme ambient temperatures, their c labels are:", sep = " "))
+  if(nrow(extreme_ambient_temperature) > 0){
+    print(extreme_ambient_temperature$c_label)
+    print("Extreme ambient temperatures are found in nematode_field_sampling.csv")}
+
+  message(">>> Checking extreme collection altitude")
+  extreme_collection_altitude <- data %>% dplyr::filter(flag_collection_altitude_extreme == TRUE)
+  print(paste("There are", nrow(extreme_collection_altitude), "rows with extreme collection altitudes, their c labels are:", sep = " "))
+  if(nrow(extreme_collection_altitude) > 0){
+    print(extreme_collection_altitude$c_label)
+    print("Extreme collection altitudes are found in nematode_field_sampling.csv")}
+
+  message(">>> Checking missing s labels")
+  missing_s_label <- data %>% dplyr::filter(flag_missing_s_label_isolation_s_labeled_plates == TRUE)
+  print(paste("There are", nrow(missing_s_label), "rows with missing s labels, their c labels are:", sep = " "))
+  if(nrow(missing_s_label) > 0){
+    print(missing_s_label$c_label)
+    print("Missing s labels are found in nematode_isolation_s_labeled_plates.csv")}
+
   message(">>> Checking duplicated s labels")
   duplicated_s_label <- data[[4]] %>% dplyr::filter(flag_duplicated_s_label_isolation_s_labeled_plates == TRUE)
   print(paste("There are", nrow(duplicated_s_label), "rows with duplicated s labels, their s labels are:", sep = " "))
@@ -160,8 +195,12 @@ checkProc <- function(data, return = FALSE) {
     return(list("duplicated_c_label" = duplicated_c_label,
                 "unusual_sample_photo_num" = unusual_sample_photo_num,
                 "duplicated_isolation_for_c_label" = duplicated_isolation_for_c_label,
-                "duplicated_s_label" = duplicated_s_label,
-                "missing_s_label" = missing_s_label))
+                "missing_isolation_record" = missing_isolation_record,
+                "extreme_substrate_temperature" = extreme_substrate_temperature,
+                "extreme_ambient_temperature" = extreme_ambient_temperature,
+                "extreme_collection_altitude" = extreme_collection_altitude,
+                "missing_s_label" = missing_s_label,
+                "duplicated_s_label" = duplicated_s_label))
   }
 }
 
