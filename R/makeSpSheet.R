@@ -46,9 +46,16 @@ makeSpSheet <- function(data, target_sp = c("Caenorhabditis briggsae", "Caenorha
                   issue_notes = NA_character_,
                   isotype_ref_strain = NA_character_,
                   wgs_seq = NA_character_,
-                  substrate_comments = glue::glue("{substrate_notes}{substrate_other}", .na = "", .sep = ","),
+                  substrate_comments = glue::glue("{substrate_notes}, {substrate_other}"),
+                  substrate_comments = stringr::str_replace_all(substrate_comments, pattern = "NA, |, NA", replacement = ""),
+                  substrate_comments = case_when(substrate_comments == "NA" ~ NA_character_,
+                                                   is.na(substrate_comments) ~ NA_character_,
+                                                   !is.na(substrate_comments) & substrate_comments != "NA" ~ substrate_comments),
                   locality_description = glue::glue("{collection_location}, {collection_island}, {collection_trail}"),
-                  locality_description = stringr::str_replace_all(locality_description, pattern = "NA, |, NA", replacement = "")) %>%
+                  locality_description = stringr::str_replace_all(locality_description, pattern = "NA, |, NA", replacement = ""),
+                  locality_description = case_when(locality_description == "NA" ~ NA_character_,
+                                                   is.na(locality_description) ~ NA_character_,
+                                                   !is.na(locality_description) & locality_description != "NA" ~ locality_description)) %>%
     dplyr::select(species = species_id,
                   species_id_method,
                   strain = strain_name,
@@ -106,6 +113,7 @@ makeSpSheet <- function(data, target_sp = c("Caenorhabditis briggsae", "Caenorha
                                                                          "Wet_shrubland",
                                                                          "Riverside",
                                                                          "Grassland"), FALSE, TRUE))
+
 
   # message about flags
   sampled_by_is_email_address <- flag_sp %>% dplyr::filter(flag_sampled_by_is_email_address == TRUE)
