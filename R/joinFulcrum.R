@@ -25,7 +25,7 @@ joinFulcrum <- function(data) {
              !(data_names$data_name %in% c("data$nematode_isolation_proc", "data$nematode_isolation_s_labeled_plates_proc", "data$nematode_isolation_photos_proc")) &&
              nrow(data_names) == 2) {
     # send message
-    message("Complete fulcrum isoaltion data not detected, joining sampling data only.")
+    message("Complete fulcrum isolation data not detected, joining sampling data only.")
 
     # join sampling data only
     # join nematode_field_sampling_proc with nematode_isolation_proc
