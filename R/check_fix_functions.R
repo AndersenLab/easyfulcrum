@@ -18,7 +18,6 @@
 #'
 
 checkParameters <- function(data, return = FALSE) {
-
   message(">>> Checking substrate temperature")
   substrate_temperature <- data[[1]] %>% dplyr::filter(flag_substrate_temperature == TRUE)
   print(paste("There are", nrow(substrate_temperature), "rows with flagged substrate temperature:", sep = " "))
@@ -141,6 +140,18 @@ fixParameters <- function(data,
 #'
 
 checkJoin <- function(data, return = FALSE) {
+  message(">>> Checking data classes")
+  types <- as.data.frame(unlist(sapply(data, class)))
+  types[,2] <- rownames(types)
+  rownames(types) <- NULL
+  names(types) <- c("class", "variable")
+  check_classes <- dplyr::left_join(fulcrumTypes, types, by = c("variable" = "variable")) %>%
+    dplyr::filter(class != classExpected)
+  print(paste("There are", nrow(check_classes), "improperly classified variables", sep = " "))
+  if(nrow(check_classes) > 0){
+    print(check_classes$variable)
+    print("Improperly classified variables may require manipulation after read-in")}
+
   message(">>> Checking duplicated c labels")
   duplicated_c_label <- data %>% dplyr::filter(flag_duplicated_c_label_field_sampling == TRUE)
   print(paste("There are", nrow(duplicated_c_label), "rows with duplicated c labels, these c labels are:", sep = " "))
@@ -205,7 +216,8 @@ checkJoin <- function(data, return = FALSE) {
     print("Duplicated s labels are found in nematode_isolation_s_labeled_plates.csv")}
 
   if(return){
-    return(list("duplicated_c_label" = duplicated_c_label,
+    return(list("check_classes" = check_classes,
+                "duplicated_c_label" = duplicated_c_label,
                 "unusual_sample_photo_num" = unusual_sample_photo_num,
                 "duplicated_isolation_for_c_label" = duplicated_isolation_for_c_label,
                 "missing_isolation_record" = missing_isolation_record,
@@ -224,11 +236,21 @@ checkJoin <- function(data, return = FALSE) {
 #' @param geno_data a genotyping dataframe generated from the \code{procGenotypes} function.
 #' @param fulc_data a single, joined fulcrum dataframe with all collection data.
 #' @param return logical, if \code{TRUE} the rows of data for specific flags are returned.
-#' @return a list of flagged rows in genptyping and fulcrum dataframes for each flag.
+#' @return a list of flagged rows in genotyping and fulcrum dataframes for each flag.
 #' @export
 #'
 
 checkGenotypes <- function(geno_data, fulc_data, target_sp = c("Caenorhabditis briggsae", "Caenorhabditis elegans", "Caenorhabditis tropicalis"), return = FALSE) {
+
+  message(">>> Checking data classes")
+  types <- as.data.frame(unlist(sapply(geno_data, class)))
+  types[,2] <- rownames(types)
+  rownames(types) <- NULL
+  names(types) <- c("class", "variable")
+  check_classes <- dplyr::left_join(genotypeTypes, types, by = c("variable" = "variable")) %>%
+    dplyr::filter(class != classExpected)
+  print(paste("There are", nrow(check_classes), "improperly classified variables", sep = " "))
+  if(nrow(check_classes) > 0){print(check_classes$variable)}
 
   # Find usual S-labels in genotyping dataframe
   usual_s_labels <- stringr::str_subset(geno_data$s_label, pattern = "S-" %R% DGT %R% DGT %R% DGT %R% DGT %R% optional(DGT) %R% optional(DGT))
@@ -312,7 +334,8 @@ checkGenotypes <- function(geno_data, fulc_data, target_sp = c("Caenorhabditis b
 
   # return data frames with appropriate missing flags
   if(return){
-    return(list("missing_s_label_genotyping" = missing_s_label_genotyping,
+    return(list("check_classes" = check_classes,
+                "missing_s_label_genotyping" = missing_s_label_genotyping,
                 "duplicated_s_label_genotyping" = duplicated_s_label_genotyping,
                 "unusual_s_label_genotyping" = unusual_s_label_genotyping,
                 "s_label_not_in_fulcrum" = s_label_not_in_fulcrum,

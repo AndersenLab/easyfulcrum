@@ -28,7 +28,7 @@
 #' @source \url{https://boundingbox.klokantech.com/}
 #' @name location
 
-#' trail ploygon vertices as a string of coordinates
+#' trail polygon vertices as a string of coordinates
 #'
 #' A dataset containing trail names amd a string of ploygon vertices. The vertices
 #' are given as longitude / latitude.
@@ -41,5 +41,25 @@
 #' @source \url{https://boundingbox.klokantech.com/}
 #' @name trails
 
+#' Expected classes in joined fulcrum object
+#'
+#' A dataset containing expected classes for each variable
+#'
+#' @format A data frame with 65 rows and 2 variables:
+#' \describe{
+#'   \item{classExpected}{class name}
+#'   \item{variable}{variable name}
+#' }
+#' @name fulcrumTypes
 
+#' Expected classes in genotype object
+#'
+#' A dataset containing expected classes for each variable
+#'
+#' @format A data frame with 38 rows and 2 variables:
+#' \describe{
+#'   \item{classExpected}{class name}
+#'   \item{variable}{variable name}
+#' }
+#' @name genotypeTypes
 
