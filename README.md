@@ -82,3 +82,29 @@ library(easyfulcrum)
 
 ```
 =
+
+
+```
+startdir/projectdirname
+├── data
+│   ├── raw
+│       ├── fulcrum
+│           ├── ... all fulcrum files here
+│           ├── photos
+│               ├── ... all collection photos here
+│       ├── sanger
+│           ├── sequence folders here if present
+│               └── ... sequences here if present
+│   ├── processed
+│       ├── fulcrum
+│           ├── empty
+│       ├── genotypes
+│           ├── empty
+│       ├── sanger
+│           ├── empty
+├── plots
+│   ├── empty
+├── reports
+│   ├── empty
+├── scripts
+```
