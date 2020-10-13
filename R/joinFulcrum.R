@@ -107,7 +107,7 @@ joinFulcrum <- function(data) {
   }
 
   # join all data
-  if(data_names$data_name %in% c("nematode_field_sampling_proc", "nematode_field_sampling_sample_photo_proc","data$nematode_isolation_proc",
+  else if(data_names$data_name %in% c("nematode_field_sampling_proc", "nematode_field_sampling_sample_photo_proc","data$nematode_isolation_proc",
                                  "data$nematode_isolation_s_labeled_plates_proc", "data$nematode_isolation_photos_proc") &&
      nrow(data_names) == 5) {
     # send message
@@ -224,7 +224,7 @@ joinFulcrum <- function(data) {
                     approximate_number_of_worms)
   }
   else {
-    message("Invalid list of dataframes supplied to joinFulcrum. Are there 5 OR 2 processed dataframes in the list? Are they named correctly?")
+    message("Invalid list of dataframes supplied to joinFulcrum. Are there 5 or 2 processed dataframes in the list? If so, are they named correctly? These conditions must be satisfied for joinFulcrum to work.")
   }
   # return data
   return(joined_data)
