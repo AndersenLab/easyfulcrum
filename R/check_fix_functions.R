@@ -19,7 +19,7 @@
 
 checkParameters <- function(data, return = FALSE) {
   message(">>> Checking substrate temperature")
-  substrate_temperature <- data[[1]] %>% dplyr::filter(flag_substrate_temperature == TRUE)
+  substrate_temperature <- data$nematode_field_sampling_proc %>% dplyr::filter(flag_substrate_temperature == TRUE)
   print(paste("There are", nrow(substrate_temperature), "rows with flagged substrate temperature:", sep = " "))
 
   if(nrow(substrate_temperature) > 0){to_return <- substrate_temperature %>%
@@ -27,7 +27,7 @@ checkParameters <- function(data, return = FALSE) {
   print.data.frame(as.data.frame(to_return))}
 
   message(">>> Checking ambient temperature")
-  ambient_temperature <- data[[1]] %>% dplyr::filter(flag_ambient_temperature == TRUE)
+  ambient_temperature <- data$nematode_field_sampling_proc %>% dplyr::filter(flag_ambient_temperature == TRUE)
   print(paste("There are", nrow(ambient_temperature), "rows with flagged ambient temperature:", sep = " "))
 
   if(nrow(ambient_temperature) > 0){to_return <- ambient_temperature %>%
@@ -36,7 +36,7 @@ checkParameters <- function(data, return = FALSE) {
 
   message(">>> Checking ambient run temperature")
   #arrange by collection_datetime
-  ambient_temperature_run <- data[[1]] %>%
+  ambient_temperature_run <- data$nematode_field_sampling_proc %>%
     dplyr::arrange(collection_datetime_UTC)
   #replace NA values in the flag with FALSE, doesn't matter for this purpose
   ambient_temperature_run$flag_ambient_temperature_run <-
@@ -109,17 +109,17 @@ fixParameters <- function(data,
                             substrate_temperature_ids = NULL,
                             ambient_temperature_ids = NULL,
                             ambient_temperature_run_ids = NULL) {
-  for(i in 1:nrow(data[[1]])){
+  for(i in 1:nrow(data$nematode_field_sampling_proc)){
     #replace proc_substrate_temperature with raw_substrate_temperature
-    if(data[[1]]$fulcrum_id[i] %in% substrate_temperature_ids){
-      data[[1]]$proc_substrate_temperature[i] = data[[1]]$raw_substrate_temperature[i]}
+    if(data$nematode_field_sampling_proc$fulcrum_id[i] %in% substrate_temperature_ids){
+      data$nematode_field_sampling_proc$proc_substrate_temperature[i] = data$nematode_field_sampling_proc$raw_substrate_temperature[i]}
     #replace proc_ambient_temperature with raw_ambient_temperature
-    if(data[[1]]$fulcrum_id[i] %in% ambient_temperature_ids){
-      data[[1]]$proc_ambient_temperature[i] = data[[1]]$raw_ambient_temperature[i]}
+    if(data$nematode_field_sampling_proc$fulcrum_id[i] %in% ambient_temperature_ids){
+      data$nematode_field_sampling_proc$proc_ambient_temperature[i] = data$nematode_field_sampling_proc$raw_ambient_temperature[i]}
     #replace proc_ambient_temperature, ambient_humidity with NA
-    if(data[[1]]$fulcrum_id[i] %in% ambient_temperature_run_ids){
-      data[[1]]$proc_ambient_temperature[i] = NA
-      data[[1]]$ambient_humidity[i] = NA}
+    if(data$nematode_field_sampling_proc$fulcrum_id[i] %in% ambient_temperature_run_ids){
+      data$nematode_field_sampling_proc$proc_ambient_temperature[i] = NA
+      data$nematode_field_sampling_proc$ambient_humidity[i] = NA}
   }
   return(data)
 }

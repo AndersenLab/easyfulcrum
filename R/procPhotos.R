@@ -14,7 +14,10 @@
 #' @export
 #'
 
-procPhotos <- function(dir, data, max_dim = 500, overwrite = FALSE) {
+procPhotos <- function(dir, data, max_dim = 500, overwrite = FALSE, pub_url = "https://storage.googleapis.com/elegansvariation.org/photos/isolation/fulcrum/") {
+  # edit pub_url to take into accoutn project name and subfolder
+  project_url <- glue::glue("{pub_url}",tail(strsplit(dir,"/")[[1]],1),"/sampling_thumbs/")
+  # edit dir to be appropriate for path to photos
   dir <- glue::glue("{dir}","/data/raw/fulcrum/photos")
   # make processed dir path
   processed_dir <- stringr::str_replace(dir, pattern = "raw/fulcrum/photos", replacement = "processed/fulcrum")
@@ -154,11 +157,14 @@ procPhotos <- function(dir, data, max_dim = 500, overwrite = FALSE) {
                                    sample_photo2_resized_file_name = sample_photo_resized_file_name, strain_name), by = c("strain_name" = "strain_name")) %>%
     dplyr::left_join(dplyr::select(thumb_hash3, sample_photo3_resized_hash = sample_photo_resized_hash,
                                    sample_photo3_processed_file_name = sample_photo_processed_file_name,
-                                   sample_photo3_resized_file_name = sample_photo_resized_file_name, strain_name), by = c("strain_name" = "strain_name")) %>%
+                                   sample_photo3_resized_file_name = sample_photo_resized_file_name, strain_name), by = c("strain_name" = "strain_name"))  %>%
+    dplyr::mutate(sample_photo1_processed_url = ifelse(!is.na(sample_photo1_processed_file_name), glue::glue("{project_url}","{sample_photo1_processed_file_name}"), NA),
+                  sample_photo2_processed_url = ifelse(!is.na(sample_photo2_processed_file_name), glue::glue("{project_url}","{sample_photo2_processed_file_name}"), NA),
+                  sample_photo3_processed_url = ifelse(!is.na(sample_photo3_processed_file_name), glue::glue("{project_url}","{sample_photo3_processed_file_name}"), NA)) %>%
     dplyr::select(project:sample_photo1, sample_photo1_raw_file_name, sample_photo1_processed_file_name, sample_photo1_hash, sample_photo1_resized_file_name, sample_photo1_resized_hash,
-                  sample_photo2, sample_photo2_raw_file_name, sample_photo2_processed_file_name, sample_photo2_hash, sample_photo2_resized_file_name, sample_photo2_resized_hash,
-                  sample_photo3, sample_photo3_raw_file_name, sample_photo3_processed_file_name, sample_photo3_hash, sample_photo3_resized_file_name, sample_photo3_resized_hash,
-                  everything())
+                sample_photo2, sample_photo2_raw_file_name, sample_photo2_processed_file_name, sample_photo2_hash, sample_photo2_resized_file_name, sample_photo2_resized_hash,
+                sample_photo3, sample_photo3_raw_file_name, sample_photo3_processed_file_name, sample_photo3_hash, sample_photo3_resized_file_name, sample_photo3_resized_hash,
+                everything())
   # return
   message("DONE")
   return(data_out)
