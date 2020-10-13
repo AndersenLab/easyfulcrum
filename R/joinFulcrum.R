@@ -53,7 +53,7 @@ joinFulcrum <- function(data) {
       # fix altitude method and altitude
       dplyr::mutate(collection_altitude = ifelse(collection_lat_long_method == "photo" & !(is.na(exif_gps_altitude)), exif_gps_altitude,
                                                  ifelse(is.na(exif_gps_altitude) & !(is.na(fulcrum_altitude)), fulcrum_altitude,
-                                                        ifelse(is.na(exif_gps_altitude) & is.na(fulcrum_altitude), NA))),
+                                                        ifelse(is.na(exif_gps_altitude) & is.na(fulcrum_altitude), NA, NA))),
                     collection_altitude_method = ifelse(collection_lat_long_method == "photo" & !(is.na(exif_gps_altitude)), "photo",
                                                         ifelse(is.na(exif_gps_altitude) & !(is.na(fulcrum_altitude)), "fulcrum",
                                                                ifelse(is.na(exif_gps_altitude) & is.na(fulcrum_altitude), NA, NA)))) %>%
@@ -138,12 +138,12 @@ joinFulcrum <- function(data) {
       dplyr::rowwise() %>%
       dplyr::mutate(collection_lat_long_method_diff = geosphere::distHaversine(c(collection_longitude, collection_latitude),
                                                                                c(collection_fulcrum_longitude, collection_fulcrum_latitude)),
-                    # adjust collection_lat_long_method_diff to NA if there is only a fulcrum GPS postion
+                    # adjust collection_lat_long_method_diff to NA if there is only a fulcrum GPS position
                     collection_lat_long_method_diff = ifelse(collection_lat_long_method == "fulcrum", NA, collection_lat_long_method_diff)) %>%
       # fix altitude method and altitude
       dplyr::mutate(collection_altitude = ifelse(collection_lat_long_method == "photo" & !(is.na(exif_gps_altitude)), exif_gps_altitude,
                                                  ifelse(is.na(exif_gps_altitude) & !(is.na(fulcrum_altitude)), fulcrum_altitude,
-                                                        ifelse(is.na(exif_gps_altitude) & is.na(fulcrum_altitude), NA))),
+                                                        ifelse(is.na(exif_gps_altitude) & is.na(fulcrum_altitude), NA, NA))),
                     collection_altitude_method = ifelse(collection_lat_long_method == "photo" & !(is.na(exif_gps_altitude)), "photo",
                                                         ifelse(is.na(exif_gps_altitude) & !(is.na(fulcrum_altitude)), "fulcrum",
                                                                ifelse(is.na(exif_gps_altitude) & is.na(fulcrum_altitude), NA, NA)))) %>%
