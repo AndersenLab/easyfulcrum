@@ -12,7 +12,13 @@
 #' @export
 #'
 
-joinGenoFulc <- function(geno, fulc, blast = NULL) {
+joinGenoFulc <- function(geno, fulc, blast = NULL, dir = NULL) {
+  # Save the finalized genotyping sheet if given
+  if(is.character(dir)){
+    save(data = geno,
+         file = glue::glue("{dir}","/data/processed/genotypes/",
+                           as.character(Sys.Date()),"_",
+                           tail(strsplit(dir,"/")[[1]],1),".rds"), version = 3)}
   if(is.null(blast)){
     # Join genotyping sheet with collection and isolation data
     out_dat <- fulc %>%

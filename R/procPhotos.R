@@ -15,6 +15,7 @@
 #'
 
 procPhotos <- function(dir, data, max_dim = 500, overwrite = FALSE) {
+  dir <- glue::glue("{dir}","/data/raw/fulcrum/photos")
   # make processed dir path
   processed_dir <- stringr::str_replace(dir, pattern = "raw/fulcrum/photos", replacement = "processed/fulcrum")
 

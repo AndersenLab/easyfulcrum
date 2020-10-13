@@ -22,10 +22,10 @@
 
 readFulcrum <- function(dir) {
   # make file list
-  files_full <- list.files(glue::glue("{dir}"), pattern = ".csv", full.names = T)
+  files_full <- list.files(glue::glue("{dir}","/data/raw/fulcrum"), pattern = ".csv", full.names = T)
 
   # get names
-  file_names <- list.files(glue::glue("{dir}"), pattern = ".csv") %>%
+  file_names <- list.files(glue::glue("{dir}","/data/raw/fulcrum"), pattern = ".csv") %>%
     stringr::str_replace_all(pattern = ".csv", replacement = "")
 
   #read files
