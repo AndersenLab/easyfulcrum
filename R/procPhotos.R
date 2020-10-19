@@ -22,18 +22,19 @@ procPhotos <- function(dir, data, max_dim = 500, overwrite = FALSE, pub_url = "h
   # make processed dir path
   processed_dir <- stringr::str_replace(dir, pattern = "raw/fulcrum/photos", replacement = "processed/fulcrum")
 
-  # find file names for photos where nematodes with strain names were isolated
+  # find file names for photos where CeNDR criteria is satisfied, create folder of these images and thumbnails
   to_change <- data %>%
     dplyr::filter(!is.na(strain_name)) %>%
+    dplyr::filter(species_id == "C. elegans" | species_id == "C. briggsae" | species_id == "C. tropicalis"  ) %>%
     dplyr::mutate(orig_file_name = glue::glue("{dir}/{sample_photo1}.jpg"),
-                  new_file_name = glue::glue("{processed_dir}/processed_photos/{strain_name}.jpg"),
-                  thumb_file_name = glue::glue("{processed_dir}/processed_photos/thumbnails/{strain_name}.jpg")) %>%
+                  new_file_name = glue::glue("{processed_dir}/CeNDR/{strain_name}.jpg"),
+                  thumb_file_name = glue::glue("{processed_dir}/CeNDR/thumbnails/{strain_name}.jpg")) %>%
     dplyr::mutate(orig_file_name2 = glue::glue("{dir}/{sample_photo2}.jpg"),
-                  new_file_name2 = glue::glue("{processed_dir}/processed_photos/{strain_name}_2.jpg"),
-                  thumb_file_name2 = glue::glue("{processed_dir}/processed_photos/thumbnails/{strain_name}_2.jpg")) %>%
+                  new_file_name2 = glue::glue("{processed_dir}/CeNDR/{strain_name}_2.jpg"),
+                  thumb_file_name2 = glue::glue("{processed_dir}/CeNDR/thumbnails/{strain_name}_2.jpg")) %>%
     dplyr::mutate(orig_file_name3 = glue::glue("{dir}/{sample_photo3}.jpg"),
-                  new_file_name3 = glue::glue("{processed_dir}/processed_photos/{strain_name}_3.jpg"),
-                  thumb_file_name3 = glue::glue("{processed_dir}/processed_photos/thumbnails/{strain_name}_3.jpg")) %>%
+                  new_file_name3 = glue::glue("{processed_dir}/CeNDR/{strain_name}_3.jpg"),
+                  thumb_file_name3 = glue::glue("{processed_dir}/CeNDR/thumbnails/{strain_name}_3.jpg")) %>%
     dplyr::select(strain_name, species_id, c_label, sample_photo1, sample_photo2, sample_photo3, orig_file_name:thumb_file_name3)
 
   to_change1 <- to_change %>%
@@ -47,8 +48,93 @@ procPhotos <- function(dir, data, max_dim = 500, overwrite = FALSE, pub_url = "h
 
 
   # make processed subdirectory in dir and a thumbnails directory below that
-  fs::dir_create(glue::glue("{processed_dir}/processed_photos"))
-  fs::dir_create(glue::glue("{processed_dir}/processed_photos/thumbnails"))
+  fs::dir_create(glue::glue("{processed_dir}/CeNDR"))
+  fs::dir_create(glue::glue("{processed_dir}/CeNDR/thumbnails"))
+
+  # copy files to new directory and rename
+  fs::file_copy(to_change1$orig_file_name, to_change1$new_file_name, overwrite = overwrite)
+  fs::file_copy(to_change2$orig_file_name2, to_change2$new_file_name2, overwrite = overwrite)
+  fs::file_copy(to_change3$orig_file_name3, to_change3$new_file_name3, overwrite = overwrite)
+
+
+  # loop through renamed images to make thumbnails
+  for(i in unique(to_change1$new_file_name)) {
+    # Make message
+    message(glue::glue("Processing collection photo:{to_change1 %>% dplyr::filter(new_file_name == i) %>% dplyr::pull(orig_file_name)}"))
+    # setup image in R
+    img <- imager::load.image(i)
+    # get raw img dimesions
+    raw_max_dim <- max(dim(img))
+    percentage <- 100*(max_dim/raw_max_dim)
+
+    # resize to make thumbnail
+    thumb <- imager::resize(img, -percentage, -percentage) # need negative for resize function
+
+    # write the file
+    imager::save.image(thumb, file = glue::glue("{to_change1 %>% dplyr::filter(new_file_name == i) %>% dplyr::pull(thumb_file_name)}"))
+  }
+
+  for(i in unique(to_change2$new_file_name2)) {
+    # Make message
+    message(glue::glue("Processing collection photo:{to_change2 %>% dplyr::filter(new_file_name2 == i) %>% dplyr::pull(orig_file_name2)}"))
+
+    # setup image in R
+    img <- imager::load.image(i)
+    # get raw img dimesions
+    raw_max_dim <- max(dim(img))
+    percentage <- 100*(max_dim/raw_max_dim)
+
+    # resize to make thumbnail
+    thumb <- imager::resize(img, -percentage, -percentage) # need negative for resize function
+
+    # write the file
+    imager::save.image(thumb, file = glue::glue("{to_change %>% dplyr::filter(new_file_name2 == i) %>% dplyr::pull(thumb_file_name2)}"))
+  }
+
+  for(i in unique(to_change3$new_file_name3)) {
+    # Make message
+    message(glue::glue("Processing collection photo:{to_change3 %>% dplyr::filter(new_file_name3 == i) %>% dplyr::pull(orig_file_name3)}"))
+
+    # setup image in R
+    img <- imager::load.image(i)
+    # get raw img dimesions
+    raw_max_dim <- max(dim(img))
+    percentage <- 100*(max_dim/raw_max_dim)
+
+    # resize to make thumbnail
+    thumb <- imager::resize(img, -percentage, -percentage) # need negative for resize function
+
+    # write the file
+    imager::save.image(thumb, file = glue::glue("{to_change %>% dplyr::filter(new_file_name3 == i) %>% dplyr::pull(thumb_file_name3)}"))
+  }
+
+  # copy all images create folder of these images and thumbnails
+  to_change <- data %>%
+    dplyr::filter(!is.na(c_label)) %>%
+    dplyr::distinct(c_label, .keep_all = TRUE) %>%
+    dplyr::mutate(orig_file_name = glue::glue("{dir}/{sample_photo1}.jpg"),
+                  new_file_name = glue::glue("{processed_dir}/{c_label}.jpg"),
+                  thumb_file_name = glue::glue("{processed_dir}/thumbnails/{c_label}.jpg")) %>%
+    dplyr::mutate(orig_file_name2 = glue::glue("{dir}/{sample_photo2}.jpg"),
+                  new_file_name2 = glue::glue("{processed_dir}/{c_label}_2.jpg"),
+                  thumb_file_name2 = glue::glue("{processed_dir}/thumbnails/{c_label}_2.jpg")) %>%
+    dplyr::mutate(orig_file_name3 = glue::glue("{dir}/{sample_photo3}.jpg"),
+                  new_file_name3 = glue::glue("{processed_dir}/{c_label}_3.jpg"),
+                  thumb_file_name3 = glue::glue("{processed_dir}/thumbnails/{c_label}_3.jpg")) %>%
+    dplyr::select(strain_name, species_id, c_label, sample_photo1, sample_photo2, sample_photo3, orig_file_name:thumb_file_name3)
+
+  to_change1 <- to_change %>%
+    dplyr::filter(!is.na(sample_photo1))
+
+  to_change2 <- to_change %>%
+    dplyr::filter(!is.na(sample_photo2))
+
+  to_change3 <- to_change %>%
+    dplyr::filter(!is.na(sample_photo3))
+
+
+  # make a thumbnails directory below main folder
+  fs::dir_create(glue::glue("{processed_dir}/thumbnails"))
 
   # copy files to new directory and rename
   fs::file_copy(to_change1$orig_file_name, to_change1$new_file_name, overwrite = overwrite)
@@ -125,7 +211,7 @@ procPhotos <- function(dir, data, max_dim = 500, overwrite = FALSE, pub_url = "h
     dplyr::filter(sample_photo %in% data$sample_photo3)
 
   message("Writing md5 hash for resized images and adding to data frame.")
-  thumb_hash <- dplyr::as_tibble(as.list(tools::md5sum(fs::dir_ls(glue::glue("{processed_dir}/processed_photos/thumbnails"))))) %>%
+  thumb_hash <- dplyr::as_tibble(as.list(tools::md5sum(fs::dir_ls(glue::glue("{processed_dir}/CeNDR/thumbnails"))))) %>%
     tidyr::gather(key = thumb_file, value = sample_photo_resized_hash) %>%
     dplyr::mutate(sample_photo_resized_file_name = stringr::str_extract(thumb_file, pattern = one_or_more(WRD) %R% optional("_") %R% optional(DGT) %R% ".jpg"),
                   strain_name = stringr::str_extract(sample_photo_resized_file_name, pattern = ALPHA %R% ALPHA %R% optional(ALPHA) %R% optional(ALPHA) %R% DGT %R% optional(DGT) %R% optional(DGT) %R% optional(DGT) %R% optional(DGT)),
