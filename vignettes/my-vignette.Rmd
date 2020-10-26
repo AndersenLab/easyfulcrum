@@ -19,16 +19,17 @@ knitr::opts_chunk$set(
 Install and load the package:
 
 ```{r setup}
-install.packages("devtools")
-devtools::install_github("AndersenLab/easyfulcrum")
+# install.packages("devtools")
+# devtools::install_github("AndersenLab/easyfulcrum")
 library(easyfulcrum)
 ```
 
 In your base directory (startdir), name the project (projectdirname) and run the `makeDirStructure` function to make a standardized directory of folders for the `easyfulcrum` run. Every collection project should be contained in its own repository. The repository name should follow the `YearMonthPlace` format used for Fulcrum collection projects, e.g. `2020FebruaryAustralia`.<br>
 
 ```{r}
-makeDirStructure(startdir = "~/Desktop/easyfulcrumrun/",
-                 projectdirname = "2020FebruaryAustralia")
+# setwd("~/Desktop/Andersen/git/easyfulcrum/vignettes")
+# makeDirStructure(startdir = "~/Desktop/easyfulcrumrun/",
+#                  projectdirname = "2020FebruaryAustralia")
 ```
 
 The directory structure (as shown below) within the repository is critically important for
@@ -75,7 +76,7 @@ For a normal `easyfulcrum` run, one would add appropriate `.csv` and `.jpg` file
 ├── scripts
 ```
 
-We create a character value that is the base directory and project name put together, this will be necessary in a few places in the `easyfulcrum` run. Once the data is loaded as explained above, we would normally run the `readFulcrum` function, but in this case, the raw_data1 object is on the github repo and is automatically loaded.
+We create a character value that is the base directory and project name put together, this will be necessary in a few places in the `easyfulcrum` run. Once the data is loaded as explained above, we would normally run the `readFulcrum` function, but in this case, the `raw_data1` object is on the github repo and is automatically loaded.
 
 ```{r}
 dir1 <- "git/test_easyfulcrum/test_data/2020FebruaryAustralia_errors_created"
@@ -92,7 +93,7 @@ proc_data1 <- procFulcrum(data = raw_data1)
 Three temperature and parameters are checked using the `checkParameters` function. Setting the `return` option to `TRUE` will return a list of three data frames that detail the rows where the flags appear, if the user desires. 
 
 ```{r}
-checkParameters(data = proc_data1)
+#checkParameters(data = proc_data1)
 flag1.1 <- checkParameters(data = proc_data1, return = TRUE)
 ```
 
@@ -113,30 +114,64 @@ proc_data1_clean <- fixParameters(data = proc_data1,
                                                                  "c9313751-3f96-41f6-9d5e-b8dc994f5edb"))
 ```
 
-The flag variables will be maintained, so rerunning `checkParameters` is a good idea to make sure that corrections have been implemented as desired
+The flag variables will be maintained, so rerunning `checkParameters` is a good idea to make sure that corrections have been implemented as desired.
 
 ```{r}
 checkParameters(data = proc_data1_clean)
 ```
 
+The individual data frames from the processed Fulcrum object are joined using the `joinFulcrum` function.
 
-join_data1 <- joinFulcrum(proc_data1)
+```{r}
+join_data1 <- joinFulcrum(data = proc_data1)
+```
 
-checkJoin(join_data1)
+The `checkJoin` function will conduct 10 different checks for flags in the joined Fulcrum data frame, assessing for duplicates of variables, missing elements, extreme values, and more. Setting the `return` option to `TRUE` will return a list of three data frames that detail the rows where the flags appear, if the user desires. If desired, based on these flags the user can manually edit values, or correct mistakes in the underlying data and quickly re-run the pipeline again.
 
-flag1.2 <- checkJoin(join_data1, return = TRUE)
+```{r}
+#checkJoin(data = join_data1)
+flag1.2 <- checkJoin(data = join_data1, return = TRUE)
+```
 
-anno_data1 <- annotateFulcrum(join_data1)
+The `annnotateFulcrum` function will add spatial information to the joined Fulcrum data frame, describing if sample collections were collected on specific islands, trails, and/or locations. 
 
+```{r}
+anno_data1 <- annotateFulcrum(data = join_data1)
+```
+
+We would normally run the `readGenotypes` function to read in genotyping data from an appropriate Google Sheet, but in this case, the `geno_data1` object is on the github repo and is automatically loaded. The `col_types` variable will specify of what type the data should be during read in.
+
+```{r}
 geno_data1 <- readGenotypes(gsKey = c("1CxKJHM6mEu4VvnN2T1ioXiJNZmmmpeosmECP2zeAPmY"))
-geno_data1 <- read.csv("geno_data1_to_fix.csv")
+head(geno_data1)
+```
 
+The `checkGenotypes` function has the dual functionality of processing the genotyping data (adds flags) and returning info on those flags if desired. Setting the `return` option to `FALSE` will return the processed genotyping data and print information on the flags.
+
+```{r}
 proc_geno_data1 <- checkGenotypes(geno_data = geno_data1, fulc_data = anno_data1, return = FALSE)
+```
 
+However, setting the `return` option to `TRUE` will return a list of data frames that detail the rows where the flags appear. If desired, based on these flags the user can manually edit values, or correct mistakes in the underlying data and quickly re-run the pipeline again.
+
+```{r}
 flag1.3 <- checkGenotypes(geno_data = geno_data1, fulc_data = anno_data1, return = TRUE)
+```
 
+The `joinGenoFulc` function will join the joined Fulcrum data frame with the genotyping information. This function will also save the processed genotyping information in _data/processed/genotypes_. 
+
+```{r}
 joingeno_data1 <- joinGenoFulc(geno = proc_geno_data1, fulc = anno_data1, dir = dir1)
+```
 
+The `joinGenoFulc` function will process the raw sample photos and add information regarding them to the final data frame of data. 
+
+```{r}
 final_data1 <- procPhotos(dir = dir1, data = joingeno_data1, max_dim = 500, overwrite = T)
+```
 
-test <- makeSpSheet(joingeno_data1)
+The final `makeSpSheet` function will generate a species csv file for the target species in mind.
+
+```{r}
+test <- makeSpSheet(data = joingeno_data1, target_sp = "Caenorhabditis tropicalis")
+```
