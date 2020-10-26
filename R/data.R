@@ -63,3 +63,16 @@
 #' }
 #' @name genotypeTypes
 
+#' Initial raw_data1 list of dataframes
+#'
+#' A list of five easyfulcrum dataframes with purposeful errors created
+#'
+#' @format A list of five data frames:
+#' \describe{
+#'   \item{nematode_field_sampling_sample_photo}
+#'   \item{nematode_field_sampling}
+#'   \item{nematode_isolation_photos}
+#'   \item{nematode_isolation_s_labeled_plates}
+#'   \item{nematode_isolation}
+#' }
+#' @name raw_data1

@@ -3,3 +3,4 @@
 .DS_Store.orig
 .Rhistory
 .RData
+inst/doc
