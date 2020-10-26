@@ -76,3 +76,11 @@
 #'   \item{nematode_isolation}
 #' }
 #' @name raw_data1
+
+#' Initial geno_data1 data frame
+#'
+#' A genotyping data frame with purposeful errors created
+#'
+#' @format A data frame with 1044 rows and 38 variables:
+#' @name geno_data1
+
