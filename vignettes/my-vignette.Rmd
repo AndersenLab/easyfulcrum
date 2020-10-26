@@ -1,5 +1,5 @@
 ---
-title: "draft vignette"
+title: "my-vignette"
 author: "Matteo Di Bernardo"
 date: "10/26/2020"
 output: rmarkdown::html_vignette
@@ -22,14 +22,14 @@ Install and load the package:
 # install.packages("devtools")
 # devtools::install_github("AndersenLab/easyfulcrum")
 library(easyfulcrum)
+setwd("~/Desktop")
 ```
 
 In your base directory (startdir), name the project (projectdirname) and run the `makeDirStructure` function to make a standardized directory of folders for the `easyfulcrum` run. Every collection project should be contained in its own repository. The repository name should follow the `YearMonthPlace` format used for Fulcrum collection projects, e.g. `2020FebruaryAustralia`.<br>
 
-```{r}
-# setwd("~/Desktop/Andersen/git/easyfulcrum/vignettes")
-# makeDirStructure(startdir = "~/Desktop/easyfulcrumrun/",
-#                  projectdirname = "2020FebruaryAustralia")
+```{r eval = FALSE}
+makeDirStructure(startdir = "~/Desktop/",
+                 projectdirname = "2020FebruaryAustralia")
 ```
 
 The directory structure (as shown below) within the repository is critically important for
@@ -79,7 +79,7 @@ For a normal `easyfulcrum` run, one would add appropriate `.csv` and `.jpg` file
 We create a character value that is the base directory and project name put together, this will be necessary in a few places in the `easyfulcrum` run. Once the data is loaded as explained above, we would normally run the `readFulcrum` function, but in this case, the `raw_data1` object is on the github repo and is automatically loaded.
 
 ```{r}
-dir1 <- "git/test_easyfulcrum/test_data/2020FebruaryAustralia_errors_created"
+dir1 <- "~/Desktop/2020FebruaryAustralia"
 # raw_data1 <- readFulcrum(dir = dir1)
 names(raw_data1)
 ```
@@ -142,7 +142,7 @@ anno_data1 <- annotateFulcrum(data = join_data1)
 We would normally run the `readGenotypes` function to read in genotyping data from an appropriate Google Sheet, but in this case, the `geno_data1` object is on the github repo and is automatically loaded. The `col_types` variable will specify of what type the data should be during read in.
 
 ```{r}
-geno_data1 <- readGenotypes(gsKey = c("1CxKJHM6mEu4VvnN2T1ioXiJNZmmmpeosmECP2zeAPmY"))
+#geno_data1 <- readGenotypes(gsKey = c("1CxKJHM6mEu4VvnN2T1ioXiJNZmmmpeosmECP2zeAPmY"))
 head(geno_data1)
 ```
 
