@@ -30,6 +30,7 @@ In your base directory (startdir), name the project (projectdirname) and run the
 ```{r eval = FALSE}
 makeDirStructure(startdir = "~/Desktop/",
                  projectdirname = "2020FebruaryAustralia")
+# note for Tim + Erik: after running this you should add the photos to the appropriate subfolder
 ```
 
 The directory structure (as shown below) within the repository is critically important for
