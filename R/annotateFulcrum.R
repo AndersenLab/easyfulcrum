@@ -3,17 +3,38 @@
 #' \code{annotateFulcrum} Adds additional collection location information to the final Fulcrum dataframe
 #'
 #' @param data A single dataframe generated with the joinFulcrum function.
+#' @param dir The path to the base fulcrum directory, dir/data/raw/fulcrum should contain:
+#' island.csv,
+#' location.csv,
+#' trails.csv
+#'
 #' @return A single dataframe containing all Fulcrum data sources.
 #' This data frame contains all necessary variables from Fulcrum. It also contains data quality flags. The variable names match the data dictionary.
 #' @export
 #'
 
-annotateFulcrum <- function(data) {
+annotateFulcrum <- function(data, dir = NULL) {
+  # import island csv
+  island <- easyfulcrum::island
+  # import location csv
+  location <- easyfulcrum::location
+
+  # Generate list of trails and geojson polygon points from geojson output of https://boundingbox.klokantech.com/.
+  # These polygons are manually curated by using the polygon tool.
+
+  # import trails csv
+  trails_df <- easyfulcrum::trails
+
+  if(!is.null(dir)){
+    dir <- glue::glue("{dir}","/data/raw/annotate")
+    message(">>> Checking for homemade island.csv, location.csv, trails.csv files in data/raw/annotate")
+    island <- read.csv(glue::glue("{dir}","/island.csv"))
+    location <- read.csv(glue::glue("{dir}","/location.csv"))
+    trails_df <- read.csv(glue::glue("{dir}","/trails.csv"))
+  }
 
   # assign data to joined_data
   joined_data <- data
-  # import island csv, this will have to change once we implement CI
-  island <- easyfulcrum::island
 
   # Create Island Column
   joined_data$collection_island <- NA_character_
@@ -23,21 +44,12 @@ annotateFulcrum <- function(data) {
     joined_data[filter_box(joined_data$collection_longitude, joined_data$collection_latitude, c(island$long_start[i], island$lat_start[i], island$long_end[i], island$lat_end[i])), "collection_island"] <- island$island_name[i]
   }
 
-  # import location csv, this will have to change once we implement CI
-  location <- easyfulcrum::location
-
   # Create location Column
   joined_data$collection_location <- NA_character_
 
   for (i in 1:nrow(location)){
     joined_data[filter_box(joined_data$collection_longitude, joined_data$collection_latitude, c(location$long_start[i], location$lat_start[i], location$long_end[i], location$lat_end[i])), "collection_location"] <- location$location_name[i]
   }
-
-  # Generate list of trails and geojson polygon points from geojson output of https://boundingbox.klokantech.com/.
-  # These polygons are manually curated by using the polygon tool.
-
-  # import trails csv, this will have to change once we implement CI
-  trails_df <- easyfulcrum::trails
 
   trails <- as.list(trails_df$coordinates)
   names(trails) <- trails_df$trail_name

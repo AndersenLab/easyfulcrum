@@ -145,7 +145,7 @@ checkJoin <- function(data, return_flags = FALSE) {
   types[,2] <- rownames(types)
   rownames(types) <- NULL
   names(types) <- c("class", "variable")
-  check_classes <- dplyr::left_join(fulcrumTypes, types, by = c("variable" = "variable")) %>%
+  check_classes <- dplyr::left_join(easyfulcrum::fulcrumTypes, types, by = c("variable" = "variable")) %>%
     dplyr::filter(class != classExpected)
   print(paste("There are", nrow(check_classes), "improperly classified variables", sep = " "))
   if(nrow(check_classes) > 0){
@@ -255,7 +255,7 @@ checkGenotypes <- function(geno_data, fulc_data, target_sp = c("Caenorhabditis b
   types[,2] <- rownames(types)
   rownames(types) <- NULL
   names(types) <- c("class", "variable")
-  check_classes <- dplyr::left_join(genotypeTypes, types, by = c("variable" = "variable")) %>%
+  check_classes <- dplyr::left_join(easyfulcrum::genotypeTypes, types, by = c("variable" = "variable")) %>%
     dplyr::filter(class != classExpected)
   print(paste("There are", nrow(check_classes), "improperly classified variables", sep = " "))
   if(nrow(check_classes) > 0){print(check_classes$variable)}

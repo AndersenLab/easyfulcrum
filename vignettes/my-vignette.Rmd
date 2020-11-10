@@ -27,7 +27,7 @@ setwd("~/Desktop")
 
 In your base directory (startdir), name the project (projectdirname) and run the `makeDirStructure` function to make a standardized directory of folders for the `easyfulcrum` run. Every collection project should be contained in its own repository. The repository name should follow the `YearMonthPlace` format used for Fulcrum collection projects, e.g. `2020FebruaryAustralia`.<br>
 
-Collection protocol can be found here: [Nematode Collection Protocol](https://docs.google.com/document/d/1aPgPDYobpxzr0BQYgvUsjPWnAGXZmCSQKQ4sDGBXuYM/edit).
+See the [Nematode Collection Protocol](https://docs.google.com/document/d/1aPgPDYobpxzr0BQYgvUsjPWnAGXZmCSQKQ4sDGBXuYM/edit) protocol for more details.
 
 ```{r eval = FALSE}
 makeDirStructure(startdir = "~/Desktop/",
@@ -84,7 +84,7 @@ We create a character value that is the base directory and project name put toge
 ```{r}
 dir1 <- "~/Desktop/2020FebruaryAustralia"
 # raw_fulc1 <- readFulcrum(dir = dir1)
-names(raw_fulc1)
+names(easyfulcrum::raw_fulc1)
 ```
 
 The individual data frames are now processed using the `procFulcrum` function, and flags are added.
@@ -110,7 +110,7 @@ The `fixTemperatures` function takes a) `fulcrum_id`s that need to be reverted f
 
 
 ```{r}
-proc_data1_clean <- fixTemperatures(data = proc_fulc1,
+proc_fulc1_clean <- fixTemperatures(data = proc_fulc1,
                                   substrate_temperature_ids = "fe28600b-c78a-4545-a525-28dfb3e5d84c",
                                   ambient_temperature_ids = "e088d373-6f4a-48c3-b672-2f6a43747595",
                                   ambient_temperature_run_ids =c("fb975ace-0036-4a80-b073-8ff638f35786",
@@ -136,7 +136,14 @@ The `checkJoin` function will conduct 10 different checks for flags in the joine
 flag1.2 <- checkJoin(data = join_fulc1, return_flags = TRUE)
 ```
 
-The `annnotateFulcrum` function will add spatial information to the joined Fulcrum data frame, describing if sample collections were collected on specific islands, trails, and/or locations. 
+The `annnotateFulcrum` function will add spatial information to the joined Fulcrum data frame, describing if sample collections were collected on specific islands, trails, and/or locations. Examples are included in the package, but a user can specify manually made .csv files and place them in _data/raw/annotate_. If that option is preferred, specifying the base directory as `dir` in `annotateFulcrum` will override the example files. 
+
+```{r}
+head(easyfulcrum::island)
+head(easyfulcrum::location)
+head(easyfulcrum::trails)
+```
+The `island` and `location` dataframes are composed of simple latitude and longitude starts and ends to create a binding box, while `trails` is composed of a character list of geojson polygon points from geojson output of that can be created on a [bounding box online tool](https://boundingbox.klokantech.com/).
 
 ```{r}
 anno_fulc1 <- annotateFulcrum(data = join_fulc1)
@@ -144,18 +151,20 @@ anno_fulc1 <- annotateFulcrum(data = join_fulc1)
 
 We would normally run the `readGenotypes` function to read in genotyping data from an appropriate Google Sheet, but in this case, the `raw_geno1` object is on the github repo and is automatically loaded. The `col_types` variable will specify of what type the data should be during read in.<br>
 
-Details on how to create genotyping google sheets can be found [here](), while further details of the googlesheets4 package (which underlies this function) and how to connect to a personalized google sheet can be found [here](https://googlesheets4.tidyverse.org/articles/articles/read-sheets.html), with details on how to specify the `col_types` specified [here](https://googlesheets4.tidyverse.org/reference/range_read.html#column-specification) if needed.
+Details on how to create genotyping google sheets can be found in the [Nematode Collection Protocol](https://docs.google.com/document/d/1aPgPDYobpxzr0BQYgvUsjPWnAGXZmCSQKQ4sDGBXuYM/edit), look for "wild_isolate_genotyping_template".<br>
+
+For more details on reading in genotyping sheets, look into the [googlesheets4](https://googlesheets4.tidyverse.org/articles/articles/read-sheets.html) package (which underlies this function), as well as further information on how to [specify](https://googlesheets4.tidyverse.org/reference/range_read.html#column-specification) the `col_types` if needed.<br>
 
 ```{r}
 # raw_geno1 <- readGenotypes(gsKey = c("1CxKJHM6mEu4VvnN2T1ioXiJNZmmmpeosmECP2zeAPmY"))
-head(raw_geno1)
+head(easyfulcrum::raw_geno1)
 ```
 
 The `checkGenotypes` function has the dual functionality of processing the genotyping data (adds flags) and returning info on those flags if desired. Setting the `return_geno` option to `FALSE` and the `return_flags` option to `FALSE` will return the processed genotyping data and print information on the flags. Both of these cannot be true at the same time.
 
 ```{r}
 proc_geno1 <- checkGenotypes(geno_data = raw_geno1, fulc_data = anno_fulc1, 
-                                  return_geno = TRUE, return_flags = TRUE)
+                                  return_geno = TRUE, return_flags = FALSE)
 ```
 
 However, setting the `return_geno` option to `FALSE` and the `return_flags` option to `TRUE` will return a list of data frames that detail the rows where the flags appear. If desired, based on these flags the user can manually edit values, or correct mistakes in the underlying data and quickly re-run the pipeline again.

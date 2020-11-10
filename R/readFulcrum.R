@@ -2,7 +2,7 @@
 #'
 #' \code{readFulcrum} reads .csv files exported from Fulcrum into R
 #'
-#' @param dir The path of the directory with up to five Fulcrum .csv files:
+#' @param dir The path to the base fulcrum directory, dir/data/raw/fulcrum should contain:
 #' nematode_field_sampling.csv,
 #' nematode_field_sampling_sample_photo.csv,
 #' nematode_isolation.csv,
