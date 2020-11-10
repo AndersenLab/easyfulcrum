@@ -52,6 +52,7 @@ saved in the `scripts` directory.
 │               ├── S-10206_oECA306_A01.seq
 │               └── ... more sequences here if present
 │           └── ... more sequence folders here if present
+│       ├── annotate
 │   ├── processed
 │       ├── fulcrum
 │           ├── empty
