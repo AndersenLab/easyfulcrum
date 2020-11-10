@@ -27,6 +27,8 @@ setwd("~/Desktop")
 
 In your base directory (startdir), name the project (projectdirname) and run the `makeDirStructure` function to make a standardized directory of folders for the `easyfulcrum` run. Every collection project should be contained in its own repository. The repository name should follow the `YearMonthPlace` format used for Fulcrum collection projects, e.g. `2020FebruaryAustralia`.<br>
 
+Collection protocol can be found here: [Nematode Collection Protocol](https://docs.google.com/document/d/1aPgPDYobpxzr0BQYgvUsjPWnAGXZmCSQKQ4sDGBXuYM/edit).
+
 ```{r eval = FALSE}
 makeDirStructure(startdir = "~/Desktop/",
                  projectdirname = "2020FebruaryAustralia")
@@ -81,98 +83,102 @@ We create a character value that is the base directory and project name put toge
 
 ```{r}
 dir1 <- "~/Desktop/2020FebruaryAustralia"
-# raw_data1 <- readFulcrum(dir = dir1)
-names(raw_data1)
+# raw_fulc1 <- readFulcrum(dir = dir1)
+names(raw_fulc1)
 ```
 
 The individual data frames are now processed using the `procFulcrum` function, and flags are added.
 
 ```{r}
-proc_data1 <- procFulcrum(data = raw_data1)
+proc_fulc1 <- procFulcrum(data = raw_fulc1)
 ```
 
-Three temperature and parameters are checked using the `checkParameters` function. Setting the `return` option to `TRUE` will return a list of three data frames that detail the rows where the flags appear, if the user desires. 
+Three temperature variables are checked using the `checkTemperatures` function. Setting the `return_flags` option to `TRUE` will return a list of three data frames that detail the rows where the flags appear, if the user desires. 
 
 ```{r}
-#checkParameters(data = proc_data1)
-flag1.1 <- checkParameters(data = proc_data1, return = TRUE)
+#checkParameters(data = proc_fulc1)
+flag1.1 <- checkTemperatures(data = proc_fulc1, return_flags = TRUE)
 ```
 
 In the first two checks, for substrate and ambient temperature, rows are flagged when `raw_substrate_temperature` and `raw_ambient_temperature` are above 40 degrees respectively. The `procFulcrum` function assumes that these temperatures are improperly inputted as Fahrenheit rather than Celsius, and automatically converts values above 40 degrees to the latter.<br>
 
 In the final check for ambient run temperature, rows are flagged when both `raw_ambient_temperature` and `raw_ambient_humidity` get stuck on the same value for 5 or more measurements in a row.<br>
 
-Upon examining the results of `checkParameters`, the user may realize that a) some of the substrate and ambient temperatures were indeed above 40 degrees Celsius, and need to be reverted to those values, and/or b) that indeed the humidity and temperature readings were stuck and some of these readings should be discarded.<br>
+Upon examining the results of `checkTemperatures`, the user may realize that a) some of the substrate and ambient temperatures were indeed above 40 degrees Celsius, and need to be reverted to those values, and/or b) that indeed the humidity and temperature readings were stuck and some of these readings should be discarded.<br>
 
-The `fixParameters` function takes a) `fulcrum_id`s that need to be reverted for both substrate temperatures (`substrate_temperature_ids`) and ambient temperatures (`ambient_temperature_ids`) as well as b) `fulcrum_id`s for which humidity and temperature readings need to be set to NA due to improper reading (`ambient_temperature_run_ids`)
+The `fixTemperatures` function takes a) `fulcrum_id`s that need to be reverted for both substrate temperatures (`substrate_temperature_ids`) and ambient temperatures (`ambient_temperature_ids`) as well as b) `fulcrum_id`s for which humidity and temperature readings need to be set to NA due to improper reading (`ambient_temperature_run_ids`)
 
 
 ```{r}
-proc_data1_clean <- fixParameters(data = proc_data1,
+proc_data1_clean <- fixTemperatures(data = proc_fulc1,
                                   substrate_temperature_ids = "fe28600b-c78a-4545-a525-28dfb3e5d84c",
                                   ambient_temperature_ids = "e088d373-6f4a-48c3-b672-2f6a43747595",
                                   ambient_temperature_run_ids =c("fb975ace-0036-4a80-b073-8ff638f35786",
                                                                  "c9313751-3f96-41f6-9d5e-b8dc994f5edb"))
 ```
 
-The flag variables will be maintained, so rerunning `checkParameters` is a good idea to make sure that corrections have been implemented as desired.
+The flag variables will be maintained, so rerunning `checkTemperatures` is a good idea to make sure that corrections have been implemented as desired.
 
 ```{r}
-checkParameters(data = proc_data1_clean)
+checkTemperatures(data = proc_fulc1_clean)
 ```
 
 The individual data frames from the processed Fulcrum object are joined using the `joinFulcrum` function.
 
 ```{r}
-join_data1 <- joinFulcrum(data = proc_data1)
+join_fulc1 <- joinFulcrum(data = proc_fulc1)
 ```
 
-The `checkJoin` function will conduct 10 different checks for flags in the joined Fulcrum data frame, assessing for duplicates of variables, missing elements, extreme values, and more. Setting the `return` option to `TRUE` will return a list of three data frames that detail the rows where the flags appear, if the user desires. If desired, based on these flags the user can manually edit values, or correct mistakes in the underlying data and quickly re-run the pipeline again.
+The `checkJoin` function will conduct 10 different checks for flags in the joined Fulcrum data frame, assessing for duplicates of variables, missing elements, extreme values, and more. Setting the `return_flags` option to `TRUE` will return a list of three data frames that detail the rows where the flags appear, if the user desires. If desired, based on these flags the user can manually edit values, or correct mistakes in the underlying data and quickly re-run the pipeline again.
 
 ```{r}
 #checkJoin(data = join_data1)
-flag1.2 <- checkJoin(data = join_data1, return = TRUE)
+flag1.2 <- checkJoin(data = join_fulc1, return_flags = TRUE)
 ```
 
 The `annnotateFulcrum` function will add spatial information to the joined Fulcrum data frame, describing if sample collections were collected on specific islands, trails, and/or locations. 
 
 ```{r}
-anno_data1 <- annotateFulcrum(data = join_data1)
+anno_fulc1 <- annotateFulcrum(data = join_fulc1)
 ```
 
-We would normally run the `readGenotypes` function to read in genotyping data from an appropriate Google Sheet, but in this case, the `geno_data1` object is on the github repo and is automatically loaded. The `col_types` variable will specify of what type the data should be during read in.
+We would normally run the `readGenotypes` function to read in genotyping data from an appropriate Google Sheet, but in this case, the `raw_geno1` object is on the github repo and is automatically loaded. The `col_types` variable will specify of what type the data should be during read in.<br>
+
+Details on how to create genotyping google sheets can be found [here](), while further details of the googlesheets4 package (which underlies this function) and how to connect to a personalized google sheet can be found [here](https://googlesheets4.tidyverse.org/articles/articles/read-sheets.html), with details on how to specify the `col_types` specified [here](https://googlesheets4.tidyverse.org/reference/range_read.html#column-specification) if needed.
 
 ```{r}
-#geno_data1 <- readGenotypes(gsKey = c("1CxKJHM6mEu4VvnN2T1ioXiJNZmmmpeosmECP2zeAPmY"))
-head(geno_data1)
+# raw_geno1 <- readGenotypes(gsKey = c("1CxKJHM6mEu4VvnN2T1ioXiJNZmmmpeosmECP2zeAPmY"))
+head(raw_geno1)
 ```
 
-The `checkGenotypes` function has the dual functionality of processing the genotyping data (adds flags) and returning info on those flags if desired. Setting the `return` option to `FALSE` will return the processed genotyping data and print information on the flags.
+The `checkGenotypes` function has the dual functionality of processing the genotyping data (adds flags) and returning info on those flags if desired. Setting the `return_geno` option to `FALSE` and the `return_flags` option to `FALSE` will return the processed genotyping data and print information on the flags. Both of these cannot be true at the same time.
 
 ```{r}
-proc_geno_data1 <- checkGenotypes(geno_data = geno_data1, fulc_data = anno_data1, return = FALSE)
+proc_geno1 <- checkGenotypes(geno_data = raw_geno1, fulc_data = anno_fulc1, 
+                                  return_geno = TRUE, return_flags = TRUE)
 ```
 
-However, setting the `return` option to `TRUE` will return a list of data frames that detail the rows where the flags appear. If desired, based on these flags the user can manually edit values, or correct mistakes in the underlying data and quickly re-run the pipeline again.
+However, setting the `return_geno` option to `FALSE` and the `return_flags` option to `TRUE` will return a list of data frames that detail the rows where the flags appear. If desired, based on these flags the user can manually edit values, or correct mistakes in the underlying data and quickly re-run the pipeline again.
 
 ```{r}
-flag1.3 <- checkGenotypes(geno_data = geno_data1, fulc_data = anno_data1, return = TRUE)
+flag1.3 <- checkGenotypes(geno_data = raw_geno1, fulc_data = anno_fulc1, 
+                          return_geno = FALSE, return_flags = TRUE)
 ```
 
 The `joinGenoFulc` function will join the joined Fulcrum data frame with the genotyping information. This function will also save the processed genotyping information in _data/processed/genotypes_. 
 
 ```{r}
-joingeno_data1 <- joinGenoFulc(geno = proc_geno_data1, fulc = anno_data1, dir = dir1)
+join_fulcgeno1 <- joinGenoFulc(geno = proc_geno1, fulc = anno_fulc1, dir = dir1)
 ```
 
 The `joinGenoFulc` function will process the raw sample photos and add information regarding them to the final data frame of data. 
 
 ```{r}
-final_data1 <- procPhotos(dir = dir1, data = joingeno_data1, max_dim = 500, overwrite = T)
+final_data1 <- procPhotos(dir = dir1, data = join_fulcgeno1, max_dim = 500, overwrite = T)
 ```
 
 The final `makeSpSheet` function will generate a species csv file for the target species in mind.
 
 ```{r}
-test <- makeSpSheet(data = joingeno_data1, target_sp = "Caenorhabditis tropicalis")
+test <- makeSpSheet(data = join_fulcgeno1, target_sp = "Caenorhabditis tropicalis")
 ```

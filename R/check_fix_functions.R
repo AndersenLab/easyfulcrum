@@ -1,23 +1,23 @@
-#' checkParameters
+#' checkTemperatures
 #'
-#' \code{checkParameters} checks for flags (3) regarding raw temperature parameters,
+#' \code{checkTemperatures} checks for flags (3) regarding raw temperature parameters,
 #'
 #' Will return the flagged rows (and neighboring rows if appropriate), and necessary columns for flag visualization on \code{procFulcrum} output
-#' The returned \emph{fulcrum_id} can be used in \code{fixParameters} to make changes to these raw temperature parameters
-#' See \code{fixParameters} documentation for details on how to make these changes
+#' The returned \emph{fulcrum_id} can be used in \code{fixTemperatures} to make changes to these raw temperature parameters
+#' See \code{fixTemperatures} documentation for details on how to make these changes
 #' flagged substrate temperature: occurs when substrate temperature > 40, \code{procFulcrum} will automatically convert to celsius (assumes temperature incorrectly in fahrenheit)
 #' flagged ambient temperature: occurs when ambient temperature > 40, \code{procFulcrum} will automatically convert to celsius (assumes temperature incorrectly in fahrenheit)
 #' flagged ambient run temperature: occurs when ambient humidity and temperature are repeated in subsequent measurements, this is meant to flag values if probe is stuck, \code{procFulcrum} does not modify anything for this flag
 #'
 #' @param data list format output of \code{procFulcrum}
-#' @param return a logical, default FALSE, set to TRUE if flagged rows in \code{procFulcrum} dataframes are to be returned and saved in list format
+#' @param return_flags a logical, default FALSE, set to TRUE if flagged rows in \code{procFulcrum} dataframes are to be returned and saved in list format
 #' @return rows with flagged substrate temperature, flagged ambient temperature, flagged ambient run temperature (and surrounding rows that cause flag to be triggered)
 #'  these returns will also contain relevant columns for understanding flagged values and how they arose
 #'  these dataframes can be saved as a list of three dataframes when return is set to TRUE
 #' @import tidyr
 #'
 
-checkParameters <- function(data, return = FALSE) {
+checkTemperatures <- function(data, return_flags = FALSE) {
   message(">>> Checking substrate temperature")
   substrate_temperature <- data$nematode_field_sampling_proc %>% dplyr::filter(flag_substrate_temperature == TRUE)
   print(paste("There are", nrow(substrate_temperature), "rows with flagged substrate temperature:", sep = " "))
@@ -79,23 +79,23 @@ checkParameters <- function(data, return = FALSE) {
                   collection_datetime_UTC)
     print.data.frame(as.data.frame(to_return))}
 
-  if(return){
+  if(return_flags){
     return(list("substrate_temperature" = substrate_temperature,
                 "ambient_temperature" = ambient_temperature,
                 "ambient_temperature_run" = ambient_temperature_run))
   }
 }
 
-#' fixParameters
+#' fixTemperatures
 #'
-#' \code{fixParameters} fixes flags (3) regarding raw temperature parameters
+#' \code{fixTemperatures} fixes flags (3) regarding raw temperature parameters
 #'
-#' To be run after checkParameters, user is advised to select the returned \emph{fulcrum_id} for changing (upon inspection) from \code{checkParameters()} to pass into this function
+#' To be run after checkTemperatures, user is advised to select the returned \emph{fulcrum_id} for changing (upon inspection) from \code{checkTemperatures()} to pass into this function
 #' flagged substrate temperature: occurs when substrate temperature > 40, \code{procFulcrum} will automatically convert to celsius (assumes temperature incorrectly in fahrenheit)
 #' flagged ambient temperature: occurs when ambient temperature > 40, \code{procFulcrum} will automatically convert to celsius (assumes temperature incorrectly in fahrenheit)
 #' flagged ambient run temperature: occurs when ambient humidity and temperature are repeated in subsequent measurements, this is meant to flag values if probe is stuck, \code{procFulcrum} does not modify anything for this flag
 #'
-#' We advise re-running \code{checkParameters()} on the saved output of \code{fixParameters()} to ensure that wanted edits have appropriately occured
+#' We advise re-running \code{checkTemperatures()} on the saved output of \code{fixTemperatures()} to ensure that wanted edits have appropriately occured
 #'
 #' @param data list format output of \code{procFulcrum}
 #' @param substrate_temperature_ids vector of \emph{fulcrum_id} of rows of \emph{substrate_temperature} to revert to original/raw temperature
@@ -105,7 +105,7 @@ checkParameters <- function(data, return = FALSE) {
 #' @export
 #'
 
-fixParameters <- function(data,
+fixTemperatures <- function(data,
                             substrate_temperature_ids = NULL,
                             ambient_temperature_ids = NULL,
                             ambient_temperature_run_ids = NULL) {
@@ -133,13 +133,13 @@ fixParameters <- function(data,
 #' We advise returning to the raw dataframes using the information returned in these checks to better understand issues that may have occurred during data collection, before re-running
 #'
 #' @param data dataframe output of \code{joinFulcrum}
-#' @param return set to TRUE if flagged rows are to be returned as a dataframe
+#' @param return_flags set to TRUE if flagged rows are to be returned as a dataframe
 #' @return c_labels and s_labels (as appropriate) for rows with each of the six flags, and the origin of the location of the raw data that triggered the flag
 #'  the rows corresponding to these labels can be saved as a list of six dataframes when return is set to TRUE
 #' @export
 #'
 
-checkJoin <- function(data, return = FALSE) {
+checkJoin <- function(data, return_flags = FALSE) {
   message(">>> Checking data classes")
   types <- as.data.frame(unlist(sapply(data, class)))
   types[,2] <- rownames(types)
@@ -215,7 +215,7 @@ checkJoin <- function(data, return = FALSE) {
     print(duplicated_s_label$s_label)
     print("Duplicated s labels are found in nematode_isolation_s_labeled_plates.csv")}
 
-  if(return){
+  if(return_flags){
     return(list("check_classes" = check_classes,
                 "duplicated_c_label" = duplicated_c_label,
                 "unusual_sample_photo_num" = unusual_sample_photo_num,
@@ -235,12 +235,20 @@ checkJoin <- function(data, return = FALSE) {
 #'
 #' @param geno_data a genotyping dataframe generated from the \code{procGenotypes} function.
 #' @param fulc_data a single, joined fulcrum dataframe with all collection data.
-#' @param return logical, if \code{TRUE} the rows of data for specific flags are returned.
+#' @param return_geno logical, if \code{TRUE} the genotyping data is returned.
+#' @param return_flags logical, if \code{TRUE} the rows of data for specific flags are returned.
 #' @return a list of flagged rows in genotyping and fulcrum dataframes for each flag.
 #' @export
 #'
 
-checkGenotypes <- function(geno_data, fulc_data, target_sp = c("Caenorhabditis briggsae", "Caenorhabditis elegans", "Caenorhabditis tropicalis"), return = FALSE) {
+checkGenotypes <- function(geno_data, fulc_data, target_sp = c("Caenorhabditis briggsae", "Caenorhabditis elegans", "Caenorhabditis tropicalis"), return_geno = TRUE, return_flags = FALSE) {
+
+  if(return_geno == TRUE & return_flags == TRUE){
+    message("Both return_geno and return_flags cannnot be set to true, nothing will be returned")
+  }
+  if(class(geno_data) == "list"){
+    message("geno_data is in list form when dataframe is expected")
+  }
 
   message(">>> Checking data classes")
   types <- as.data.frame(unlist(sapply(geno_data, class)))
@@ -330,20 +338,23 @@ checkGenotypes <- function(geno_data, fulc_data, target_sp = c("Caenorhabditis b
   if(nrow(strain_name_expected) > 0){print(strain_name_expected$s_label)}
 
   #return geno_data with added flags
-  if(return == FALSE){return(geno_data_flagged)}
+  if(return_flags == FALSE){
+    if(return_geno == TRUE){return(geno_data_flagged)}}
 
   # return data frames with appropriate missing flags
-  if(return){
-    return(list("check_classes" = check_classes,
-                "missing_s_label_genotyping" = missing_s_label_genotyping,
-                "duplicated_s_label_genotyping" = duplicated_s_label_genotyping,
-                "unusual_s_label_genotyping" = unusual_s_label_genotyping,
-                "s_label_not_in_fulcrum" = s_label_not_in_fulcrum,
-                "s_label_in_fulcrum_not_in_genotyping" = s_label_in_fulcrum_not_in_genotyping,
-                "proliferation_missing" = proliferation_missing,
-                "its2_genotype_expected" = its2_genotype_expected,
-                "species_id_expected" = species_id_expected,
-                "unusual_target_species_name" = unusual_target_species_name,
-                "strain_name_expected" = strain_name_expected))
+  if(return_geno == FALSE){
+    if(return_flags == TRUE){
+      return(list("check_classes" = check_classes,
+                  "missing_s_label_genotyping" = missing_s_label_genotyping,
+                  "duplicated_s_label_genotyping" = duplicated_s_label_genotyping,
+                  "unusual_s_label_genotyping" = unusual_s_label_genotyping,
+                  "s_label_not_in_fulcrum" = s_label_not_in_fulcrum,
+                  "s_label_in_fulcrum_not_in_genotyping" = s_label_in_fulcrum_not_in_genotyping,
+                  "proliferation_missing" = proliferation_missing,
+                  "its2_genotype_expected" = its2_genotype_expected,
+                  "species_id_expected" = species_id_expected,
+                  "unusual_target_species_name" = unusual_target_species_name,
+                  "strain_name_expected" = strain_name_expected))
+    }
   }
 }
