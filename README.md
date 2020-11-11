@@ -76,17 +76,4 @@ This directory exhibits the minimal file content and naming for all the `easyful
 
 Nematode collections are performed following a detailed protocol [found here.]( https://docs.google.com/document/d/1jssQVPFrFsXJiA6Jt7LyEjQRBGfcfGCitP4qPya7VwU/edit) The `easyfulcrum` package is written to process and analyze the data generated for a specific collection project. The basic workflow is to generate a final processed dataframe that can be used for downstream analysis. 
 
-![Project workflow](.readmefiles/Workflow.pdf)
-
-2020FebruaryAustralia/
-├── data
-│   ├── raw
-│       ├── fulcrum
-│           ├── ... all fulcrum files here
-│           ├── photos
-│               └── ... all collection photos here
-│       ├── sanger
-│           └── ... sequence folders
-│               └── ... all sequences here
-│       ├── annotate
-│           └── ... all annotation .csvs here
+![Project workflow](.readmefiles/easyFulcrum.jpg)
