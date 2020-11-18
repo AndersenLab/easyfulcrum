@@ -6,6 +6,7 @@
 #' @param data a data frame output from the \code{joinGenoFulc} function.
 #' @param max_dim This value sets the maximum dimension of the resized images in pixels. The default value is 500.
 #' @param overwrite Logical, passed to fs::file_copy. If \code{TRUE} then existing files with similar names will be written over. Default is \code{FALSE}.
+#' @param CeNDR Logical, determines whether to write CeNDR criteria qualifying photos to a subdirectory
 #' @return A folder named processed_photos in the data/processed/fulcrum directory. The folder contains full size sample photos renamed with strain names.
 #' A thumbnails subfolder is also returned within the processed_photos folder. This folder contains resized images. A dataframe identical to input \code{data}
 #' with md5 hash values and file names for all photos.
@@ -14,7 +15,7 @@
 #' @export
 #'
 
-procPhotos <- function(dir, data, max_dim = 500, overwrite = FALSE, pub_url = "https://storage.googleapis.com/elegansvariation.org/photos/isolation/fulcrum/") {
+procPhotos <- function(dir, data, max_dim = 500, overwrite = FALSE, CeNDR = FALSE, pub_url = "https://storage.googleapis.com/elegansvariation.org/photos/isolation/fulcrum/") {
   # edit pub_url to take into accoutn project name and subfolder
   project_url <- glue::glue("{pub_url}",tail(strsplit(dir,"/")[[1]],1),"/sampling_thumbs/")
   # edit dir to be appropriate for path to photos
@@ -23,89 +24,91 @@ procPhotos <- function(dir, data, max_dim = 500, overwrite = FALSE, pub_url = "h
   processed_dir <- stringr::str_replace(dir, pattern = "raw/fulcrum/photos", replacement = "processed/fulcrum")
 
   # find file names for photos where CeNDR criteria is satisfied, create folder of these images and thumbnails
-  to_change <- data %>%
-    dplyr::filter(!is.na(strain_name)) %>%
-    dplyr::filter(species_id == "C. elegans" | species_id == "C. briggsae" | species_id == "C. tropicalis"  ) %>%
-    dplyr::mutate(orig_file_name = glue::glue("{dir}/{sample_photo1}.jpg"),
-                  new_file_name = glue::glue("{processed_dir}/CeNDR/{strain_name}.jpg"),
-                  thumb_file_name = glue::glue("{processed_dir}/CeNDR/thumbnails/{strain_name}.jpg")) %>%
-    dplyr::mutate(orig_file_name2 = glue::glue("{dir}/{sample_photo2}.jpg"),
-                  new_file_name2 = glue::glue("{processed_dir}/CeNDR/{strain_name}_2.jpg"),
-                  thumb_file_name2 = glue::glue("{processed_dir}/CeNDR/thumbnails/{strain_name}_2.jpg")) %>%
-    dplyr::mutate(orig_file_name3 = glue::glue("{dir}/{sample_photo3}.jpg"),
-                  new_file_name3 = glue::glue("{processed_dir}/CeNDR/{strain_name}_3.jpg"),
-                  thumb_file_name3 = glue::glue("{processed_dir}/CeNDR/thumbnails/{strain_name}_3.jpg")) %>%
-    dplyr::select(strain_name, species_id, c_label, sample_photo1, sample_photo2, sample_photo3, orig_file_name:thumb_file_name3)
+  if(CeNDR){
+    to_change <- data %>%
+      dplyr::filter(!is.na(strain_name)) %>%
+      dplyr::filter(species_id == "C. elegans" | species_id == "C. briggsae" | species_id == "C. tropicalis"  ) %>%
+      dplyr::mutate(orig_file_name = glue::glue("{dir}/{sample_photo1}.jpg"),
+                    new_file_name = glue::glue("{processed_dir}/CeNDR/{strain_name}.jpg"),
+                    thumb_file_name = glue::glue("{processed_dir}/CeNDR/thumbnails/{strain_name}.jpg")) %>%
+      dplyr::mutate(orig_file_name2 = glue::glue("{dir}/{sample_photo2}.jpg"),
+                    new_file_name2 = glue::glue("{processed_dir}/CeNDR/{strain_name}_2.jpg"),
+                    thumb_file_name2 = glue::glue("{processed_dir}/CeNDR/thumbnails/{strain_name}_2.jpg")) %>%
+      dplyr::mutate(orig_file_name3 = glue::glue("{dir}/{sample_photo3}.jpg"),
+                    new_file_name3 = glue::glue("{processed_dir}/CeNDR/{strain_name}_3.jpg"),
+                    thumb_file_name3 = glue::glue("{processed_dir}/CeNDR/thumbnails/{strain_name}_3.jpg")) %>%
+      dplyr::select(strain_name, species_id, c_label, sample_photo1, sample_photo2, sample_photo3, orig_file_name:thumb_file_name3)
 
-  to_change1 <- to_change %>%
-    dplyr::filter(!is.na(sample_photo1))
+    to_change1 <- to_change %>%
+      dplyr::filter(!is.na(sample_photo1))
 
-  to_change2 <- to_change %>%
-    dplyr::filter(!is.na(sample_photo2))
+    to_change2 <- to_change %>%
+      dplyr::filter(!is.na(sample_photo2))
 
-  to_change3 <- to_change %>%
-    dplyr::filter(!is.na(sample_photo3))
-
-
-  # make processed subdirectory in dir and a thumbnails directory below that
-  fs::dir_create(glue::glue("{processed_dir}/CeNDR"))
-  fs::dir_create(glue::glue("{processed_dir}/CeNDR/thumbnails"))
-
-  # copy files to new directory and rename
-  fs::file_copy(to_change1$orig_file_name, to_change1$new_file_name, overwrite = overwrite)
-  fs::file_copy(to_change2$orig_file_name2, to_change2$new_file_name2, overwrite = overwrite)
-  fs::file_copy(to_change3$orig_file_name3, to_change3$new_file_name3, overwrite = overwrite)
+    to_change3 <- to_change %>%
+      dplyr::filter(!is.na(sample_photo3))
 
 
-  # loop through renamed images to make thumbnails
-  for(i in unique(to_change1$new_file_name)) {
-    # Make message
-    message(glue::glue("Processing collection photo:{to_change1 %>% dplyr::filter(new_file_name == i) %>% dplyr::pull(orig_file_name)}"))
-    # setup image in R
-    img <- imager::load.image(i)
-    # get raw img dimesions
-    raw_max_dim <- max(dim(img))
-    percentage <- 100*(max_dim/raw_max_dim)
+    # make processed subdirectory in dir and a thumbnails directory below that
+    fs::dir_create(glue::glue("{processed_dir}/CeNDR"))
+    fs::dir_create(glue::glue("{processed_dir}/CeNDR/thumbnails"))
 
-    # resize to make thumbnail
-    thumb <- imager::resize(img, -percentage, -percentage) # need negative for resize function
+    # copy files to new directory and rename
+    fs::file_copy(to_change1$orig_file_name, to_change1$new_file_name, overwrite = overwrite)
+    fs::file_copy(to_change2$orig_file_name2, to_change2$new_file_name2, overwrite = overwrite)
+    fs::file_copy(to_change3$orig_file_name3, to_change3$new_file_name3, overwrite = overwrite)
 
-    # write the file
-    imager::save.image(thumb, file = glue::glue("{to_change1 %>% dplyr::filter(new_file_name == i) %>% dplyr::pull(thumb_file_name)}"))
-  }
 
-  for(i in unique(to_change2$new_file_name2)) {
-    # Make message
-    message(glue::glue("Processing collection photo:{to_change2 %>% dplyr::filter(new_file_name2 == i) %>% dplyr::pull(orig_file_name2)}"))
+    # loop through renamed images to make thumbnails
+    for(i in unique(to_change1$new_file_name)) {
+      # Make message
+      message(glue::glue("Processing collection photo:{to_change1 %>% dplyr::filter(new_file_name == i) %>% dplyr::pull(orig_file_name)}"))
+      # setup image in R
+      img <- imager::load.image(i)
+      # get raw img dimesions
+      raw_max_dim <- max(dim(img))
+      percentage <- 100*(max_dim/raw_max_dim)
 
-    # setup image in R
-    img <- imager::load.image(i)
-    # get raw img dimesions
-    raw_max_dim <- max(dim(img))
-    percentage <- 100*(max_dim/raw_max_dim)
+      # resize to make thumbnail
+      thumb <- imager::resize(img, -percentage, -percentage) # need negative for resize function
 
-    # resize to make thumbnail
-    thumb <- imager::resize(img, -percentage, -percentage) # need negative for resize function
+      # write the file
+      imager::save.image(thumb, file = glue::glue("{to_change1 %>% dplyr::filter(new_file_name == i) %>% dplyr::pull(thumb_file_name)}"))
+    }
 
-    # write the file
-    imager::save.image(thumb, file = glue::glue("{to_change %>% dplyr::filter(new_file_name2 == i) %>% dplyr::pull(thumb_file_name2)}"))
-  }
+    for(i in unique(to_change2$new_file_name2)) {
+      # Make message
+      message(glue::glue("Processing collection photo:{to_change2 %>% dplyr::filter(new_file_name2 == i) %>% dplyr::pull(orig_file_name2)}"))
 
-  for(i in unique(to_change3$new_file_name3)) {
-    # Make message
-    message(glue::glue("Processing collection photo:{to_change3 %>% dplyr::filter(new_file_name3 == i) %>% dplyr::pull(orig_file_name3)}"))
+      # setup image in R
+      img <- imager::load.image(i)
+      # get raw img dimesions
+      raw_max_dim <- max(dim(img))
+      percentage <- 100*(max_dim/raw_max_dim)
 
-    # setup image in R
-    img <- imager::load.image(i)
-    # get raw img dimesions
-    raw_max_dim <- max(dim(img))
-    percentage <- 100*(max_dim/raw_max_dim)
+      # resize to make thumbnail
+      thumb <- imager::resize(img, -percentage, -percentage) # need negative for resize function
 
-    # resize to make thumbnail
-    thumb <- imager::resize(img, -percentage, -percentage) # need negative for resize function
+      # write the file
+      imager::save.image(thumb, file = glue::glue("{to_change %>% dplyr::filter(new_file_name2 == i) %>% dplyr::pull(thumb_file_name2)}"))
+    }
 
-    # write the file
-    imager::save.image(thumb, file = glue::glue("{to_change %>% dplyr::filter(new_file_name3 == i) %>% dplyr::pull(thumb_file_name3)}"))
+    for(i in unique(to_change3$new_file_name3)) {
+      # Make message
+      message(glue::glue("Processing collection photo:{to_change3 %>% dplyr::filter(new_file_name3 == i) %>% dplyr::pull(orig_file_name3)}"))
+
+      # setup image in R
+      img <- imager::load.image(i)
+      # get raw img dimesions
+      raw_max_dim <- max(dim(img))
+      percentage <- 100*(max_dim/raw_max_dim)
+
+      # resize to make thumbnail
+      thumb <- imager::resize(img, -percentage, -percentage) # need negative for resize function
+
+      # write the file
+      imager::save.image(thumb, file = glue::glue("{to_change %>% dplyr::filter(new_file_name3 == i) %>% dplyr::pull(thumb_file_name3)}"))
+    }
   }
 
   # copy all images create folder of these images and thumbnails
@@ -210,8 +213,8 @@ procPhotos <- function(dir, data, max_dim = 500, overwrite = FALSE, pub_url = "h
   raw_hash3 <- raw_hash %>%
     dplyr::filter(sample_photo %in% data$sample_photo3)
 
-  message("Writing md5 hash for resized images and adding to data frame.")
-  thumb_hash <- dplyr::as_tibble(as.list(tools::md5sum(fs::dir_ls(glue::glue("{processed_dir}/CeNDR/thumbnails"))))) %>%
+  message("Writing md5 hash for thumbnail images and adding to data frame.")
+  thumb_hash <- dplyr::as_tibble(as.list(tools::md5sum(fs::dir_ls(glue::glue("{processed_dir}/thumbnails"))))) %>%
     tidyr::gather(key = thumb_file, value = sample_photo_resized_hash) %>%
     dplyr::mutate(sample_photo_resized_file_name = stringr::str_extract(thumb_file, pattern = one_or_more(WRD) %R% optional("_") %R% optional(DGT) %R% ".jpg"),
                   strain_name = stringr::str_extract(sample_photo_resized_file_name, pattern = ALPHA %R% ALPHA %R% optional(ALPHA) %R% optional(ALPHA) %R% DGT %R% optional(DGT) %R% optional(DGT) %R% optional(DGT) %R% optional(DGT)),

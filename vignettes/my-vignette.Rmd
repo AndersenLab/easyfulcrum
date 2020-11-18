@@ -82,9 +82,9 @@ For a normal `easyfulcrum` run, one would add appropriate `.csv` and `.jpg` file
 We create a character value that is the base directory and project name put together, this will be necessary in a few places in the `easyfulcrum` run. Once the data is loaded as explained above, we would normally run the `readFulcrum` function, but in this case, the `raw_data1` object is on the github repo and is automatically loaded.
 
 ```{r}
-dir1 <- "~/Desktop/2020FebruaryAustralia"
-# raw_fulc1 <- readFulcrum(dir = dir1)
-names(easyfulcrum::raw_fulc1)
+dir1 <- "~/Desktop/2020JanuaryHawaii"
+raw_fulc1 <- readFulcrum(dir = dir1)
+#names(easyfulcrum::raw_fulc1)
 ```
 
 The individual data frames are now processed using the `procFulcrum` function, and flags are added.
@@ -177,17 +177,17 @@ flag1.3 <- checkGenotypes(geno_data = raw_geno1, fulc_data = anno_fulc1,
 The `joinGenoFulc` function will join the joined Fulcrum data frame with the genotyping information. This function will also save the processed genotyping information in _data/processed/genotypes_. 
 
 ```{r}
-join_fulcgeno1 <- joinGenoFulc(geno = proc_geno1, fulc = anno_fulc1, dir = dir1)
+join_genofulc1 <- joinGenoFulc(geno = proc_geno1, fulc = anno_fulc1, dir = dir1)
 ```
 
 The `joinGenoFulc` function will process the raw sample photos and add information regarding them to the final data frame of data. 
 
 ```{r}
-final_data1 <- procPhotos(dir = dir1, data = join_fulcgeno1, max_dim = 500, overwrite = T)
+final_data1 <- procPhotos(dir = dir1, data = join_genofulc1, max_dim = 500, overwrite = T, CeNDR = TRUE)
 ```
 
 The final `makeSpSheet` function will generate a species csv file for the target species in mind.
 
 ```{r}
-test <- makeSpSheet(data = join_fulcgeno1, target_sp = "Caenorhabditis tropicalis")
+test <- makeSpSheet(data = join_genofulc1, target_sp = "Caenorhabditis tropicalis")
 ```
