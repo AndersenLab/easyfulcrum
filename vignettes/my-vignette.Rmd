@@ -189,5 +189,5 @@ final_data1 <- procPhotos(dir = dir1, data = join_genofulc1, max_dim = 500, over
 The final `makeSpSheet` function will generate a species csv file for the target species in mind.
 
 ```{r}
-test <- makeSpSheet(data = join_genofulc1, target_sp = "Caenorhabditis tropicalis")
+test <- makeSpSheet(data = join_genofulc1, target_sp = "Caenorhabditis Briggsae")
 ```
