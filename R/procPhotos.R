@@ -27,7 +27,7 @@ procPhotos <- function(dir, data, max_dim = 500, overwrite = FALSE, CeNDR = FALS
   if(CeNDR){
     to_change <- data %>%
       dplyr::filter(!is.na(strain_name)) %>%
-      dplyr::filter(species_id == "C. elegans" | species_id == "C. briggsae" | species_id == "C. tropicalis"  ) %>%
+      dplyr::filter(species_id %in% c("C. elegans","C. briggsae","C. tropicalis","Caenorhabditis elegans","Caenorhabditis briggsae","Caenorhabditis tropicalis")) %>%
       dplyr::mutate(orig_file_name = glue::glue("{dir}/{sample_photo1}.jpg"),
                     new_file_name = glue::glue("{processed_dir}/CeNDR/{strain_name}.jpg"),
                     thumb_file_name = glue::glue("{processed_dir}/CeNDR/thumbnails/{strain_name}.jpg")) %>%

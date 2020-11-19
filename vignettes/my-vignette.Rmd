@@ -156,8 +156,8 @@ Details on how to create genotyping google sheets can be found in the [Nematode 
 For more details on reading in genotyping sheets, look into the [googlesheets4](https://googlesheets4.tidyverse.org/articles/articles/read-sheets.html) package (which underlies this function), as well as further information on how to [specify](https://googlesheets4.tidyverse.org/reference/range_read.html#column-specification) the `col_types` if needed.<br>
 
 ```{r}
-# raw_geno1 <- readGenotypes(gsKey = c("1CxKJHM6mEu4VvnN2T1ioXiJNZmmmpeosmECP2zeAPmY"))
-head(easyfulcrum::raw_geno1)
+raw_geno1 <- readGenotypes(gsKey = c("1_6u4sk_Zj-Hm5d_058Lg8WYWLe7BZHGTWxXcH6EsDUI"))
+# head(easyfulcrum::raw_geno1)
 ```
 
 The `checkGenotypes` function has the dual functionality of processing the genotyping data (adds flags) and returning info on those flags if desired. Setting the `return_geno` option to `FALSE` and the `return_flags` option to `FALSE` will return the processed genotyping data and print information on the flags. Both of these cannot be true at the same time.
