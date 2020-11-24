@@ -23,6 +23,8 @@ Install and load the package:
 # devtools::install_github("AndersenLab/easyfulcrum")
 library(easyfulcrum)
 setwd("~/Desktop")
+
+proc_img_dir <- rprojroot::find_package_root_file("vignettes", "2020JanuaryHawaii_photos")
 ```
 
 In your base directory (startdir), name the project (projectdirname) and run the `makeDirStructure` function to make a standardized directory of folders for the `easyfulcrum` run. Every collection project should be contained in its own repository. The repository name should follow the `YearMonthPlace` format used for Fulcrum collection projects, e.g. `2020FebruaryAustralia`.<br>
