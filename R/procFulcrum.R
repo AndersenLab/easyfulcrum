@@ -73,6 +73,7 @@ procFulcrum <- function(data) {
       dplyr::group_by(c_label) %>%
       dplyr::mutate(flag_duplicated_c_label_field_sampling = ifelse(dplyr::n() > 1, TRUE, FALSE)) %>%
       dplyr::ungroup() %>%
+      # looks for commas in the sample_photo name
       dplyr::mutate(flag_unusual_sample_photo_num = ifelse(is.na(stringr::str_count(sample_photo, pattern = ",")) |
                                                              stringr::str_count(sample_photo, pattern = ",") != 0, TRUE, FALSE)) %>%
       # break apart mutliple sample photos. This takes the first sample photo and warns if additional photos are discarded
