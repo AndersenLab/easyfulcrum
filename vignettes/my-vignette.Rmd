@@ -19,8 +19,8 @@ knitr::opts_chunk$set(
 Install and load the package:
 
 ```{r setup}
-# install.packages("devtools")
-# devtools::install_github("AndersenLab/easyfulcrum")
+install.packages("devtools")
+devtools::install_github("AndersenLab/easyfulcrum")
 library(easyfulcrum)
 setwd("~/Desktop")
 ```
