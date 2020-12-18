@@ -50,7 +50,7 @@ saved in the `scripts` directory.<br>
 
 In a normal `easyfulcrum` run, the user would add appropriate `.csv` and `.jpg` files into the appropriate locations after running this function.
 
-### 1) Reading, processing, and cleaning Fulcrum results:
+### Reading, processing, and joining Fulcrum results:
 
 The first group of functions operates to clean the results from the Fulcrum `.csv`s.<br>
 
@@ -122,7 +122,7 @@ The `island` and `location` dataframes are composed of simple latitude and longi
 anno_fulc1 <- annotateFulcrum(data = join_fulc1, dir = NULL)
 ```
 
-### 2) Reading, processing, and cleaning genotyping google sheet:
+### Reading, processing, and joining genotyping google sheet:
 
 This second group of functions operates to clean the results from the genotyping google sheet.<br>
 
@@ -161,7 +161,7 @@ flag1.3 <- checkGenotypes(geno_data = raw_geno1, fulc_data = anno_fulc1,
 join_genofulc1 <- joinGenoFulc(geno = proc_geno1, fulc = anno_fulc1, dir = dir1)
 ```
 
-### 3) Reading, processing, and cleaning collection images:
+### Reading, resizing, and joining collection images:
 
 The final function processes and resizes images, adding details to a final dataframe.<br>
 
@@ -192,7 +192,7 @@ for(i in 1:nrow(photos)){
 final_data1 <- procPhotos(dir = dir1, data = join_genofulc1, max_dim = 500, overwrite = T, CeNDR = TRUE)
 ```
 
-### 4) Generating summary and output files:
+### Generating summary and output files:
 
 We include two functions for generating sample output from `final_data1`. This final dataframe can otherwise be used as needed by the user.
 
