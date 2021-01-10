@@ -43,11 +43,11 @@ joinFulcrum <- function(data) {
       # In cases where lat/lon are not available from photo set to collection_fulcrum_latitude and collection_fulcrum_longitude
       dplyr::mutate(collection_latitude = ifelse(is.na(exif_gps_latitude), collection_fulcrum_latitude, exif_gps_latitude),
                     collection_longitude = ifelse(is.na(exif_gps_longitude), collection_fulcrum_longitude, exif_gps_longitude)) %>%
-      # Calculate the Haversine distance between fulcrum record_latitude and record_longitue and photo latitude and longitude
+      # Calculate the Haversine distance between fulcrum record_latitude and record_longitude and photo latitude and longitude
       dplyr::rowwise() %>%
       dplyr::mutate(collection_lat_long_method_diff = geosphere::distHaversine(c(collection_longitude, collection_latitude),
                                                                                c(collection_fulcrum_longitude, collection_fulcrum_latitude)),
-                    # adjust collection_lat_long_method_diff to NA if there is only a fulcrum GPS postion
+                    # adjust collection_lat_long_method_diff to NA if there is only a fulcrum GPS position
                     collection_lat_long_method_diff = ifelse(collection_lat_long_method == "fulcrum", NA, collection_lat_long_method_diff)) %>%
       dplyr::ungroup() %>%
       # fix altitude method and altitude
@@ -57,7 +57,7 @@ joinFulcrum <- function(data) {
                     collection_altitude_method = ifelse(collection_lat_long_method == "photo" & !(is.na(exif_gps_altitude)), "photo",
                                                         ifelse(is.na(exif_gps_altitude) & !(is.na(fulcrum_altitude)), "fulcrum",
                                                                ifelse(is.na(exif_gps_altitude) & is.na(fulcrum_altitude), NA, NA)))) %>%
-      # set varible order
+      # set variable order
       dplyr::select(project,
                     c_label,
                     flag_ambient_temperature,

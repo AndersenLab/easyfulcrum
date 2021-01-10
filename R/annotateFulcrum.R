@@ -9,7 +9,8 @@
 #' trails.csv
 #'
 #' @return A single dataframe containing all Fulcrum data sources.
-#' This data frame contains all necessary variables from Fulcrum. It also contains data quality flags. The variable names match the data dictionary.
+#' This data frame contains all necessary variables from Fulcrum. It also contains data quality flags.
+#' The variable names match the data dictionary.
 #' @export
 #'
 
@@ -99,8 +100,10 @@ annotateFulcrum <- function(data, dir = NULL) {
                   c_label,
                   s_label,
                   flag_ambient_temperature,
+                  flag_ambient_temperature_extreme,
                   flag_ambient_temperature_run,
                   flag_substrate_temperature,
+                  flag_substrate_temperature_extreme,
                   flag_unusual_sample_photo_num,
                   flag_duplicated_c_label_field_sampling,
                   flag_duplicated_isolation_for_c_label,
@@ -126,6 +129,7 @@ annotateFulcrum <- function(data, dir = NULL) {
                   collection_location,
                   collection_island,
                   collection_trail,
+                  flag_collection_altitude_extreme,
                   landscape,
                   sky_view,
                   ambient_humidity,
@@ -143,7 +147,7 @@ annotateFulcrum <- function(data, dir = NULL) {
                   sample_photo1,
                   sample_photo2,
                   sample_photo3,
-                  best_exif_dop_photo,
+                  best_exif_dop_photo = best_photo,
                   best_sample_photo_caption,
                   gps_course,
                   gps_horizontal_accuracy,
@@ -162,3 +166,4 @@ annotateFulcrum <- function(data, dir = NULL) {
   return(fulc_data)
 
 }
+

@@ -5,7 +5,7 @@
 #' @param data a checked dataframe generated from the \code{joinGenoFulc} function.
 #' @param target_sp a vector of target species names with full genus and species names. Default target species names are:
 #' Caenorhabditis briggsae, Caenorhabditis elegans, Caenorhabditis tropicalis.
-#' @param dir the path to the base fulcrum directory
+#' @param dir The path to the base fulcrum directory, species sheet will be saved as reports/spSheet.csv
 #' @return a list of dataframes containing species sheets for target species with flags for identified issues
 #' @export
 #'
@@ -79,7 +79,7 @@ makeSpSheet <- function(data, target_sp = c("Caenorhabditis briggsae", "Caenorha
                   isotype_ref_strain,
                   wgs_seq)
 
-  # write csv
+  # write csv and save under reports subfolder
   write.csv(sp_data,glue::glue("{dir}","/reports/spSheet.csv"))
 
   # make flags

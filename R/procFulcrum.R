@@ -87,7 +87,7 @@ procFulcrum <- function(data) {
   if("nematode_field_sampling_sample_photo" %in% data_names) {
     message("Processing nematode_field_sampling_sample_photo")
     nematode_field_sampling_sample_photo_proc <- data$nematode_field_sampling_sample_photo %>%
-      dplyr::group_by(fulcrum_parent_id) %>% # group to find best percision among photos
+      dplyr::group_by(fulcrum_parent_id) %>% # group to find best precision among photos
       dplyr::arrange(exif_gps_dop) %>%
       dplyr::ungroup() %>%
       dplyr::distinct(fulcrum_parent_id, .keep_all = T) %>%

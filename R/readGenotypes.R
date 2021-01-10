@@ -1,6 +1,6 @@
 #' readGenotypes
 #'
-#' \code{readGenotypes} reads genotyping data from project specific genotyping Google sheets
+#' \code{readGenotypes} reads genotyping data from project specific genotyping Google sheets.
 #'
 #' @param gsKey a vector containing the google sheet keys for the genotype data to load.
 #' Your Google Sheet keys are found in your Google sheets URL. Select the string

@@ -1,10 +1,10 @@
 #' filter_box
 #'
-#' \code{filter_box} finds lat and long inside bounding box
+#' \code{filter_box} finds lat and long inside bounding box.
 #'
-#' @param longitude longitude of collection
-#' @param latitude latitude of collection
-#' @param coords coordinates of bounding box
+#' @param longitude longitude of collection.
+#' @param latitude latitude of collection.
+#' @param coords coordinates of bounding box.
 #'
 
 filter_box <- function(longitude, latitude, coords) {
@@ -15,9 +15,9 @@ filter_box <- function(longitude, latitude, coords) {
 
 #' FtoC
 #'
-#' \code{FtoC} Converts fahrenheit measurement to celsius
+#' \code{FtoC} Converts fahrenheit measurement to celsius.
 #'
-#' @param F fahrenheit measurement to convert
+#' @param F fahrenheit measurement to convert.
 #'
 
 FtoC <- function(F) {
@@ -26,13 +26,14 @@ FtoC <- function(F) {
 
 #' makeDirStructure
 #'
-#' \code{makeDirStructure} Makes the nested folder directory for use in easyfulcrum
+#' \code{makeDirStructure} Makes the nested folder directory for use in easyfulcrum.
 #'
-#' @param startdir the working folder where project files will lie
-#' @param projectdirname the name of the project, folder will be constructed under startdir
+#' @param startdir the working folder where project files will lie.
+#' @param projectdirname the name of the project, folder will be constructed under \code{startdir}.
 #'
 
 makeDirStructure <- function(startdir, projectdirname) {
+  # creates empty directory folders as required
   dir.create(file.path(startdir, projectdirname, "data", "raw", "fulcrum", "photos"), recursive = TRUE)
   dir.create(file.path(startdir, projectdirname, "data", "raw", "sanger"), recursive = TRUE)
   dir.create(file.path(startdir, projectdirname, "data", "raw", "annotate"), recursive = TRUE)

@@ -2,21 +2,21 @@
 #'
 #' \code{procPhotos} copies raw sample photos from the Fulcrum export and renames them to strain_name for use with CeNDR. The function also resizes images.
 #'
-#' @param dir a directory with sample photos.
+#' @param dir The path to the base fulcrum directory, raw/fulcrum/photos should contain the photos for the project
 #' @param data a data frame output from the \code{joinGenoFulc} function.
 #' @param max_dim This value sets the maximum dimension of the resized images in pixels. The default value is 500.
-#' @param overwrite Logical, passed to fs::file_copy. If \code{TRUE} then existing files with similar names will be written over. Default is \code{FALSE}.
+#' @param overwrite Logical, passed to fs::file_copy. If TRUE then existing files with similar names will be written over. Default is FALSE.
 #' @param CeNDR Logical, determines whether to write CeNDR criteria qualifying photos to a subdirectory
 #' @return A folder named processed_photos in the data/processed/fulcrum directory. The folder contains full size sample photos renamed with strain names.
 #' A thumbnails subfolder is also returned within the processed_photos folder. This folder contains resized images. A dataframe identical to input \code{data}
-#' with md5 hash values and file names for all photos.
+#' with md5 hash values and file names for all photos. If \code{CeNDR} is set to TRUE other subfolders will be made with those images.
 #' @importFrom rebus ALPHA one_or_more %R% DGT WRD optional
 #' @importFrom imager load.image resize save.image
 #' @export
 #'
 
 procPhotos <- function(dir, data, max_dim = 500, overwrite = FALSE, CeNDR = FALSE, pub_url = "https://storage.googleapis.com/elegansvariation.org/photos/isolation/fulcrum/") {
-  # edit pub_url to take into accoutn project name and subfolder
+  # edit pub_url to take into account project name and subfolder
   project_url <- glue::glue("{pub_url}",tail(strsplit(dir,"/")[[1]],1),"/sampling_thumbs/")
   # edit dir to be appropriate for path to photos
   dir <- glue::glue("{dir}","/data/raw/fulcrum/photos")
@@ -57,7 +57,6 @@ procPhotos <- function(dir, data, max_dim = 500, overwrite = FALSE, CeNDR = FALS
     fs::file_copy(to_change1$orig_file_name, to_change1$new_file_name, overwrite = overwrite)
     fs::file_copy(to_change2$orig_file_name2, to_change2$new_file_name2, overwrite = overwrite)
     fs::file_copy(to_change3$orig_file_name3, to_change3$new_file_name3, overwrite = overwrite)
-
 
     # loop through renamed images to make thumbnails
     for(i in unique(to_change1$new_file_name)) {
