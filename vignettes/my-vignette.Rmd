@@ -144,7 +144,7 @@ head(easyfulcrum::raw_geno1)
 `checkGenotypes` both processes the genotyping data (adds flags) and returns info on those flags if desired. Setting the `return_geno` option to `TRUE` and the `return_flags` option to `FALSE` will return the processed genotyping data and print information on the flags. Setting the `return_geno` option to `FALSE` and the `return_flags` option to `TRUE` will return a list of data frames that detail the rows where the flags appear. Both of these cannot be `TRUE` at the same time.
 
 ```{r}
-proc_geno1 <- checkGenotypes(geno_data = raw_geno1, fulc_data = anno_fulc1, 
+proc_geno1 <- checkGenotypes(geno_data = easyfulcrum::raw_geno1, fulc_data = anno_fulc1, 
                                   return_geno = TRUE, return_flags = FALSE)
 ```
 

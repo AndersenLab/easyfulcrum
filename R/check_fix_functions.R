@@ -263,7 +263,7 @@ checkGenotypes <- function(geno_data, fulc_data, return_geno = TRUE, return_flag
   if(return_geno == TRUE & return_flags == TRUE){
     message("Both return_geno and return_flags cannnot be set to true, nothing will be returned")
   }
-  if(class(geno_data) == "list"){
+  if("list" %in% class(geno_data)){
     message("geno_data is in list form when dataframe is expected")
   }
 
@@ -282,7 +282,7 @@ checkGenotypes <- function(geno_data, fulc_data, return_geno = TRUE, return_flag
 
   # add s_label flags to genotyping dataframe
   geno_data_flagged <- geno_data %>%
-    dplyr::mutate(flag_unusual_s_label_genotyping = ifelse(!(s_label %in% usual_s_labels), TRUE, FALSE),
+    dplyr::mutate(flag_unusual_s_label_genotyping = ifelse(!(s_label %in% c(usual_s_labels,NA)), TRUE, FALSE),
                   flag_missing_s_label_genotyping = ifelse(is.na(s_label), TRUE, FALSE),
                   flag_s_label_not_in_fulcrum = ifelse(!(s_label %in% fulc_data$s_label), TRUE, FALSE)) %>%
     dplyr::group_by(s_label) %>%
