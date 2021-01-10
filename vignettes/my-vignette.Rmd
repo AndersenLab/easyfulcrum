@@ -118,7 +118,7 @@ flag1.2 <- checkJoin(data = join_fulc1, return_flags = TRUE)
 
 The `island` and `location` dataframes are composed of simple latitude and longitude starts and ends to create a binding box, while `trails` is composed of a character list of geojson polygon points from geojson output of that can be created on a [bounding box online tool](https://boundingbox.klokantech.com/).
 
-```{r message = FALSE, warning = FALSE}
+```{r message = FALSE}
 anno_fulc1 <- annotateFulcrum(data = join_fulc1, dir = NULL)
 ```
 

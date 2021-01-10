@@ -59,12 +59,12 @@ annotateFulcrum <- function(data, dir = NULL) {
   trail_coordinates <- NULL
 
   for(i in 1:length(trails)){
-    longs <- tibble::as_tibble(stringr::str_match_all(trails,  "(?<=\\[).+?(?=,)")[[i]]) %>%
-      dplyr::rename(longitudes = V1) %>%
+    longs <- tibble::as_tibble(stringr::str_match_all(trails,  "(?<=\\[).+?(?=,)")[[i]], .name_repair = ~ vctrs::vec_as_names(..., repair = "unique", quiet = TRUE)) %>%
+      dplyr::rename(longitudes = `...1`) %>%
       dplyr::mutate(longitudes = as.numeric(longitudes))
 
-    lats <- tibble::as_tibble(stringr::str_match_all(trails,  "(?<=[0-9],).+?(?=\\])")[[i]]) %>%
-      dplyr::rename(latitudes = V1) %>%
+    lats <- tibble::as_tibble(stringr::str_match_all(trails,  "(?<=[0-9],).+?(?=\\])")[[i]], .name_repair = ~ vctrs::vec_as_names(..., repair = "unique", quiet = TRUE)) %>%
+      dplyr::rename(latitudes = `...1`) %>%
       dplyr::mutate(latitudes = as.numeric(latitudes))
 
     long_lats <- dplyr::bind_cols(longs, lats) %>%
@@ -147,7 +147,7 @@ annotateFulcrum <- function(data, dir = NULL) {
                   sample_photo1,
                   sample_photo2,
                   sample_photo3,
-                  best_exif_dop_photo = best_photo,
+                  best_exif_dop_photo,
                   best_sample_photo_caption,
                   gps_course,
                   gps_horizontal_accuracy,
