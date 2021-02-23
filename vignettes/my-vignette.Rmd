@@ -207,9 +207,12 @@ flag1.4 <- makeSpSheet(data = join_genofulc1,
 
 #### sampleReport:
 
-`sampleReport` is a markdown file that will generate a simple description of the data in the project based on `final_data1`. Please feel free to edit this file as you require.
+`sampleReport` is a markdown file that will generate a simple description of the data in the project based on `final_data1`. Please feel free to edit this file as you require, it can be found in _____. We suggest specifying a location for output, such as the `/reports` sub-directory.
 
 ```{r message = F}
-# rmarkdown::render("/Users/matteodibernardo/Desktop/Andersen/git/easyfulcrum/R/sampleReport.Rmd",
-#                   output_format	= "html_document")
+rmarkdown::render("/Users/matteodibernardo/Desktop/Andersen/sampleReport/sampleReport.Rmd",
+                  output_dir = "~/Desktop/2020JanuaryHawaii/reports",
+                  output_format	= "html_document")
 ```
+
+pub_url
