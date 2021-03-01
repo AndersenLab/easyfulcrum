@@ -186,7 +186,7 @@ for(i in 1:nrow(photos)){
 
 #### procPhotos:
 
-`procPhotos` processes the raw sample photos and adds information regarding them to the final data frame of data. Setting the `CeNDR` option to `TRUE` will place photos of samples meeting CeNDR criteria to an appropriate subfolder.
+`procPhotos` processes the raw sample photos and adds information regarding them to the final data frame of data, which is also saved in _data/processed/fulcrum_. Setting the `CeNDR` option to `TRUE` will place photos of samples meeting CeNDR criteria to an appropriate subfolder.
 
 ```{r message = FALSE}
 final_data1 <- procPhotos(dir = dir1, data = join_genofulc1, max_dim = 500, overwrite = T, CeNDR = TRUE)
@@ -210,9 +210,7 @@ flag1.4 <- makeSpSheet(data = join_genofulc1,
 `sampleReport` is a markdown file that will generate a simple description of the data in the project based on `final_data1`. Please feel free to edit this file as you require, it can be found in _____. We suggest specifying a location for output, such as the `/reports` sub-directory.
 
 ```{r message = F}
-rmarkdown::render("/Users/matteodibernardo/Desktop/Andersen/sampleReport/sampleReport.Rmd",
-                  output_dir = "~/Desktop/2020JanuaryHawaii/reports",
+rmarkdown::render("../R/sampleReport.Rmd",
+                  output_dir = paste(dir1,"reports",sep = "/"),
                   output_format	= "html_document")
 ```
-
-pub_url
