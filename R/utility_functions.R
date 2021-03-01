@@ -40,7 +40,6 @@ makeDirStructure <- function(startdir, projectdirname) {
   dir.create(file.path(startdir, projectdirname, "data", "processed", "fulcrum"), recursive = TRUE)
   dir.create(file.path(startdir, projectdirname, "data", "processed", "genotypes"), recursive = TRUE)
   dir.create(file.path(startdir, projectdirname, "data", "processed", "sanger"), recursive = TRUE)
-  dir.create(file.path(startdir, projectdirname, "plots"), recursive = TRUE)
   dir.create(file.path(startdir, projectdirname, "reports"), recursive = TRUE)
   dir.create(file.path(startdir, projectdirname, "scripts"), recursive = TRUE)
 }
