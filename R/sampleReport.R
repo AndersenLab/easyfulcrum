@@ -1,4 +1,4 @@
-## ---- echo=F, warning = F, message=F------------------------------------------
+## ---- echo=F, warning = F, message=F---------------------------------------
 # load packages
 library(tidyverse)
 library(ggmap)
@@ -20,7 +20,7 @@ library(htmltools)
 #setting working directory
 knitr::opts_knit$set(root.dir = '..')
 
-## ---- include=F, echo=F, warning = F, message=F-------------------------------
+## ---- include=F, echo=F, warning = F, message=F----------------------------
 # Target species map function
 # Map_collection function for reviewing collection locations
 map_target_species <- function(df, color_use) {
@@ -91,11 +91,11 @@ knitr::knit_hooks$set(
    }
 )
 
-## ---- echo=F, warning = F, message=F------------------------------------------
+## ---- echo=F, warning = F, message=F---------------------------------------
 setwd("~/Desktop/2020JanuaryHawaii/data/processed/fulcrum/")
 df <- readRDS("2021-02-28_2020JanuaryHawaiifulcrum.rds")
 
-## ---- echo=F, warning = F, message=F------------------------------------------
+## ---- echo=F, warning = F, message=F---------------------------------------
 sf <- lubridate::stamp("Tuesday, September 30, 1997")
 
 # pull information on project
@@ -126,7 +126,7 @@ DT::datatable(personnel_collection_dates, colnames = "Dates of collection:",
 DT::datatable(personnel_isolation_dates, colnames = "Dates of isolation:", 
               rownames = FALSE, filter = "none", options = list(dom = 't'))
 
-## ---- echo=F, warning = F, message=F------------------------------------------
+## ---- echo=F, warning = F, message=F---------------------------------------
 # temporary table to collect enumerations on certain quantities of interest
 collection_counts_1 <- df %>%
   dplyr::distinct(c_label, .keep_all = TRUE) %>%
@@ -179,7 +179,7 @@ DT::datatable(collection_worms_on_sample, colnames = c("worms on sample","number
 DT::datatable(collection_species_id, colnames = c("species id","number of collections"),
               rownames = FALSE, filter = "none", options = list(dom = 't')) 
 
-## ---- fig.height=5, fig.width=10, echo=F, warning = F, message=F--------------
+## ---- fig.height=5, fig.width=10, echo=F, warning = F, message=F-----------
 target_df <- df %>%
   dplyr::group_by(c_label, species_id) %>%
   dplyr::mutate(species_count = n()) %>%
@@ -205,7 +205,7 @@ target_map <-  map_target_species(target_df,"color")
 
 target_map
 
-## ---- echo=F, warning = F, message=F------------------------------------------
+## ---- echo=F, warning = F, message=F---------------------------------------
 # temporary table to collect enumerations on certain quantities of interest
 isolation_counts_1 <- df %>%
   dplyr::mutate(non.caeno = ifelse((pcr_product_ssu == 1 & pcr_product_its2 == 0) |
@@ -247,7 +247,7 @@ DT::datatable(isolation_distinct, colnames = c("","number of isolations"),
 DT::datatable(isolation_species_id, colnames = c("species id","number of isolations"),
               rownames = FALSE, filter = "none", options = list(dom = 't'))
 
-## ---- fig.height=5, fig.width=10, echo=F, warning = F, message=F--------------
+## ---- fig.height=5, fig.width=10, echo=F, warning = F, message=F-----------
 target_df <- df %>%
   dplyr::group_by(c_label, species_id) %>%
   dplyr::mutate(species_count = n()) %>%
@@ -271,7 +271,7 @@ target_map <-  map_target_species(target_df,"color")
 
 target_map
 
-## ---- fig.height=8, fig.width=8, echo=F, warning = F, message=F---------------
+## ---- fig.height=8, fig.width=8, echo=F, warning = F, message=F------------
 stat_df <- df%>%
   dplyr::filter(species_id %in% c("Caenorhabditis elegans", "Caenorhabditis tropicalis", 
                                   "Caenorhabditis briggsae")) %>%
@@ -346,7 +346,7 @@ plot_elev <- ggplot(data = stat_df %>% dplyr::filter(env_par == "collection_alti
 cowplot::plot_grid(plot_atemp, plot_stemp, plot_ahum, plot_elev,
                    ncol = 2, nrow = 2, align = "hv", axis = "l")
 
-## ---- echo=F, warning = F, message=F------------------------------------------
+## ---- echo=F, warning = F, message=F---------------------------------------
 target_df <- df %>% dplyr::filter(species_id %in% c("Caenorhabditis elegans", 
                                                     "Caenorhabditis tropicalis", 
                                                     "Caenorhabditis briggsae")) %>%
@@ -357,7 +357,7 @@ target_df <- df %>% dplyr::filter(species_id %in% c("Caenorhabditis elegans",
 
 DT::datatable(target_df, rownames = FALSE, filter = "none", options = list(dom = 'ftrp'))
 
-## ---- echo=F, warning = T, message=F------------------------------------------
+## ---- echo=F, warning = T, message=F---------------------------------------
 elegans_eval <- ifelse(collection_counts_1 %>% 
                       dplyr::filter(species_id == "Caenorhabditis elegans") %>%
                       dplyr::pull(c_label) %>% length()==0,
@@ -393,7 +393,7 @@ if(elegans_eval == FALSE) {
 #  
 #  target_map
 
-## ---- echo=F, warning = F, message=F, eval=elegans_eval-----------------------
+## ---- echo=F, warning = F, message=F, eval=elegans_eval--------------------
 #  elegans_df <- df %>% dplyr::filter(species_id == "Caenorhabditis elegans") %>%
 #    dplyr::select(c_label,s_label,proc_ambient_temperature,ambient_humidity,
 #                  proc_substrate_temperature,collection_altitude, substrate,
@@ -476,7 +476,7 @@ if(elegans_eval == FALSE) {
 #  cowplot::plot_grid(plot_atemp, plot_stemp, plot_ahum, plot_elev,
 #                     ncol = 2, nrow = 2, align = "hv", axis = "l")
 
-## ---- echo=F, warning = T, message=F------------------------------------------
+## ---- echo=F, warning = T, message=F---------------------------------------
 briggsae_eval <- ifelse(collection_counts_1 %>% 
                       dplyr::filter(species_id == "Caenorhabditis briggsae") %>%
                       dplyr::pull(c_label) %>% length()==0,
@@ -512,7 +512,7 @@ target_map <-  map_target_species(target_df,"color")
 
 target_map
 
-## ---- echo=F, warning = F, message=F, eval=briggsae_eval----------------------
+## ---- echo=F, warning = F, message=F, eval=briggsae_eval-------------------
 briggsae_df <- df %>% dplyr::filter(species_id == "Caenorhabditis briggsae") %>%
   dplyr::select(c_label,s_label,proc_ambient_temperature,ambient_humidity,
                 proc_substrate_temperature,collection_altitude, substrate,
@@ -595,7 +595,7 @@ plot_elev <- ggplot(data = stat_df %>% dplyr::filter(env_par == "collection_alti
 cowplot::plot_grid(plot_atemp, plot_stemp, plot_ahum, plot_elev,
                    ncol = 2, nrow = 2, align = "hv", axis = "l")
 
-## ---- echo=F, warning = T, message=F------------------------------------------
+## ---- echo=F, warning = T, message=F---------------------------------------
 tropicalis_eval <- ifelse(collection_counts_1 %>% 
                       dplyr::filter(species_id == "Caenorhabditis tropicalis") %>%
                       dplyr::pull(c_label) %>% length()==0,
@@ -631,7 +631,7 @@ if(tropicalis_eval == FALSE) {
 #  
 #  target_map
 
-## ---- echo=F, warning = F, message=F, eval=tropicalis_eval--------------------
+## ---- echo=F, warning = F, message=F, eval=tropicalis_eval-----------------
 #  tropicalis_df <- df %>% dplyr::filter(species_id == "Caenorhabditis tropicalis") %>%
 #    dplyr::select(c_label,s_label,proc_ambient_temperature,ambient_humidity,
 #                  proc_substrate_temperature,collection_altitude, substrate,
@@ -714,7 +714,7 @@ if(tropicalis_eval == FALSE) {
 #  cowplot::plot_grid(plot_atemp, plot_stemp, plot_ahum, plot_elev,
 #                     ncol = 2, nrow = 2, align = "hv", axis = "l")
 
-## ----echo=F, warning = F, message=F, eval=FALSE-------------------------------
+## ----echo=F, warning = F, message=F, eval=FALSE----------------------------
 #  df %>%
 #    #dplyr::distinct(c_label, .keep_all = TRUE) %>%
 #    dplyr::filter(!is.na(c_label)) %>%
