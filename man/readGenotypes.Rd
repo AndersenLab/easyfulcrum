@@ -4,12 +4,16 @@
 \alias{readGenotypes}
 \title{readGenotypes}
 \usage{
-readGenotypes(gsKey)
+readGenotypes(gsKey, col_types = "cDDdcdcddddddDcDDdcdcdddddddcdcccddccc")
 }
 \arguments{
 \item{gsKey}{a vector containing the google sheet keys for the genotype data to load.
 Your Google Sheet keys are found in your Google sheets URL. Select the string
 found between the slashes after spreadsheets/d in your Google Sheet URL.}
+
+\item{col_types}{a single string of readr-style short codes. To let the column types be guessed
+specify \code{col_types} to \code{"?"}. See details here:
+https://googlesheets4.tidyverse.org/reference/read_sheet.html}
 }
 \value{
 A dataframe generated from the Google sheets \code{gsKey} argument. If multiple Google sheets
@@ -18,5 +22,5 @@ specified by the \code{wild_isolate_genotyping_template} and the data must be fo
 \code{genotyping template}.
 }
 \description{
-\code{readGenotypes} reads genotyping data from project specific genotyping Google sheets
+\code{readGenotypes} reads genotyping data from project specific genotyping Google sheets.
 }

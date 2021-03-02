@@ -4,21 +4,32 @@
 \alias{procPhotos}
 \title{procPhotos}
 \usage{
-procPhotos(dir, data, max_dim = 500, overwrite = FALSE)
+procPhotos(
+  dir,
+  data,
+  max_dim = 500,
+  overwrite = FALSE,
+  CeNDR = FALSE,
+ 
+    pub_url = "https://storage.googleapis.com/elegansvariation.org/photos/isolation/fulcrum/"
+)
 }
 \arguments{
-\item{dir}{a directory with sample photos.}
+\item{dir}{The path to the base fulcrum directory, raw/fulcrum/photos should contain the photos for the project}
 
 \item{data}{a data frame output from the \code{joinGenoFulc} function.}
 
 \item{max_dim}{This value sets the maximum dimension of the resized images in pixels. The default value is 500.}
 
-\item{overwrite}{Logical, passed to fs::file_copy. If \code{TRUE} then existing files with similar names will be written over. Default is \code{FALSE}.}
+\item{overwrite}{Logical, passed to fs::file_copy. If TRUE then existing files with similar names will be written over. Default is FALSE.}
+
+\item{CeNDR}{Logical, determines whether to write CeNDR criteria qualifying photos to a subdirectory}
 }
 \value{
 A folder named processed_photos in the data/processed/fulcrum directory. The folder contains full size sample photos renamed with strain names.
 A thumbnails subfolder is also returned within the processed_photos folder. This folder contains resized images. A dataframe identical to input \code{data}
-with md5 hash values and file names for all photos.
+with md5 hash values and file names for all photos, also saved as an rds file in data/processed/fulcrum directory.
+If \code{CeNDR} is set to TRUE other subfolders will be made with those images.
 }
 \description{
 \code{procPhotos} copies raw sample photos from the Fulcrum export and renames them to strain_name for use with CeNDR. The function also resizes images.

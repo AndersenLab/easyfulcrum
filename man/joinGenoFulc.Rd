@@ -4,7 +4,7 @@
 \alias{joinGenoFulc}
 \title{joinGenoFulc}
 \usage{
-joinGenoFulc(geno, fulc, blast = NULL)
+joinGenoFulc(geno, fulc, blast = NULL, dir = NULL)
 }
 \arguments{
 \item{geno}{a genotyping data frame output from the \code{loadGenotypes} function.}
@@ -12,12 +12,14 @@ joinGenoFulc(geno, fulc, blast = NULL)
 \item{fulc}{a collection data frame output from the \code{procFulcrum} function.}
 
 \item{blast}{OPTIONAL, a blast results data frame output from the \code{procSanger} function.}
+
+\item{dir}{OPTIONAL, the path to the base fulcrum directory, if passed will save the genotypings data in data/processed/genotypes.}
 }
 \value{
 A single collection dataframe with variables descriped in the data dictionary.
 }
 \description{
 \code{joinGenoFulc} joins the collection data output from the \code{procFulcrum} function
-with the genotyping data output from the \code{readGenotypes} function.
+with the genotyping data output from the \code{checkGenotypes} function.
 Blast data output from the \code{procSanger} function can also be joined if desired.
 }
