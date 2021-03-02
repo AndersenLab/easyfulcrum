@@ -29,7 +29,6 @@ library(dplyr)
 library(knitr)
 library(DT)
 library(htmltools)
-library(easyfulcrum)
 
 #setting working directory
 knitr::opts_knit$set(root.dir = '..')
