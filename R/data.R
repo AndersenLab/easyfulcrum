@@ -84,3 +84,9 @@
 #' @format A data frame with 1044 rows and 38 variables:
 #' @name raw_geno1
 
+#' Final final_data1 data frame
+#'
+#' A final processed data frame with purposeful errors created
+#'
+#' @format A data frame with 66 rows and 95 variables:
+#' @name final_data1
