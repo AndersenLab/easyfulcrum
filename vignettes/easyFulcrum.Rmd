@@ -211,7 +211,7 @@ flag1.4 <- makeSpSheet(data = join_genofulc1,
 ```{r message = F}
 file.copy("../R/sampleReport.Rmd", paste(dir1,"scripts",sep = "/"))
 
-rmarkdown::render("../R/sampleReport.Rmd",
+rmarkdown::render(paste(dir1,"scripts","sampleReport.Rmd",sep = "/"),
                   output_dir = paste(dir1,"reports",sep = "/"),
                   output_format	= "html_document")
 ```

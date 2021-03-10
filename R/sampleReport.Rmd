@@ -112,7 +112,7 @@ knitr::knit_hooks$set(
 # final_data1 <- df
 # save(final_data1, file = "~/Desktop/final_data1.rda", version = 3)
 
-df <- final_data1
+df <- easyfulcrum::final_data1
 ```
 
 ## Personnel:
