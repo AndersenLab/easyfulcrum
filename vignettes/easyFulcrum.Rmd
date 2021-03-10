@@ -168,19 +168,19 @@ The final function processes and resizes images, adding details to a final dataf
 #This chunk of code will move the photos required for this trial run into the appropriate folder for raw photos, according to what `dir1` is specified. 
 #You can also find these photos for manual download at: https://github.com/AndersenLab/easyfulcrum/tree/master/vignettes/2020JanuaryHawaii_photos
 
-library(googledrive)
-final_directory <- paste(dir1, "data/raw/fulcrum/photos", sep = "/")
-temp_dir <- tempdir()
-photos <- googledrive::drive_ls(as_id("11T6qzszJ_yK3yRyy4eqBfplZuai20y-g"))
-photos$temp_location <- paste(temp_dir,photos$name, sep = "/")
-photos$final_location <- paste(final_directory,photos$name, sep = "/")
-
-for(i in 1:nrow(photos)){
-  googledrive::drive_download(as_id(photos$id[i]), 
-                            path =photos$temp_location[i], 
-                            overwrite = TRUE)
-  fs::file_copy(photos$temp_location[i], photos$final_location[i], overwrite = TRUE)
-}
+# library(googledrive)
+# final_directory <- paste(dir1, "data/raw/fulcrum/photos", sep = "/")
+# temp_dir <- tempdir()
+# photos <- googledrive::drive_ls(as_id("11T6qzszJ_yK3yRyy4eqBfplZuai20y-g"))
+# photos$temp_location <- paste(temp_dir,photos$name, sep = "/")
+# photos$final_location <- paste(final_directory,photos$name, sep = "/")
+# 
+# for(i in 1:nrow(photos)){
+#   googledrive::drive_download(as_id(photos$id[i]), 
+#                             path =photos$temp_location[i], 
+#                             overwrite = TRUE)
+#   fs::file_copy(photos$temp_location[i], photos$final_location[i], overwrite = TRUE)
+# }
 ```
 
 #### procPhotos:
