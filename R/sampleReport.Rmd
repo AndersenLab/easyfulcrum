@@ -107,12 +107,17 @@ knitr::knit_hooks$set(
 ```
 
 ```{r, echo=F, warning = F, message=F}
+<<<<<<< HEAD
 # setwd("~/Desktop/2020JanuaryHawaii/data/processed/fulcrum/")
 # df <- readRDS("2021-02-28_2020JanuaryHawaiifulcrum.rds")
 # final_data1 <- df
 # save(final_data1, file = "~/Desktop/final_data1.rda", version = 3)
 
 df <- easyfulcrum::final_data1
+=======
+setwd("~/Desktop/2020JanuaryHawaii/data/processed/fulcrum/")
+df <- readRDS("2021-02-28_2020JanuaryHawaiifulcrum.rds")
+>>>>>>> parent of c77fddb (Add final data 1)
 ```
 
 ## Personnel:
