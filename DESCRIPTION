@@ -25,9 +25,9 @@ Imports:
     lutz,
     googlesheets4,
     rebus,
+    imager,    
     stringr
 Suggests:
-    imager,
     knitr,
     rmarkdown
 Depends: 
