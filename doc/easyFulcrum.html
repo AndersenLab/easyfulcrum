@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="Author: Matteo Di Bernardo" />
+
+<meta name="date" content="2021-03-17" />
+
+<title>easyFulcrum</title>
+
+<script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
+// v0.0.1
+// Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
+
+document.addEventListener('DOMContentLoaded', function() {
+  const codeList = document.getElementsByClassName("sourceCode");
+  for (var i = 0; i < codeList.length; i++) {
+    var linkList = codeList[i].getElementsByTagName('a');
+    for (var j = 0; j < linkList.length; j++) {
+      if (linkList[j].innerHTML === "") {
+        linkList[j].setAttribute('aria-hidden', 'true');
+      }
+    }
+  }
+});
+</script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">easyFulcrum</h1>
+<h4 class="author">Author: Matteo Di Bernardo</h4>
+<h4 class="date">17 Mar 2021</h4>
+
+
+
+<p>The <strong>easyfulcrum</strong> package is a tool to work with data from Fulcrum exports, genotyping Google sheets, blast results, and images from collection.</p>
+<p>Install and load the package:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="co"># install.packages(&quot;devtools&quot;)</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="co"># devtools::install_github(&quot;AndersenLab/easyfulcrum&quot;)</span></span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="kw">library</span>(easyfulcrum)</span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="kw">setwd</span>(<span class="st">&quot;~/Desktop&quot;</span>)</span></code></pre></div>
+<div id="directory-structure" class="section level3">
+<h3>Directory structure:</h3>
+<p>The <code>makeDirStructure</code> function assists in making a standardized directory of folders for the <code>easyfulcrum</code> run, taking a base directory (<code>startdir</code>) and the project name (<code>projectdirname</code>) as inputs.<br></p>
+<p>Every collection project should be contained in its own repository. The repository name should follow the <code>YearMonthPlace</code> format used for Fulcrum collection projects, e.g. <code>2020JanuaryHawaii</code>.<br></p>
+<p>See the <a href="https://docs.google.com/document/d/1aPgPDYobpxzr0BQYgvUsjPWnAGXZmCSQKQ4sDGBXuYM/edit">Nematode Collection Protocol</a> protocol for more details.<br></p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">makeDirStructure</span>(<span class="dt">startdir =</span> <span class="st">&quot;~/Desktop/&quot;</span>,</span>
+<span id="cb2-2"><a href="#cb2-2"></a>                 <span class="dt">projectdirname =</span> <span class="st">&quot;2020JanuaryHawaii&quot;</span>)</span></code></pre></div>
+<p>The <code>data</code> directory contains the <code>raw</code> and <code>processed</code> subdirectories.<br> - <code>raw/fulcrum</code> holds the <code>.csv</code> files exported from Fulcrum and <code>raw/fulcrum/photos</code> contains <code>.jpg</code> files exported from Fulcrum.<br> - <code>raw/sanger</code> can hold <code>.ab1</code>, <code>.phd.1</code>, <code>.scf</code>, and <code>.seq</code> files exported from the sequencing facility. We have not implemented functionalities for merging sanger files but will work towards this for the next release.<br> - <code>raw/annotate</code> can hold spatial location files <code>island.csv</code>, <code>location.csv</code>, and <code>trail.csv</code> that the user generates for mapping the site of collection.<br> - <code>processed/fulcrum</code> and <code>processed/sanger</code> directories hold <code>easyfulcrum</code> function outputs.<br> The <code>reports</code> directory holds <code>easyfulcrum</code> function outputs. These outputs will be generated by the user processing script(s) saved in the <code>scripts</code> directory.<br></p>
+<p>In a normal <code>easyfulcrum</code> run, the user would add appropriate <code>.csv</code> and <code>.jpg</code> files into the appropriate locations after running this function.</p>
+</div>
+<div id="reading-processing-and-joining-fulcrum-results" class="section level3">
+<h3>Reading, processing, and joining Fulcrum results:</h3>
+<p>The first group of functions operates to clean the results from the Fulcrum <code>.csv</code>s.<br></p>
+<div id="readfulcrum" class="section level4">
+<h4>readFulcrum:</h4>
+<p><code>readFulcrum</code> takes a <code>dir</code> argument that specifies the repository in use to read in Fulcrum <code>.csv</code>s (in the example case, the <code>raw_data1</code> object is automatically loaded).</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>dir1 &lt;-<span class="st"> &quot;~/Desktop/2020JanuaryHawaii&quot;</span></span>
+<span id="cb3-2"><a href="#cb3-2"></a><span class="co"># raw_fulc1 &lt;- readFulcrum(dir = dir1)</span></span>
+<span id="cb3-3"><a href="#cb3-3"></a><span class="kw">names</span>(easyfulcrum<span class="op">::</span>raw_fulc1)</span>
+<span id="cb3-4"><a href="#cb3-4"></a><span class="co">#&gt; [1] &quot;nematode_field_sampling_sample_photo&quot;</span></span>
+<span id="cb3-5"><a href="#cb3-5"></a><span class="co">#&gt; [2] &quot;nematode_field_sampling&quot;             </span></span>
+<span id="cb3-6"><a href="#cb3-6"></a><span class="co">#&gt; [3] &quot;nematode_isolation_photos&quot;           </span></span>
+<span id="cb3-7"><a href="#cb3-7"></a><span class="co">#&gt; [4] &quot;nematode_isolation_s_labeled_plates&quot; </span></span>
+<span id="cb3-8"><a href="#cb3-8"></a><span class="co">#&gt; [5] &quot;nematode_isolation&quot;</span></span></code></pre></div>
+</div>
+<div id="procfulcrum" class="section level4">
+<h4>procFulcrum:</h4>
+<p><code>procFulcrum</code> processes individual data frames and adds flags where anomalies exist.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>proc_fulc1 &lt;-<span class="st"> </span><span class="kw">procFulcrum</span>(<span class="dt">data =</span> raw_fulc1)</span>
+<span id="cb4-2"><a href="#cb4-2"></a><span class="co">#&gt; Processing nematode_field_sampling</span></span>
+<span id="cb4-3"><a href="#cb4-3"></a><span class="co">#&gt; Processing nematode_field_sampling_sample_photo</span></span>
+<span id="cb4-4"><a href="#cb4-4"></a><span class="co">#&gt; Processing nematode_isolation</span></span>
+<span id="cb4-5"><a href="#cb4-5"></a><span class="co">#&gt; Processing nematode_isolation_s_labeled_plates</span></span>
+<span id="cb4-6"><a href="#cb4-6"></a><span class="co">#&gt; Processing nematode_isolation_photos</span></span></code></pre></div>
+</div>
+<div id="checktemperatures" class="section level4">
+<h4>checkTemperatures:</h4>
+<p><code>checkTemperatures</code> identifies flags in three temperature variables. Setting the <code>return_flags</code> option to <code>TRUE</code> will return a list of three data frames that pulls only the rows where each of the three flag types appear. The function automatically prints the rows where the flags exist.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>flag1<span class="fl">.1</span> &lt;-<span class="st"> </span><span class="kw">checkTemperatures</span>(<span class="dt">data =</span> proc_fulc1, <span class="dt">return_flags =</span> <span class="ot">TRUE</span>)</span>
+<span id="cb5-2"><a href="#cb5-2"></a><span class="co">#&gt; &gt;&gt;&gt; Checking substrate temperature</span></span>
+<span id="cb5-3"><a href="#cb5-3"></a><span class="co">#&gt; [1] &quot;There are 1 rows with flagged substrate temperature:&quot;</span></span>
+<span id="cb5-4"><a href="#cb5-4"></a><span class="co">#&gt;                             fulcrum_id raw_substrate_temperature</span></span>
+<span id="cb5-5"><a href="#cb5-5"></a><span class="co">#&gt; 1 a7db618d-44cc-4b4a-bc67-871306029274                      65.3</span></span>
+<span id="cb5-6"><a href="#cb5-6"></a><span class="co">#&gt;   proc_substrate_temperature</span></span>
+<span id="cb5-7"><a href="#cb5-7"></a><span class="co">#&gt; 1                       18.5</span></span>
+<span id="cb5-8"><a href="#cb5-8"></a><span class="co">#&gt; &gt;&gt;&gt; Checking ambient temperature</span></span>
+<span id="cb5-9"><a href="#cb5-9"></a><span class="co">#&gt; [1] &quot;There are 1 rows with flagged ambient temperature:&quot;</span></span>
+<span id="cb5-10"><a href="#cb5-10"></a><span class="co">#&gt;                             fulcrum_id raw_ambient_temperature</span></span>
+<span id="cb5-11"><a href="#cb5-11"></a><span class="co">#&gt; 1 b1f20ae4-c5c2-426f-894a-e1f46c2fa693                    71.2</span></span>
+<span id="cb5-12"><a href="#cb5-12"></a><span class="co">#&gt;   proc_ambient_temperature</span></span>
+<span id="cb5-13"><a href="#cb5-13"></a><span class="co">#&gt; 1                     21.8</span></span>
+<span id="cb5-14"><a href="#cb5-14"></a><span class="co">#&gt; &gt;&gt;&gt; Checking ambient run temperature</span></span>
+<span id="cb5-15"><a href="#cb5-15"></a><span class="co">#&gt; [1] &quot;There are 5 rows with flagged ambient run temperature:&quot;</span></span>
+<span id="cb5-16"><a href="#cb5-16"></a><span class="co">#&gt;                              fulcrum_id c_label raw_ambient_temperature</span></span>
+<span id="cb5-17"><a href="#cb5-17"></a><span class="co">#&gt; 1  854b40c4-ac6a-47d1-a737-cf611aa94268  C-5115                    16.9</span></span>
+<span id="cb5-18"><a href="#cb5-18"></a><span class="co">#&gt; 2  de2ae06e-cfff-44bc-869e-8dd9205a65c6  C-5139                    23.3</span></span>
+<span id="cb5-19"><a href="#cb5-19"></a><span class="co">#&gt; 3  b1f20ae4-c5c2-426f-894a-e1f46c2fa693  C-5121                    71.2</span></span>
+<span id="cb5-20"><a href="#cb5-20"></a><span class="co">#&gt; 4  0a049170-e63c-4545-8b02-04bc08a5ea54  C-5117                    16.7</span></span>
+<span id="cb5-21"><a href="#cb5-21"></a><span class="co">#&gt; 5  34848a83-5951-4136-b632-d39aa85c76d3  C-5120                    17.4</span></span>
+<span id="cb5-22"><a href="#cb5-22"></a><span class="co">#&gt; 6  dda77efe-d73c-48e9-aefb-b508e613256b  C-5122                    17.4</span></span>
+<span id="cb5-23"><a href="#cb5-23"></a><span class="co">#&gt; 7  93de14a0-40ab-4793-8614-ab1512ab158c  C-5118                    17.4</span></span>
+<span id="cb5-24"><a href="#cb5-24"></a><span class="co">#&gt; 8  216cb71a-6470-46eb-950d-366ac3180498  C-5123                    17.4</span></span>
+<span id="cb5-25"><a href="#cb5-25"></a><span class="co">#&gt; 9  920a6a56-7a29-47f4-afce-a5f83787d639  C-5131                    17.4</span></span>
+<span id="cb5-26"><a href="#cb5-26"></a><span class="co">#&gt; 10 6b25c113-4bb6-4bc5-9473-eca1f8075d10  C-5132                    17.4</span></span>
+<span id="cb5-27"><a href="#cb5-27"></a><span class="co">#&gt; 11 e38a295e-7595-4227-887b-74e1514c71bc  C-5133                    17.4</span></span>
+<span id="cb5-28"><a href="#cb5-28"></a><span class="co">#&gt; 12 a4afcda9-2d13-4f7f-991a-2299cb3c5a3c  C-5135                    15.8</span></span>
+<span id="cb5-29"><a href="#cb5-29"></a><span class="co">#&gt; 13 c0e68d42-5180-4fda-88e8-7721bbc8c96d  C-5134                    15.3</span></span>
+<span id="cb5-30"><a href="#cb5-30"></a><span class="co">#&gt; 14 4b7c21ea-2987-49d8-88c3-951417de4965  C-5130                    15.3</span></span>
+<span id="cb5-31"><a href="#cb5-31"></a><span class="co">#&gt; 15 2922c799-0dd7-499c-b674-ea99c72e5ea7  C-5134                    15.3</span></span>
+<span id="cb5-32"><a href="#cb5-32"></a><span class="co">#&gt;    proc_ambient_temperature ambient_humidity flag_ambient_temperature_run</span></span>
+<span id="cb5-33"><a href="#cb5-33"></a><span class="co">#&gt; 1                      16.9             85.8                        FALSE</span></span>
+<span id="cb5-34"><a href="#cb5-34"></a><span class="co">#&gt; 2                      23.3             65.3                        FALSE</span></span>
+<span id="cb5-35"><a href="#cb5-35"></a><span class="co">#&gt; 3                      21.8             77.9                        FALSE</span></span>
+<span id="cb5-36"><a href="#cb5-36"></a><span class="co">#&gt; 4                      16.7             85.9                        FALSE</span></span>
+<span id="cb5-37"><a href="#cb5-37"></a><span class="co">#&gt; 5                      17.4             80.0                        FALSE</span></span>
+<span id="cb5-38"><a href="#cb5-38"></a><span class="co">#&gt; 6                      17.4             80.0                         TRUE</span></span>
+<span id="cb5-39"><a href="#cb5-39"></a><span class="co">#&gt; 7                      17.4             80.0                         TRUE</span></span>
+<span id="cb5-40"><a href="#cb5-40"></a><span class="co">#&gt; 8                      17.4             80.0                         TRUE</span></span>
+<span id="cb5-41"><a href="#cb5-41"></a><span class="co">#&gt; 9                      17.4             80.0                         TRUE</span></span>
+<span id="cb5-42"><a href="#cb5-42"></a><span class="co">#&gt; 10                     17.4             80.0                         TRUE</span></span>
+<span id="cb5-43"><a href="#cb5-43"></a><span class="co">#&gt; 11                     17.4             87.0                        FALSE</span></span>
+<span id="cb5-44"><a href="#cb5-44"></a><span class="co">#&gt; 12                     15.8             90.2                        FALSE</span></span>
+<span id="cb5-45"><a href="#cb5-45"></a><span class="co">#&gt; 13                     15.3             91.2                        FALSE</span></span>
+<span id="cb5-46"><a href="#cb5-46"></a><span class="co">#&gt; 14                     15.3             90.2                        FALSE</span></span>
+<span id="cb5-47"><a href="#cb5-47"></a><span class="co">#&gt; 15                     15.3             87.8                        FALSE</span></span>
+<span id="cb5-48"><a href="#cb5-48"></a><span class="co">#&gt;    collection_local_time collection_datetime_UTC</span></span>
+<span id="cb5-49"><a href="#cb5-49"></a><span class="co">#&gt; 1             42660 secs     2020-01-19 21:51:26</span></span>
+<span id="cb5-50"><a href="#cb5-50"></a><span class="co">#&gt; 2             43080 secs     2020-01-19 21:58:02</span></span>
+<span id="cb5-51"><a href="#cb5-51"></a><span class="co">#&gt; 3             43140 secs     2020-01-19 21:59:02</span></span>
+<span id="cb5-52"><a href="#cb5-52"></a><span class="co">#&gt; 4             43320 secs     2020-01-19 22:02:01</span></span>
+<span id="cb5-53"><a href="#cb5-53"></a><span class="co">#&gt; 5             44100 secs     2020-01-19 22:15:15</span></span>
+<span id="cb5-54"><a href="#cb5-54"></a><span class="co">#&gt; 6             45780 secs     2020-01-19 22:43:04</span></span>
+<span id="cb5-55"><a href="#cb5-55"></a><span class="co">#&gt; 7             45960 secs     2020-01-19 22:46:11</span></span>
+<span id="cb5-56"><a href="#cb5-56"></a><span class="co">#&gt; 8             46440 secs     2020-01-19 22:54:01</span></span>
+<span id="cb5-57"><a href="#cb5-57"></a><span class="co">#&gt; 9             38520 secs     2020-01-22 20:42:55</span></span>
+<span id="cb5-58"><a href="#cb5-58"></a><span class="co">#&gt; 10            39000 secs     2020-01-22 20:50:48</span></span>
+<span id="cb5-59"><a href="#cb5-59"></a><span class="co">#&gt; 11            40320 secs     2020-01-22 21:12:29</span></span>
+<span id="cb5-60"><a href="#cb5-60"></a><span class="co">#&gt; 12            45420 secs     2020-01-22 22:37:28</span></span>
+<span id="cb5-61"><a href="#cb5-61"></a><span class="co">#&gt; 13            45540 secs     2020-01-22 22:39:10</span></span>
+<span id="cb5-62"><a href="#cb5-62"></a><span class="co">#&gt; 14            47400 secs     2020-01-22 23:10:25</span></span>
+<span id="cb5-63"><a href="#cb5-63"></a><span class="co">#&gt; 15            51780 secs     2020-01-23 00:23:02</span></span></code></pre></div>
+<p><code>procFulcrum</code> function assumes that when <code>raw_substrate_temperature</code> or <code>raw_ambient_temperature</code> temperatures are above 40 degrees, that the temperatures were mistakenly inputted as Fahrenheit rather than Celsius, and converts these values to Celsius. It will also notice when both <code>raw_ambient_temperature</code> and <code>raw_ambient_humidity</code> get stuck on the same value for 5 or more measurements in a row. These are the three flags returned above.<br></p>
+</div>
+<div id="fixtemperatures" class="section level4">
+<h4>fixTemperatures:</h4>
+<p><code>fixTemperatures</code> takes a) <code>fulcrum_id</code>s that need to be reverted <em>back to their original values</em> (if readings above 40 degrees were truly in Celsius) for both substrate temperatures (<code>substrate_temperature_ids</code>) and ambient temperatures (<code>ambient_temperature_ids</code>) as well as b) <code>fulcrum_id</code>s for which humidity and temperature readings need to be set to NA due to improper reading (<code>ambient_temperature_run_ids</code>).</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a>proc_fulc1_clean &lt;-<span class="st"> </span><span class="kw">fixTemperatures</span>(<span class="dt">data =</span> proc_fulc1,</span>
+<span id="cb6-2"><a href="#cb6-2"></a>                                  <span class="dt">substrate_temperature_ids =</span> <span class="st">&quot;a7db618d-44cc-4b4a-bc67-871306029274&quot;</span>,</span>
+<span id="cb6-3"><a href="#cb6-3"></a>                                  <span class="dt">ambient_temperature_ids =</span> <span class="st">&quot;b1f20ae4-c5c2-426f-894a-e1f46c2fa693&quot;</span>,</span>
+<span id="cb6-4"><a href="#cb6-4"></a>                                  <span class="dt">ambient_temperature_run_ids=</span><span class="kw">c</span>(<span class="st">&quot;dda77efe-d73c-48e9-aefb-b508e613256b&quot;</span>,</span>
+<span id="cb6-5"><a href="#cb6-5"></a>                                                                 <span class="st">&quot;93de14a0-40ab-4793-8614-ab1512ab158c&quot;</span>))</span></code></pre></div>
+<p>The flag variables will be maintained, so rerunning <code>checkTemperatures</code> on the cleaned processed fulcrum data is a good idea to make sure that corrections have been implemented as desired.</p>
+</div>
+<div id="joinfulcrum" class="section level4">
+<h4>joinFulcrum:</h4>
+<p><code>joinFulcrum</code> joins the Fulcrum dataframes.<br></p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a>join_fulc1 &lt;-<span class="st"> </span><span class="kw">joinFulcrum</span>(<span class="dt">data =</span> proc_fulc1)</span>
+<span id="cb7-2"><a href="#cb7-2"></a><span class="co">#&gt; Attempting to join:</span></span>
+<span id="cb7-3"><a href="#cb7-3"></a><span class="co">#&gt; proc_fulc1$nematode_field_sampling_proc</span></span>
+<span id="cb7-4"><a href="#cb7-4"></a><span class="co">#&gt; proc_fulc1$nematode_field_sampling_sample_photo_proc</span></span>
+<span id="cb7-5"><a href="#cb7-5"></a><span class="co">#&gt; proc_fulc1$nematode_isolation_proc</span></span>
+<span id="cb7-6"><a href="#cb7-6"></a><span class="co">#&gt; proc_fulc1$nematode_isolation_s_labeled_plates_proc</span></span>
+<span id="cb7-7"><a href="#cb7-7"></a><span class="co">#&gt; proc_fulc1$nematode_isolation_photos_proc</span></span>
+<span id="cb7-8"><a href="#cb7-8"></a><span class="co">#&gt; Complete fulcrum data detected, joining all data.</span></span></code></pre></div>
+</div>
+<div id="checkjoin" class="section level4">
+<h4>checkJoin:</h4>
+<p><code>checkJoin</code> conducts 10 different checks for flags in the joined Fulcrum data frame, assessing for duplicates of variables, missing elements, extreme values, and more. The <code>return_flags</code> option is the same as in <code>checkTemperatures</code>, and the function automatically prints the rows where the flags exist. If desired, based on these flags the user can manually edit values, or correct mistakes in the underlying data and quickly re-run the pipeline again.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>flag1<span class="fl">.2</span> &lt;-<span class="st"> </span><span class="kw">checkJoin</span>(<span class="dt">data =</span> join_fulc1, <span class="dt">return_flags =</span> <span class="ot">TRUE</span>)</span>
+<span id="cb8-2"><a href="#cb8-2"></a><span class="co">#&gt; &gt;&gt;&gt; Checking data classes</span></span>
+<span id="cb8-3"><a href="#cb8-3"></a><span class="co">#&gt; [1] &quot;There are 1 improperly classified variables&quot;</span></span>
+<span id="cb8-4"><a href="#cb8-4"></a><span class="co">#&gt; [1] &quot;isolation_date_UTC&quot;</span></span>
+<span id="cb8-5"><a href="#cb8-5"></a><span class="co">#&gt; [1] &quot;Improperly classified variables may require manipulation after read-in&quot;</span></span>
+<span id="cb8-6"><a href="#cb8-6"></a><span class="co">#&gt; &gt;&gt;&gt; Checking duplicated c labels</span></span>
+<span id="cb8-7"><a href="#cb8-7"></a><span class="co">#&gt; [1] &quot;There are 2 rows with duplicated c labels, these c labels are:&quot;</span></span>
+<span id="cb8-8"><a href="#cb8-8"></a><span class="co">#&gt; [1] &quot;C-5134&quot; &quot;C-5134&quot;</span></span>
+<span id="cb8-9"><a href="#cb8-9"></a><span class="co">#&gt; [1] &quot;Duplicated c labels are found in nematode_field_sampling.csv&quot;</span></span>
+<span id="cb8-10"><a href="#cb8-10"></a><span class="co">#&gt; &gt;&gt;&gt; Checking unusual sample photo number</span></span>
+<span id="cb8-11"><a href="#cb8-11"></a><span class="co">#&gt; [1] &quot;There are 6 rows with unusual sample photo numbers, their c labels are:&quot;</span></span>
+<span id="cb8-12"><a href="#cb8-12"></a><span class="co">#&gt; [1] &quot;C-5121&quot; &quot;C-5121&quot; &quot;C-5121&quot; &quot;C-5121&quot; &quot;C-5121&quot; &quot;C-5121&quot;</span></span>
+<span id="cb8-13"><a href="#cb8-13"></a><span class="co">#&gt; [1] &quot;Unusual sample photo number are found in nematode_field_sampling.csv&quot;</span></span>
+<span id="cb8-14"><a href="#cb8-14"></a><span class="co">#&gt; &gt;&gt;&gt; Checking duplicated isolation for c label</span></span>
+<span id="cb8-15"><a href="#cb8-15"></a><span class="co">#&gt; [1] &quot;There are 4 rows with duplicated isolation for c label, their c labels are:&quot;</span></span>
+<span id="cb8-16"><a href="#cb8-16"></a><span class="co">#&gt; [1] &quot;C-5130&quot; &quot;C-5130&quot; &quot;C-5130&quot; &quot;C-5130&quot;</span></span>
+<span id="cb8-17"><a href="#cb8-17"></a><span class="co">#&gt; [1] &quot;Duplicated isolation for c label are found in nematode_isolation.csv&quot;</span></span>
+<span id="cb8-18"><a href="#cb8-18"></a><span class="co">#&gt; &gt;&gt;&gt; Checking missing isolation records</span></span>
+<span id="cb8-19"><a href="#cb8-19"></a><span class="co">#&gt; [1] &quot;There are 4 rows with missing isolation records, their c labels are:&quot;</span></span>
+<span id="cb8-20"><a href="#cb8-20"></a><span class="co">#&gt; [1] &quot;C-5130&quot; &quot;C-5130&quot; &quot;C-5130&quot; &quot;C-5133&quot;</span></span>
+<span id="cb8-21"><a href="#cb8-21"></a><span class="co">#&gt; [1] &quot;Missing isolation records are found in nematode_isolation.csv&quot;</span></span>
+<span id="cb8-22"><a href="#cb8-22"></a><span class="co">#&gt; &gt;&gt;&gt; Checking extreme substrate temperatures</span></span>
+<span id="cb8-23"><a href="#cb8-23"></a><span class="co">#&gt; [1] &quot;There are 6 rows with extreme substrate temperatures, their c labels are:&quot;</span></span>
+<span id="cb8-24"><a href="#cb8-24"></a><span class="co">#&gt; [1] &quot;C-5121&quot; &quot;C-5121&quot; &quot;C-5121&quot; &quot;C-5121&quot; &quot;C-5121&quot; &quot;C-5121&quot;</span></span>
+<span id="cb8-25"><a href="#cb8-25"></a><span class="co">#&gt; [1] &quot;Extreme substrate temperatures are found in nematode_field_sampling.csv&quot;</span></span>
+<span id="cb8-26"><a href="#cb8-26"></a><span class="co">#&gt; &gt;&gt;&gt; Checking extreme ambient temperatures</span></span>
+<span id="cb8-27"><a href="#cb8-27"></a><span class="co">#&gt; [1] &quot;There are 3 rows with extreme ambient temperatures, their c labels are:&quot;</span></span>
+<span id="cb8-28"><a href="#cb8-28"></a><span class="co">#&gt; [1] &quot;C-5126&quot; &quot;C-5126&quot; &quot;C-5126&quot;</span></span>
+<span id="cb8-29"><a href="#cb8-29"></a><span class="co">#&gt; [1] &quot;Extreme ambient temperatures are found in nematode_field_sampling.csv&quot;</span></span>
+<span id="cb8-30"><a href="#cb8-30"></a><span class="co">#&gt; &gt;&gt;&gt; Checking extreme collection altitude</span></span>
+<span id="cb8-31"><a href="#cb8-31"></a><span class="co">#&gt; [1] &quot;There are 1 rows with extreme collection altitudes, their c labels are:&quot;</span></span>
+<span id="cb8-32"><a href="#cb8-32"></a><span class="co">#&gt; [1] &quot;C-5134&quot;</span></span>
+<span id="cb8-33"><a href="#cb8-33"></a><span class="co">#&gt; [1] &quot;Extreme collection altitudes are found in nematode_field_sampling.csv&quot;</span></span>
+<span id="cb8-34"><a href="#cb8-34"></a><span class="co">#&gt; &gt;&gt;&gt; Checking missing s labels</span></span>
+<span id="cb8-35"><a href="#cb8-35"></a><span class="co">#&gt; [1] &quot;There are 1 rows with missing s labels, their c labels are:&quot;</span></span>
+<span id="cb8-36"><a href="#cb8-36"></a><span class="co">#&gt; [1] &quot;C-5115&quot;</span></span>
+<span id="cb8-37"><a href="#cb8-37"></a><span class="co">#&gt; [1] &quot;Missing s labels are found in nematode_isolation_s_labeled_plates.csv&quot;</span></span>
+<span id="cb8-38"><a href="#cb8-38"></a><span class="co">#&gt; &gt;&gt;&gt; Checking duplicated s labels</span></span>
+<span id="cb8-39"><a href="#cb8-39"></a><span class="co">#&gt; [1] &quot;There are 2 rows with duplicated s labels, their s labels are:&quot;</span></span>
+<span id="cb8-40"><a href="#cb8-40"></a><span class="co">#&gt; [1] &quot;S-12776&quot; &quot;S-12776&quot;</span></span>
+<span id="cb8-41"><a href="#cb8-41"></a><span class="co">#&gt; [1] &quot;Duplicated s labels are found in nematode_isolation_s_labeled_plates.csv&quot;</span></span></code></pre></div>
+</div>
+<div id="annotatefulcrum" class="section level4">
+<h4>annotateFulcrum:</h4>
+<p><code>annnotateFulcrum</code> adds spatial information to the joined Fulcrum data frame, noting if sample collections were collected on specific islands, trails, and/or locations. Examples islands, trails, and/or locations are automatically loaded with the package, but a user can specify manually made <code>.csv</code> files and place them in <em>data/raw/annotate</em>, specifying the base directory as <code>dir</code> in <code>annotateFulcrum</code> will override the example files.<br></p>
+<p>The <code>hawaii_islands</code> and <code>hawaii_locations</code> dataframes are composed of simple latitude and longitude starts and ends to create a binding box, while <code>hawaii_trails</code> is composed of a character list of geojson polygon points from geojson output of that can be created on a <a href="https://boundingbox.klokantech.com/">bounding box online tool</a>.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>anno_fulc1 &lt;-<span class="st"> </span><span class="kw">annotateFulcrum</span>(<span class="dt">data =</span> join_fulc1, <span class="dt">dir =</span> <span class="ot">NULL</span>)</span></code></pre></div>
+</div>
+</div>
+<div id="reading-processing-and-joining-genotyping-google-sheet" class="section level3">
+<h3>Reading, processing, and joining genotyping google sheet:</h3>
+<p>This second group of functions operates to clean the results from the genotyping google sheet.<br></p>
+<p>Details on how to create genotyping google sheets can be found in the <a href="https://docs.google.com/document/d/1aPgPDYobpxzr0BQYgvUsjPWnAGXZmCSQKQ4sDGBXuYM/edit">Nematode Collection Protocol</a>, look for “wild_isolate_genotyping_template”.<br></p>
+<div id="readgenotypes" class="section level4">
+<h4>readGenotypes:</h4>
+<p><code>readGenotypes</code> reads in genotyping data from an appropriate Google Sheet with requisite <code>gsKey</code> (in this case, the <code>raw_geno1</code> is loaded with the package). The <code>col_types</code> variable will specify of what column types the data should be.<br></p>
+<p>For more details on reading in genotyping sheets, look into the <a href="https://googlesheets4.tidyverse.org/articles/articles/read-sheets.html">googlesheets4</a> package (which underlies this function), as well as further information on how to <a href="https://googlesheets4.tidyverse.org/reference/range_read.html#column-specification">specify</a> the <code>col_types</code> if needed.<br></p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a><span class="co"># raw_geno1 &lt;- readGenotypes(gsKey = c(&quot;1_6u4sk_Zj-Hm5d_058Lg8WYWLe7BZHGTWxXcH6EsDUI&quot;))</span></span>
+<span id="cb10-2"><a href="#cb10-2"></a><span class="kw">head</span>(easyfulcrum<span class="op">::</span>raw_geno1)</span>
+<span id="cb10-3"><a href="#cb10-3"></a><span class="co">#&gt; # A tibble: 6 x 38</span></span>
+<span id="cb10-4"><a href="#cb10-4"></a><span class="co">#&gt;   project_id   shipment_sent_d… shipment_receive… shipment_number shipment_color</span></span>
+<span id="cb10-5"><a href="#cb10-5"></a><span class="co">#&gt;   &lt;chr&gt;        &lt;date&gt;           &lt;date&gt;                      &lt;dbl&gt; &lt;chr&gt;         </span></span>
+<span id="cb10-6"><a href="#cb10-6"></a><span class="co">#&gt; 1 2020January… NA               NA                              1 &lt;NA&gt;          </span></span>
+<span id="cb10-7"><a href="#cb10-7"></a><span class="co">#&gt; 2 2020January… NA               NA                              1 &lt;NA&gt;          </span></span>
+<span id="cb10-8"><a href="#cb10-8"></a><span class="co">#&gt; 3 2020January… NA               NA                              1 &lt;NA&gt;          </span></span>
+<span id="cb10-9"><a href="#cb10-9"></a><span class="co">#&gt; 4 2020January… NA               NA                              1 &lt;NA&gt;          </span></span>
+<span id="cb10-10"><a href="#cb10-10"></a><span class="co">#&gt; 5 2020January… NA               NA                              1 &lt;NA&gt;          </span></span>
+<span id="cb10-11"><a href="#cb10-11"></a><span class="co">#&gt; 6 2020January… NA               NA                              1 &lt;NA&gt;          </span></span>
+<span id="cb10-12"><a href="#cb10-12"></a><span class="co">#&gt; # … with 33 more variables: isolation_box_number &lt;dbl&gt;, s_label &lt;chr&gt;,</span></span>
+<span id="cb10-13"><a href="#cb10-13"></a><span class="co">#&gt; #   s_label_repeat_error &lt;dbl&gt;, proliferation_48 &lt;dbl&gt;,</span></span>
+<span id="cb10-14"><a href="#cb10-14"></a><span class="co">#&gt; #   proliferation_168 &lt;dbl&gt;, proliferating &lt;dbl&gt;, strip_tube_number &lt;dbl&gt;,</span></span>
+<span id="cb10-15"><a href="#cb10-15"></a><span class="co">#&gt; #   strip_tube_position &lt;dbl&gt;, lysis_date &lt;chr&gt;, lysis_notes &lt;chr&gt;,</span></span>
+<span id="cb10-16"><a href="#cb10-16"></a><span class="co">#&gt; #   ssu_pcr_date &lt;date&gt;, its2_pcr_date &lt;date&gt;, pcr_plate_number &lt;dbl&gt;,</span></span>
+<span id="cb10-17"><a href="#cb10-17"></a><span class="co">#&gt; #   pcr_well &lt;chr&gt;, gel_number &lt;dbl&gt;, gel_position &lt;chr&gt;,</span></span>
+<span id="cb10-18"><a href="#cb10-18"></a><span class="co">#&gt; #   pcr_product_ssu &lt;dbl&gt;, positive_ctrl_ssu &lt;dbl&gt;, neg_ctrl_ssu &lt;dbl&gt;,</span></span>
+<span id="cb10-19"><a href="#cb10-19"></a><span class="co">#&gt; #   ssu_fail_redo &lt;dbl&gt;, pcr_product_its2 &lt;dbl&gt;, positive_ctrl_its2 &lt;dbl&gt;,</span></span>
+<span id="cb10-20"><a href="#cb10-20"></a><span class="co">#&gt; #   neg_ctrl_ist2 &lt;dbl&gt;, general_notes &lt;chr&gt;, mclab_sequencing_plate &lt;dbl&gt;,</span></span>
+<span id="cb10-21"><a href="#cb10-21"></a><span class="co">#&gt; #   mclab_sequencing_well &lt;chr&gt;, manual_blast_notes &lt;chr&gt;, species_id &lt;chr&gt;,</span></span>
+<span id="cb10-22"><a href="#cb10-22"></a><span class="co">#&gt; #   possible_new_caeno_sp &lt;dbl&gt;, make_strain_name &lt;dbl&gt;,</span></span>
+<span id="cb10-23"><a href="#cb10-23"></a><span class="co">#&gt; #   reason_strain_not_named &lt;chr&gt;, strain_name &lt;chr&gt;, pair_name &lt;chr&gt;</span></span></code></pre></div>
+</div>
+<div id="checkgenotypes" class="section level4">
+<h4>checkGenotypes:</h4>
+<p><code>checkGenotypes</code> both processes the genotyping data (adds flags) and returns info on those flags if desired. Setting the <code>return_geno</code> option to <code>TRUE</code> and the <code>return_flags</code> option to <code>FALSE</code> will return the processed genotyping data and print information on the flags. Setting the <code>return_geno</code> option to <code>FALSE</code> and the <code>return_flags</code> option to <code>TRUE</code> will return a list of data frames that detail the rows where the flags appear. Both of these cannot be <code>TRUE</code> at the same time.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a>proc_geno1 &lt;-<span class="st"> </span><span class="kw">checkGenotypes</span>(<span class="dt">geno_data =</span> easyfulcrum<span class="op">::</span>raw_geno1, <span class="dt">fulc_data =</span> anno_fulc1, </span>
+<span id="cb11-2"><a href="#cb11-2"></a>                                  <span class="dt">return_geno =</span> <span class="ot">TRUE</span>, <span class="dt">return_flags =</span> <span class="ot">FALSE</span>)</span>
+<span id="cb11-3"><a href="#cb11-3"></a><span class="co">#&gt; &gt;&gt;&gt; Checking data classes</span></span>
+<span id="cb11-4"><a href="#cb11-4"></a><span class="co">#&gt; [1] &quot;There are 1 improperly classified variables&quot;</span></span>
+<span id="cb11-5"><a href="#cb11-5"></a><span class="co">#&gt; [1] &quot;lysis_date&quot;</span></span>
+<span id="cb11-6"><a href="#cb11-6"></a><span class="co">#&gt; &gt;&gt;&gt; Checking s labels</span></span>
+<span id="cb11-7"><a href="#cb11-7"></a><span class="co">#&gt; [1] &quot;There are 1 rows with missing s labels, these s labels are:&quot;</span></span>
+<span id="cb11-8"><a href="#cb11-8"></a><span class="co">#&gt; [1] NA</span></span>
+<span id="cb11-9"><a href="#cb11-9"></a><span class="co">#&gt; [1] &quot;There are 2 rows with duplicated s labels, these s labels are:&quot;</span></span>
+<span id="cb11-10"><a href="#cb11-10"></a><span class="co">#&gt; [1] &quot;S-12664&quot; &quot;S-12664&quot;</span></span>
+<span id="cb11-11"><a href="#cb11-11"></a><span class="co">#&gt; [1] &quot;There are 1 rows with unusual s labels, these s labels are:&quot;</span></span>
+<span id="cb11-12"><a href="#cb11-12"></a><span class="co">#&gt; [1] &quot;R-12666&quot;</span></span>
+<span id="cb11-13"><a href="#cb11-13"></a><span class="co">#&gt; [1] &quot;There are 3 rows with s labels not found in the Fulcrum data, these s labels are:&quot;</span></span>
+<span id="cb11-14"><a href="#cb11-14"></a><span class="co">#&gt; [1] &quot;S-12652&quot; &quot;R-12666&quot; &quot;S-12688&quot;</span></span>
+<span id="cb11-15"><a href="#cb11-15"></a><span class="co">#&gt; [1] &quot;There are 3 s labels in the Fulcrum data but not in the genotyping data, these s labels are:&quot;</span></span>
+<span id="cb11-16"><a href="#cb11-16"></a><span class="co">#&gt; [1] &quot;S-12666&quot; &quot;S-12662&quot; &quot;S-12663&quot;</span></span>
+<span id="cb11-17"><a href="#cb11-17"></a><span class="co">#&gt; &gt;&gt;&gt; Checking genotyping process</span></span>
+<span id="cb11-18"><a href="#cb11-18"></a><span class="co">#&gt; [1] &quot;There are 1 rows missing expected proliferation data, these s labels are:&quot;</span></span>
+<span id="cb11-19"><a href="#cb11-19"></a><span class="co">#&gt; [1] &quot;S-12668&quot;</span></span>
+<span id="cb11-20"><a href="#cb11-20"></a><span class="co">#&gt; [1] &quot;There are 1 rows missing expected its2 genotype, these s labels are:&quot;</span></span>
+<span id="cb11-21"><a href="#cb11-21"></a><span class="co">#&gt; [1] &quot;S-12652&quot;</span></span>
+<span id="cb11-22"><a href="#cb11-22"></a><span class="co">#&gt; [1] &quot;There are 1 rows missing expected species_id, these s labels are:&quot;</span></span>
+<span id="cb11-23"><a href="#cb11-23"></a><span class="co">#&gt; [1] &quot;S-12668&quot;</span></span>
+<span id="cb11-24"><a href="#cb11-24"></a><span class="co">#&gt; [1] &quot;There are 1 rows with unusual target species names, these names are:&quot;</span></span>
+<span id="cb11-25"><a href="#cb11-25"></a><span class="co">#&gt; [1] &quot;O. myriophilus&quot;</span></span>
+<span id="cb11-26"><a href="#cb11-26"></a><span class="co">#&gt; [1] &quot;There are 1 rows missing expected strain_name, these s labels are:&quot;</span></span>
+<span id="cb11-27"><a href="#cb11-27"></a><span class="co">#&gt; [1] &quot;S-12775&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a>flag1<span class="fl">.3</span> &lt;-<span class="st"> </span><span class="kw">checkGenotypes</span>(<span class="dt">geno_data =</span> raw_geno1, <span class="dt">fulc_data =</span> anno_fulc1, </span>
+<span id="cb12-2"><a href="#cb12-2"></a>                          <span class="dt">return_geno =</span> <span class="ot">FALSE</span>, <span class="dt">return_flags =</span> <span class="ot">TRUE</span>)</span>
+<span id="cb12-3"><a href="#cb12-3"></a><span class="co">#&gt; &gt;&gt;&gt; Checking data classes</span></span>
+<span id="cb12-4"><a href="#cb12-4"></a><span class="co">#&gt; [1] &quot;There are 1 improperly classified variables&quot;</span></span>
+<span id="cb12-5"><a href="#cb12-5"></a><span class="co">#&gt; [1] &quot;lysis_date&quot;</span></span>
+<span id="cb12-6"><a href="#cb12-6"></a><span class="co">#&gt; &gt;&gt;&gt; Checking s labels</span></span>
+<span id="cb12-7"><a href="#cb12-7"></a><span class="co">#&gt; [1] &quot;There are 1 rows with missing s labels, these s labels are:&quot;</span></span>
+<span id="cb12-8"><a href="#cb12-8"></a><span class="co">#&gt; [1] NA</span></span>
+<span id="cb12-9"><a href="#cb12-9"></a><span class="co">#&gt; [1] &quot;There are 2 rows with duplicated s labels, these s labels are:&quot;</span></span>
+<span id="cb12-10"><a href="#cb12-10"></a><span class="co">#&gt; [1] &quot;S-12664&quot; &quot;S-12664&quot;</span></span>
+<span id="cb12-11"><a href="#cb12-11"></a><span class="co">#&gt; [1] &quot;There are 1 rows with unusual s labels, these s labels are:&quot;</span></span>
+<span id="cb12-12"><a href="#cb12-12"></a><span class="co">#&gt; [1] &quot;R-12666&quot;</span></span>
+<span id="cb12-13"><a href="#cb12-13"></a><span class="co">#&gt; [1] &quot;There are 3 rows with s labels not found in the Fulcrum data, these s labels are:&quot;</span></span>
+<span id="cb12-14"><a href="#cb12-14"></a><span class="co">#&gt; [1] &quot;S-12652&quot; &quot;R-12666&quot; &quot;S-12688&quot;</span></span>
+<span id="cb12-15"><a href="#cb12-15"></a><span class="co">#&gt; [1] &quot;There are 3 s labels in the Fulcrum data but not in the genotyping data, these s labels are:&quot;</span></span>
+<span id="cb12-16"><a href="#cb12-16"></a><span class="co">#&gt; [1] &quot;S-12666&quot; &quot;S-12662&quot; &quot;S-12663&quot;</span></span>
+<span id="cb12-17"><a href="#cb12-17"></a><span class="co">#&gt; &gt;&gt;&gt; Checking genotyping process</span></span>
+<span id="cb12-18"><a href="#cb12-18"></a><span class="co">#&gt; [1] &quot;There are 1 rows missing expected proliferation data, these s labels are:&quot;</span></span>
+<span id="cb12-19"><a href="#cb12-19"></a><span class="co">#&gt; [1] &quot;S-12668&quot;</span></span>
+<span id="cb12-20"><a href="#cb12-20"></a><span class="co">#&gt; [1] &quot;There are 1 rows missing expected its2 genotype, these s labels are:&quot;</span></span>
+<span id="cb12-21"><a href="#cb12-21"></a><span class="co">#&gt; [1] &quot;S-12652&quot;</span></span>
+<span id="cb12-22"><a href="#cb12-22"></a><span class="co">#&gt; [1] &quot;There are 1 rows missing expected species_id, these s labels are:&quot;</span></span>
+<span id="cb12-23"><a href="#cb12-23"></a><span class="co">#&gt; [1] &quot;S-12668&quot;</span></span>
+<span id="cb12-24"><a href="#cb12-24"></a><span class="co">#&gt; [1] &quot;There are 1 rows with unusual target species names, these names are:&quot;</span></span>
+<span id="cb12-25"><a href="#cb12-25"></a><span class="co">#&gt; [1] &quot;O. myriophilus&quot;</span></span>
+<span id="cb12-26"><a href="#cb12-26"></a><span class="co">#&gt; [1] &quot;There are 1 rows missing expected strain_name, these s labels are:&quot;</span></span>
+<span id="cb12-27"><a href="#cb12-27"></a><span class="co">#&gt; [1] &quot;S-12775&quot;</span></span></code></pre></div>
+</div>
+<div id="joingenofulc" class="section level4">
+<h4>joinGenoFulc:</h4>
+<p><code>joinGenoFulc</code> will join the joined Fulcrum data frame with the genotyping information. This function will also save the processed genotyping information in <em>data/processed/genotypes</em> if desired.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a>join_genofulc1 &lt;-<span class="st"> </span><span class="kw">joinGenoFulc</span>(<span class="dt">geno =</span> proc_geno1, <span class="dt">fulc =</span> anno_fulc1, <span class="dt">dir =</span> dir1)</span>
+<span id="cb13-2"><a href="#cb13-2"></a><span class="co">#&gt; Joining, by = &quot;s_label&quot;</span></span></code></pre></div>
+</div>
+</div>
+<div id="reading-resizing-and-joining-collection-images" class="section level3">
+<h3>Reading, resizing, and joining collection images:</h3>
+<p>The final function processes and resizes images, adding details to a final dataframe.<br></p>
+<div id="procphotos" class="section level4">
+<h4>procPhotos:</h4>
+<p><code>procPhotos</code> processes the raw sample photos and adds information regarding them to the final data frame of data, which is also saved in <em>data/processed/fulcrum</em>. Setting the <code>CeNDR</code> option to <code>TRUE</code> will place photos of samples meeting CeNDR criteria to an appropriate subfolder.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a>final_data1 &lt;-<span class="st"> </span><span class="kw">procPhotos</span>(<span class="dt">dir =</span> dir1, <span class="dt">data =</span> join_genofulc1, <span class="dt">max_dim =</span> <span class="dv">500</span>, <span class="dt">overwrite =</span> T, <span class="dt">CeNDR =</span> <span class="ot">TRUE</span>)</span></code></pre></div>
+</div>
+</div>
+<div id="generating-summary-and-output-files" class="section level3">
+<h3>Generating summary and output files:</h3>
+<p>We include two functions for generating sample output from <code>final_data1</code>. This final dataframe can otherwise be used as needed by the user.</p>
+<div id="makespsheet" class="section level4">
+<h4>makeSpSheet:</h4>
+<p><code>makeSpSheet</code> generates a species csv file for the target species <code>target_sp</code>, and writes it to the <code>/reports</code> subdirectory. It returns a dataframe with flags for these samples with the target species.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a>flag1<span class="fl">.4</span> &lt;-<span class="st"> </span><span class="kw">makeSpSheet</span>(<span class="dt">data =</span> join_genofulc1,</span>
+<span id="cb15-2"><a href="#cb15-2"></a>                    <span class="dt">target_sp =</span> <span class="st">&quot;Caenorhabditis Briggsae&quot;</span>, <span class="dt">dir =</span> dir1)</span>
+<span id="cb15-3"><a href="#cb15-3"></a><span class="co">#&gt; [1] &quot;There are 8 strains with an email address for sampled_by:&quot;</span></span>
+<span id="cb15-4"><a href="#cb15-4"></a><span class="co">#&gt; [1] &quot;ECA2499&quot; &quot;ECA2501&quot; &quot;ECA2503&quot; &quot;ECA2506&quot; &quot;ECA2507&quot; &quot;ECA2509&quot; &quot;ECA2511&quot;</span></span>
+<span id="cb15-5"><a href="#cb15-5"></a><span class="co">#&gt; [8] &quot;ECA2513&quot;</span></span>
+<span id="cb15-6"><a href="#cb15-6"></a><span class="co">#&gt; [1] &quot;There are 8 strains with an email address for isolated_by:&quot;</span></span>
+<span id="cb15-7"><a href="#cb15-7"></a><span class="co">#&gt; [1] &quot;ECA2499&quot; &quot;ECA2501&quot; &quot;ECA2503&quot; &quot;ECA2506&quot; &quot;ECA2507&quot; &quot;ECA2509&quot; &quot;ECA2511&quot;</span></span>
+<span id="cb15-8"><a href="#cb15-8"></a><span class="co">#&gt; [8] &quot;ECA2513&quot;</span></span>
+<span id="cb15-9"><a href="#cb15-9"></a><span class="co">#&gt; [1] &quot;There are 9 strains with a species name not in the target species list:&quot;</span></span>
+<span id="cb15-10"><a href="#cb15-10"></a><span class="co">#&gt; [1] &quot;ECA2499&quot; &quot;ECA2501&quot; &quot;ECA2503&quot; &quot;ECA2505&quot; &quot;ECA2506&quot; &quot;ECA2507&quot; &quot;ECA2509&quot;</span></span>
+<span id="cb15-11"><a href="#cb15-11"></a><span class="co">#&gt; [8] &quot;ECA2511&quot; &quot;ECA2513&quot;</span></span>
+<span id="cb15-12"><a href="#cb15-12"></a><span class="co">#&gt; [1] &quot;There are 1 strains with an unusual substrate class:&quot;</span></span>
+<span id="cb15-13"><a href="#cb15-13"></a><span class="co">#&gt; [1] &quot;ECA2505&quot;</span></span>
+<span id="cb15-14"><a href="#cb15-14"></a><span class="co">#&gt; [1] &quot;please classify substrate as one of the following:&quot;</span></span>
+<span id="cb15-15"><a href="#cb15-15"></a><span class="co">#&gt; Arthropod</span></span>
+<span id="cb15-16"><a href="#cb15-16"></a><span class="co">#&gt; Bait</span></span>
+<span id="cb15-17"><a href="#cb15-17"></a><span class="co">#&gt; Compost</span></span>
+<span id="cb15-18"><a href="#cb15-18"></a><span class="co">#&gt; Fungus</span></span>
+<span id="cb15-19"><a href="#cb15-19"></a><span class="co">#&gt; Mollusk</span></span>
+<span id="cb15-20"><a href="#cb15-20"></a><span class="co">#&gt; Moss</span></span>
+<span id="cb15-21"><a href="#cb15-21"></a><span class="co">#&gt; NA</span></span>
+<span id="cb15-22"><a href="#cb15-22"></a><span class="co">#&gt; Rotting_flower</span></span>
+<span id="cb15-23"><a href="#cb15-23"></a><span class="co">#&gt; Rotting_nut/pod/seed/fruit</span></span>
+<span id="cb15-24"><a href="#cb15-24"></a><span class="co">#&gt; Rotting_stem</span></span>
+<span id="cb15-25"><a href="#cb15-25"></a><span class="co">#&gt; Rotting_wood</span></span>
+<span id="cb15-26"><a href="#cb15-26"></a><span class="co">#&gt; Soil</span></span>
+<span id="cb15-27"><a href="#cb15-27"></a><span class="co">#&gt; Vegetal_litter/mixNULL</span></span>
+<span id="cb15-28"><a href="#cb15-28"></a><span class="co">#&gt; [1] &quot;There are 1 strains with an unusual landscape class:&quot;</span></span>
+<span id="cb15-29"><a href="#cb15-29"></a><span class="co">#&gt; [1] &quot;ECA2505&quot;</span></span>
+<span id="cb15-30"><a href="#cb15-30"></a><span class="co">#&gt; [1] &quot;please classify landscape as one of the following:&quot;</span></span>
+<span id="cb15-31"><a href="#cb15-31"></a><span class="co">#&gt; Agricultural_land</span></span>
+<span id="cb15-32"><a href="#cb15-32"></a><span class="co">#&gt; Forest</span></span>
+<span id="cb15-33"><a href="#cb15-33"></a><span class="co">#&gt; Rural_garden</span></span>
+<span id="cb15-34"><a href="#cb15-34"></a><span class="co">#&gt; Urban_garden</span></span>
+<span id="cb15-35"><a href="#cb15-35"></a><span class="co">#&gt; Botanical_garden_or_zoo</span></span>
+<span id="cb15-36"><a href="#cb15-36"></a><span class="co">#&gt; Beach</span></span>
+<span id="cb15-37"><a href="#cb15-37"></a><span class="co">#&gt; Dry_shrubland</span></span>
+<span id="cb15-38"><a href="#cb15-38"></a><span class="co">#&gt; Wet_shrubland</span></span>
+<span id="cb15-39"><a href="#cb15-39"></a><span class="co">#&gt; Riverside</span></span>
+<span id="cb15-40"><a href="#cb15-40"></a><span class="co">#&gt; GrasslandNULL</span></span></code></pre></div>
+</div>
+<div id="samplereport" class="section level4">
+<h4>sampleReport:</h4>
+<p><code>sampleReport</code> is a markdown file that will generate a simple description of the data in the project based on <code>final_data1</code>. Please feel free to edit this file as you require, the first command will copy the file .Rmd file into <code>/scripts</code> sub-directory. We suggest specifying a location for output of the .html file, such as the <code>/reports</code> sub-directory.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a><span class="kw">file.copy</span>(<span class="st">&quot;../R/sampleReport.Rmd&quot;</span>, <span class="kw">paste</span>(dir1,<span class="st">&quot;scripts&quot;</span>,<span class="dt">sep =</span> <span class="st">&quot;/&quot;</span>))</span>
+<span id="cb16-2"><a href="#cb16-2"></a><span class="co">#&gt; [1] FALSE</span></span>
+<span id="cb16-3"><a href="#cb16-3"></a></span>
+<span id="cb16-4"><a href="#cb16-4"></a>rmarkdown<span class="op">::</span><span class="kw">render</span>(<span class="kw">paste</span>(dir1,<span class="st">&quot;scripts&quot;</span>,<span class="st">&quot;sampleReport.Rmd&quot;</span>,<span class="dt">sep =</span> <span class="st">&quot;/&quot;</span>),</span>
+<span id="cb16-5"><a href="#cb16-5"></a>                  <span class="dt">output_dir =</span> <span class="kw">paste</span>(dir1,<span class="st">&quot;reports&quot;</span>,<span class="dt">sep =</span> <span class="st">&quot;/&quot;</span>),</span>
+<span id="cb16-6"><a href="#cb16-6"></a>                  <span class="dt">output_format =</span> <span class="st">&quot;html_document&quot;</span>)</span>
+<span id="cb16-7"><a href="#cb16-7"></a><span class="co">#&gt; Warning in in_dir(input_dir(), evaluate(code, envir = env, new_device =</span></span>
+<span id="cb16-8"><a href="#cb16-8"></a><span class="co">#&gt; FALSE, : You changed the working directory to /Users/matteodibernardo/Desktop/</span></span>
+<span id="cb16-9"><a href="#cb16-9"></a><span class="co">#&gt; 2020JanuaryHawaii/data/processed/fulcrum (probably via setwd()). It will be</span></span>
+<span id="cb16-10"><a href="#cb16-10"></a><span class="co">#&gt; restored to /Users/matteodibernardo/Desktop/2020JanuaryHawaii. See the Note</span></span>
+<span id="cb16-11"><a href="#cb16-11"></a><span class="co">#&gt; section in ?knitr::knit</span></span>
+<span id="cb16-12"><a href="#cb16-12"></a><span class="co">#&gt; Warning in validateCoords(lng, lat, funcName): Data contains 1 rows with either</span></span>
+<span id="cb16-13"><a href="#cb16-13"></a><span class="co">#&gt; missing or invalid lat/lon values and will be ignored</span></span>
+<span id="cb16-14"><a href="#cb16-14"></a></span>
+<span id="cb16-15"><a href="#cb16-15"></a><span class="co">#&gt; Warning in validateCoords(lng, lat, funcName): Data contains 1 rows with either</span></span>
+<span id="cb16-16"><a href="#cb16-16"></a><span class="co">#&gt; missing or invalid lat/lon values and will be ignored</span></span>
+<span id="cb16-17"><a href="#cb16-17"></a><span class="co">#&gt; Warning: Unknown levels in `f`: Caenorhabditis elegans, Caenorhabditis</span></span>
+<span id="cb16-18"><a href="#cb16-18"></a><span class="co">#&gt; tropicalis</span></span>
+<span id="cb16-19"><a href="#cb16-19"></a><span class="co">#&gt; Warning: Removed 1 rows containing non-finite values (stat_boxplot).</span></span>
+<span id="cb16-20"><a href="#cb16-20"></a><span class="co">#&gt; Warning: Removed 1 rows containing missing values (geom_point).</span></span>
+<span id="cb16-21"><a href="#cb16-21"></a><span class="co">#&gt; Warning: Removed 1 rows containing non-finite values (stat_boxplot).</span></span>
+<span id="cb16-22"><a href="#cb16-22"></a><span class="co">#&gt; Warning: Removed 1 rows containing missing values (geom_point).</span></span>
+<span id="cb16-23"><a href="#cb16-23"></a><span class="co">#&gt; Warning: Removed 1 rows containing non-finite values (stat_boxplot).</span></span>
+<span id="cb16-24"><a href="#cb16-24"></a><span class="co">#&gt; Warning: Removed 1 rows containing missing values (geom_point).</span></span>
+<span id="cb16-25"><a href="#cb16-25"></a><span class="co">#&gt; Warning: Removed 1 rows containing non-finite values (stat_boxplot).</span></span>
+<span id="cb16-26"><a href="#cb16-26"></a><span class="co">#&gt; Warning: Removed 1 rows containing missing values (geom_point).</span></span>
+<span id="cb16-27"><a href="#cb16-27"></a><span class="co">#&gt; Warning in validateCoords(lng, lat, funcName): Data contains 1 rows with either</span></span>
+<span id="cb16-28"><a href="#cb16-28"></a><span class="co">#&gt; missing or invalid lat/lon values and will be ignored</span></span>
+<span id="cb16-29"><a href="#cb16-29"></a><span class="co">#&gt; Warning: Unknown levels in `f`: Caenorhabditis elegans, Caenorhabditis</span></span>
+<span id="cb16-30"><a href="#cb16-30"></a><span class="co">#&gt; tropicalis</span></span>
+<span id="cb16-31"><a href="#cb16-31"></a><span class="co">#&gt; Warning: Removed 1 rows containing non-finite values (stat_boxplot).</span></span>
+<span id="cb16-32"><a href="#cb16-32"></a><span class="co">#&gt; Warning: Removed 1 rows containing missing values (geom_point).</span></span>
+<span id="cb16-33"><a href="#cb16-33"></a><span class="co">#&gt; Warning: Removed 1 rows containing non-finite values (stat_boxplot).</span></span>
+<span id="cb16-34"><a href="#cb16-34"></a><span class="co">#&gt; Warning: Removed 1 rows containing missing values (geom_point).</span></span>
+<span id="cb16-35"><a href="#cb16-35"></a><span class="co">#&gt; Warning: Removed 1 rows containing non-finite values (stat_boxplot).</span></span>
+<span id="cb16-36"><a href="#cb16-36"></a><span class="co">#&gt; Warning: Removed 1 rows containing missing values (geom_point).</span></span>
+<span id="cb16-37"><a href="#cb16-37"></a><span class="co">#&gt; Warning: Removed 1 rows containing non-finite values (stat_boxplot).</span></span>
+<span id="cb16-38"><a href="#cb16-38"></a><span class="co">#&gt; Warning: Removed 1 rows containing missing values (geom_point).</span></span>
+<span id="cb16-39"><a href="#cb16-39"></a><span class="co">#&gt; /Applications/RStudio.app/Contents/MacOS/pandoc/pandoc +RTS -K512m -RTS sampleReport.utf8.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output /Users/matteodibernardo/Desktop/2020JanuaryHawaii/reports/sampleReport.html --lua-filter /Library/Frameworks/R.framework/Versions/4.0/Resources/library/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /Library/Frameworks/R.framework/Versions/4.0/Resources/library/rmarkdown/rmarkdown/lua/latex-div.lua --self-contained --variable bs3=TRUE --standalone --section-divs --table-of-contents --toc-depth 4 --variable toc_float=1 --variable toc_selectors=h1,h2,h3,h4 --variable toc_collapsed=1 --variable toc_smooth_scroll=1 --variable toc_print=1 --template /Library/Frameworks/R.framework/Versions/4.0/Resources/library/rmarkdown/rmd/h/default.html --no-highlight --variable highlightjs=1 --variable theme=bootstrap --include-in-header /var/folders/y8/61hdswn12r52s0310b9ht1780000gn/T//RtmpBBLdbw/rmarkdown-strf2b140c4d7cb.html --mathjax --variable &#39;mathjax-url:https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML&#39;</span></span></code></pre></div>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
