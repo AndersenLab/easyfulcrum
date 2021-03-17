@@ -7,8 +7,8 @@
 FtoC(F)
 }
 \arguments{
-\item{F}{fahrenheit measurement to convert}
+\item{F}{fahrenheit measurement to convert.}
 }
 \description{
-\code{FtoC} Converts fahrenheit measurement to celsius
+\code{FtoC} Converts fahrenheit measurement to celsius.
 }

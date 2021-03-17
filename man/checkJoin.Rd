@@ -4,16 +4,24 @@
 \alias{checkJoin}
 \title{checkJoin}
 \usage{
-checkJoin(data, return = FALSE)
+checkJoin(data, return_flags = FALSE)
 }
 \arguments{
-\item{data}{dataframe output of joinFulcrum function}
+\item{data}{dataframe output of \code{joinFulcrum}.}
 
-\item{return}{set to TRUE if flagged rows are to be returned as a dataframe}
+\item{return_flags}{set to TRUE if flagged rows are to be returned as a dataframe.}
 }
 \value{
-a dataframe flagged rows in a dataframe for flag of interest
+\emph{c_labels} and \emph{s_label}s (as appropriate) for rows with each of the six flags,
+and the origin of the location of the raw data that triggered the flag
+ the rows corresponding to these labels can be saved as a list of six dataframes when return is set to TRUE
 }
 \description{
-\code{checkJoin} checks for one flag in joined data
+\code{checkJoin} checks for flags (9) in \code{joinFulcrum} output.
+}
+\details{
+This check function will return \emph{c_labels} and \emph{s_labels} for various flags relating to missing or duplicated data.
+Messages regarding what checks are being done, and where they lie in the raw dataframes is also provided.
+We advise returning to the raw dataframes using the information returned in these checks to better understand
+issues that may have occurred during data collection, before re-running.
 }

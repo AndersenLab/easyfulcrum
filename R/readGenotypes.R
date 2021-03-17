@@ -13,6 +13,8 @@
 #' are provided the data are appended using rbind. Note, the genotyping sheet must contain variable names
 #' specified by the \code{wild_isolate_genotyping_template} and the data must be found on the sheet named
 #' \code{genotyping template}.
+#' @import dplyr
+#' @import googlesheets4
 #' @export
 #'
 

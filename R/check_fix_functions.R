@@ -19,6 +19,8 @@
 #'  these returns will also contain relevant columns for understanding flagged values and how they arose
 #'  these dataframes can be saved as a list of three dataframes when \code{return_flags} is set to TRUE
 #' @import tidyr
+#' @import dplyr
+#' @export
 #'
 
 checkTemperatures <- function(data, return_flags = FALSE) {
@@ -150,6 +152,7 @@ fixTemperatures <- function(data,
 #' @return \emph{c_labels} and \emph{s_label}s (as appropriate) for rows with each of the six flags,
 #' and the origin of the location of the raw data that triggered the flag
 #'  the rows corresponding to these labels can be saved as a list of six dataframes when return is set to TRUE
+#' @import dplyr
 #' @export
 #'
 
@@ -255,6 +258,7 @@ checkJoin <- function(data, return_flags = FALSE) {
 #' @param target_sp vector of target species for species id checks. Default target species names are:
 #' Caenorhabditis briggsae, Caenorhabditis elegans, Caenorhabditis tropicalis.
 #' @return a list of flagged rows in genotyping and fulcrum dataframes for each flag.
+#' @import dplyr
 #' @export
 #'
 

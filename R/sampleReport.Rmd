@@ -14,22 +14,12 @@ output:
 ```{r, echo=F, warning = F, message=F}
 # load packages
 library(tidyverse)
-library(ggmap)
-library(memoise)
 library(lubridate)
 library(cowplot)
-library(pals)
-library(grid)
-library(gridExtra)
-library(scales)
-library(kableExtra)
 library(leaflet)
-library(htmlwidgets)
 library(dplyr)
 library(knitr)
-library(printr)
 library(DT)
-library(htmltools)
 
 #setting working directory
 knitr::opts_knit$set(root.dir = '..')
@@ -403,7 +393,7 @@ DT::datatable(target_df, rownames = FALSE, filter = "none", options = list(dom =
 #### C. elegans
 
 ```{r, echo=F, warning = T, message=F}
-elegans_eval <- ifelse(collection_counts_1 %>% 
+elegans_eval <- ifelse(df %>% 
                       dplyr::filter(species_id == "Caenorhabditis elegans") %>%
                       dplyr::pull(c_label) %>% length()==0,
                     FALSE,TRUE)
@@ -528,7 +518,7 @@ cowplot::plot_grid(plot_atemp, plot_stemp, plot_ahum, plot_elev,
 #### C. briggsae
 
 ```{r, echo=F, warning = T, message=F}
-briggsae_eval <- ifelse(collection_counts_1 %>% 
+briggsae_eval <- ifelse(df %>% 
                       dplyr::filter(species_id == "Caenorhabditis briggsae") %>%
                       dplyr::pull(c_label) %>% length()==0,
                     FALSE,TRUE)
@@ -653,7 +643,7 @@ cowplot::plot_grid(plot_atemp, plot_stemp, plot_ahum, plot_elev,
 #### C. tropicalis
 
 ```{r, echo=F, warning = T, message=F}
-tropicalis_eval <- ifelse(collection_counts_1 %>% 
+tropicalis_eval <- ifelse(df %>% 
                       dplyr::filter(species_id == "Caenorhabditis tropicalis") %>%
                       dplyr::pull(c_label) %>% length()==0,
                     FALSE,TRUE)
@@ -773,16 +763,5 @@ plot_elev <- ggplot(data = stat_df %>% dplyr::filter(env_par == "collection_alti
 
 cowplot::plot_grid(plot_atemp, plot_stemp, plot_ahum, plot_elev,
                    ncol = 2, nrow = 2, align = "hv", axis = "l")
-```
-
-```{r echo=F, warning = F, message=F, eval=FALSE}
-df %>%
-  #dplyr::distinct(c_label, .keep_all = TRUE) %>%
-  dplyr::filter(!is.na(c_label)) %>%
-  dplyr::mutate(non.caeno = ifelse((pcr_product_ssu == 1 & pcr_product_its2 == 0) |
-                                 (pcr_product_ssu == 1 & pcr_product_its2 == 1 &
-                                    !(grepl("^Caeno",species_id))),"non-caeno",NA)) %>%
-  dplyr::filter(!is.na(non.caeno))
-
 ```
 

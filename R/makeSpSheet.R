@@ -7,6 +7,7 @@
 #' Caenorhabditis briggsae, Caenorhabditis elegans, Caenorhabditis tropicalis.
 #' @param dir The path to the base fulcrum directory, species sheet will be saved as reports/spSheet.csv
 #' @return a list of dataframes containing species sheets for target species with flags for identified issues
+#' @import dplyr
 #' @export
 #'
 

@@ -7,6 +7,7 @@
 #' @param geno a genotyping data frame output from the \code{loadGenotypes} function.
 #' @param dir OPTIONAL, the path to the base fulcrum directory, if passed will save the genotyping data in data/processed/genotypes.
 #' @return A single collection dataframe with variables described in the data dictionary.
+#' @import dplyr
 #' @export
 #'
 

@@ -11,20 +11,24 @@
 #' @return A single dataframe containing all Fulcrum data sources.
 #' This data frame contains all necessary variables from Fulcrum. It also contains data quality flags.
 #' The variable names match the data dictionary.
+#' @importFrom glue glue
+#' @import tibble
+#' @import dplyr
+#' @import sp
 #' @export
 #'
 
 annotateFulcrum <- function(data, dir = NULL) {
   # import island csv
-  island <- easyfulcrum::island
+  island <- easyfulcrum::hawaii_islands
   # import location csv
-  location <- easyfulcrum::location
+  location <- easyfulcrum::hawaii_locations
 
   # Generate list of trails and geojson polygon points from geojson output of https://boundingbox.klokantech.com/.
   # These polygons are manually curated by using the polygon tool.
 
   # import trails csv
-  trails_df <- easyfulcrum::trails
+  trails_df <- easyfulcrum::hawaii_trails
 
   if(!is.null(dir)){
     dir <- glue::glue("{dir}","/data/raw/annotate")

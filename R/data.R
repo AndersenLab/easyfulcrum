@@ -11,7 +11,7 @@
 #'   \item{lat_end}{latitude of bounding box end}
 #' }
 #' @source \url{https://boundingbox.klokantech.com/}
-#' @name island
+#' @name hawaii_islands
 
 #' Bounding box for locations
 #'
@@ -26,7 +26,7 @@
 #'   \item{lat_end}{latitude of bounding box end}
 #' }
 #' @source \url{https://boundingbox.klokantech.com/}
-#' @name location
+#' @name hawaii_locations
 
 #' trail polygon vertices as a string of coordinates
 #'
@@ -39,7 +39,7 @@
 #'   \item{coordinates}{string of ploygon vertices. Each vertex contains long,lat}
 #' }
 #' @source \url{https://boundingbox.klokantech.com/}
-#' @name trails
+#' @name hawaii_trails
 
 #' Expected classes in joined fulcrum object
 #'

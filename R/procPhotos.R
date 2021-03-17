@@ -13,6 +13,11 @@
 #' If \code{CeNDR} is set to TRUE other subfolders will be made with those images.
 #' @importFrom rebus ALPHA one_or_more %R% DGT WRD optional
 #' @importFrom imager load.image resize save.image
+#' @importFrom glue glue
+#' @import dplyr
+#' @import stringr
+#' @import tidyr
+#' @import fs
 #' @export
 #'
 

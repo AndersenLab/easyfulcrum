@@ -7,12 +7,12 @@
 filter_box(longitude, latitude, coords)
 }
 \arguments{
-\item{longitude}{longitude of collection}
+\item{longitude}{longitude of collection.}
 
-\item{latitude}{latitude of collection}
+\item{latitude}{latitude of collection.}
 
-\item{coords}{coordinates of bounding box}
+\item{coords}{coordinates of bounding box.}
 }
 \description{
-\code{filter_box} finds lat and long inside bounding box
+\code{filter_box} finds lat and long inside bounding box.
 }

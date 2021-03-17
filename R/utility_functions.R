@@ -30,6 +30,7 @@ FtoC <- function(F) {
 #'
 #' @param startdir the working folder where project files will lie.
 #' @param projectdirname the name of the project, folder will be constructed under \code{startdir}.
+#' @export
 #'
 
 makeDirStructure <- function(startdir, projectdirname) {

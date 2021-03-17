@@ -13,6 +13,8 @@
 #' nematode_isolation_photos_proc \tab a processed dataframe from the nematode_isolation_photos.csv\cr
 #' }
 #' @import dplyr
+#' @import lubridate
+#' @import stringr
 #' @importFrom runner streak_run
 #' @export
 

@@ -115,7 +115,7 @@ flag1.2 <- checkJoin(data = join_fulc1, return_flags = TRUE)
 
 `annnotateFulcrum` adds spatial information to the joined Fulcrum data frame, noting if sample collections were collected on specific islands, trails, and/or locations. Examples islands, trails, and/or locations are automatically loaded with the package, but a user can specify manually made `.csv` files and place them in _data/raw/annotate_, specifying the base directory as `dir` in `annotateFulcrum` will override the example files.<br>
 
-The `island` and `location` dataframes are composed of simple latitude and longitude starts and ends to create a binding box, while `trails` is composed of a character list of geojson polygon points from geojson output of that can be created on a [bounding box online tool](https://boundingbox.klokantech.com/).
+The `hawaii_islands` and `hawaii_locations` dataframes are composed of simple latitude and longitude starts and ends to create a binding box, while `hawaii_trails` is composed of a character list of geojson polygon points from geojson output of that can be created on a [bounding box online tool](https://boundingbox.klokantech.com/).
 
 ```{r message = F}
 anno_fulc1 <- annotateFulcrum(data = join_fulc1, dir = NULL)
