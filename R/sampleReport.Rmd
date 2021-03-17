@@ -159,24 +159,33 @@ DT::datatable(personnel_isolation_dates, colnames = "Dates of isolation:",
 ```{r, echo=F, warning = F, message=T}
 # temporary table to collect enumerations on certain quantities of interest
 collection_counts_1 <- df %>%
-  dplyr::distinct(c_label, .keep_all = TRUE) %>%
   dplyr::filter(!is.na(c_label)) %>%
-  dplyr::mutate(non.caeno = ifelse((pcr_product_ssu == 1 & pcr_product_its2 == 0) |
-                                 (pcr_product_ssu == 1 & pcr_product_its2 == 1 &
-                                    !(grepl("^Caeno",species_id))),"non-caeno",NA)) %>%
+  dplyr::mutate(class = 
+                  ifelse(grepl("^Caeno",species_id),species_id,
+                         ifelse(!is.na(species_id),"other-Caeno",
+                                ifelse((pcr_product_ssu == 1 & pcr_product_its2 == 0),"non-Caenorhabditis",
+                                ifelse((pcr_product_ssu == 0 & pcr_product_its2 == 0),"Unknown nematode",
+                                ifelse((pcr_product_its2 = 1 & is.na(species_id)),"its2 genotype missing",NA)))))) %>%
+  dplyr::mutate(collection_class = forcats::as_factor(class),
+                collection_class = forcats::fct_relevel(collection_class,
+                                       "C. elegans",
+                                       "C. tropicalis",
+                                       "C. briggsae",
+                                       "other-Caeno",
+                                       "non-Caeno",
+                                       "unknown nematode", 
+                                       "no nematode")) %>%
+  dplyr::arrange(collection_class) %>%
+  dplyr::distinct(c_label, .keep_all = TRUE) %>%
   dplyr::mutate(`total number of distinct collections` = n()) %>%
-  dplyr::add_count(species_id) %>%
-  dplyr::rename(species_id_counts = n) %>%
   dplyr::add_count(worms_on_sample) %>%
   dplyr::rename(worms_on_sample_counts = n) %>%
-  dplyr::add_count(non.caeno) %>%
-  dplyr::rename(non.caeno_counts = n) %>%
-  dplyr::select(c_label,
-                worms_on_sample, species_id, non.caeno,
+  dplyr::add_count(collection_class) %>%
+  dplyr::rename(collection_class_counts = n) %>%
+  dplyr::select(c_label,worms_on_sample, collection_class,
                 `total number of distinct collections`,
                 worms_on_sample_counts,
-                species_id_counts,
-                non.caeno_counts) 
+                collection_class_counts) 
 
 collection_distinct <- pull(collection_counts_1%>%dplyr::distinct(`total number of distinct collections`)%>%dplyr::filter(!is.na(`total number of distinct collections`)))
 
@@ -184,16 +193,12 @@ collection_worms_on_sample <- collection_counts_1%>%
   dplyr::distinct(worms_on_sample,worms_on_sample_counts)
 
 collection_species_id <- collection_counts_1%>%
-  dplyr::distinct(species_id,species_id_counts)%>%
-    dplyr::filter(!is.na(species_id))%>%
-  bind_rows(collection_counts_1%>%dplyr::filter(!is.na(non.caeno))%>%
-  dplyr::distinct(non.caeno,non.caeno_counts) %>% 
-  dplyr::rename(species_id = non.caeno, 
-         species_id_counts = non.caeno_counts))
+  dplyr::distinct(collection_class,collection_class_counts)
 
 collection_worms_on_sample <- data.frame(collection_worms_on_sample) 
 collection_worms_on_sample$worms_on_sample[is.na(collection_worms_on_sample$worms_on_sample)] <- "unknown/NA"
 collection_species_id <- data.frame(collection_species_id) 
+collection_species_id$collection_class <- fct_explicit_na(collection_species_id$collection_class, "unknown/NA")
 
 message(paste("Total number of distinct collections:", 
             collection_distinct, sep = " "))
@@ -201,7 +206,7 @@ message(paste("Total number of distinct collections:",
 DT::datatable(collection_worms_on_sample, colnames = c("worms on sample","number of collections"),
               rownames = FALSE, filter = "none", options = list(dom = 't'))
 
-DT::datatable(collection_species_id, colnames = c("species id","number of collections"),
+DT::datatable(collection_species_id, colnames = c("collection class","number of collections"),
               rownames = FALSE, filter = "none", options = list(dom = 't')) 
 ```
 
@@ -244,38 +249,31 @@ target_map
 ```{r, echo=F, warning = F, message=T}
 # temporary table to collect enumerations on certain quantities of interest
 isolation_counts_1 <- df %>%
-  dplyr::mutate(non.caeno = ifelse((pcr_product_ssu == 1 & pcr_product_its2 == 0) |
-                               (pcr_product_ssu == 1 & pcr_product_its2 == 1 &
-                                  !(grepl("^Caeno",species_id))),"non-caeno",NA)) %>%
+  dplyr::mutate(class = 
+                  ifelse(!is.na(species_id),species_id,
+                         ifelse((pcr_product_ssu == 1 & pcr_product_its2 == 0),"non-Caenorhabditis",
+                                ifelse((pcr_product_ssu == 0 & pcr_product_its2 == 0),"Unknown nematode",
+                                ifelse((pcr_product_its2 = 1 & is.na(species_id)),"its2 genotype missing",NA))))) %>%
   dplyr::distinct(s_label, .keep_all = TRUE) %>%
   dplyr::filter(!is.na(s_label)) %>%
   dplyr::mutate(`total number of distinct isolations` = n()) %>%
-  dplyr::add_count(species_id) %>%
-  dplyr::rename(species_id_counts = n) %>%
-  dplyr::add_count(non.caeno) %>%
-  dplyr::rename(non.caeno_counts = n) %>%
-  dplyr::select(c_label,
-                species_id, non.caeno,
-                `total number of distinct isolations`,
-                species_id_counts,
-                non.caeno_counts) 
+  dplyr::add_count(class) %>%
+  dplyr::rename(class_counts = n) %>%
+  dplyr::select(c_label,class,`total number of distinct isolations`,class_counts) 
 
 isolation_distinct <- pull(isolation_counts_1%>%dplyr::distinct(`total number of distinct isolations`)%>%dplyr::filter(!is.na(`total number of distinct isolations`)))
 
 isolation_species_id <- isolation_counts_1%>%
-  dplyr::distinct(species_id,species_id_counts)%>%
-    dplyr::filter(!is.na(species_id))%>%
-  bind_rows(isolation_counts_1%>%dplyr::filter(!is.na(non.caeno))%>%
-  dplyr::distinct(non.caeno,non.caeno_counts) %>% 
-  dplyr::rename(species_id = non.caeno, 
-         species_id_counts = non.caeno_counts))
+  dplyr::distinct(class,class_counts)
 
 isolation_species_id <- data.frame(isolation_species_id)
+
+isolation_species_id$class[is.na(isolation_species_id$class)] <- "unknown/NA"
 
 message(paste("Total number of distinct isolations:", 
             isolation_distinct, sep = " "))
 
-DT::datatable(isolation_species_id, colnames = c("species id","number of isolations"),
+DT::datatable(isolation_species_id, colnames = c("isolation class","number of isolations"),
               rownames = FALSE, filter = "none", options = list(dom = 't'))
 ```
 
