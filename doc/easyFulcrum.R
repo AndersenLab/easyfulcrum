@@ -7,17 +7,19 @@ knitr::opts_chunk$set(
 ## ----setup--------------------------------------------------------------------
 # install.packages("devtools")
 # devtools::install_github("AndersenLab/easyfulcrum")
+# setwd("~/Desktop")
+
 library(easyfulcrum)
-setwd("~/Desktop")
 
 ## ----warning = F, message = F-------------------------------------------------
-makeDirStructure(startdir = "~/Desktop/",
-                 projectdirname = "2020JanuaryHawaii")
+# makeDirStructure(startdir = "~/Desktop/",
+#                  projectdirname = "2020JanuaryHawaii")
 
 ## -----------------------------------------------------------------------------
 dir1 <- "~/Desktop/2020JanuaryHawaii"
 # raw_fulc1 <- readFulcrum(dir = dir1)
-names(easyfulcrum::raw_fulc1)
+raw_fulc1 <- easyfulcrum::raw_fulc1
+names(raw_fulc1)
 
 ## -----------------------------------------------------------------------------
 proc_fulc1 <- procFulcrum(data = raw_fulc1)
@@ -43,7 +45,8 @@ anno_fulc1 <- annotateFulcrum(data = join_fulc1, dir = NULL)
 
 ## -----------------------------------------------------------------------------
 # raw_geno1 <- readGenotypes(gsKey = c("1_6u4sk_Zj-Hm5d_058Lg8WYWLe7BZHGTWxXcH6EsDUI"))
-head(easyfulcrum::raw_geno1)
+raw_geno1 <- easyfulcrum::raw_geno1
+head(raw_geno1)
 
 ## -----------------------------------------------------------------------------
 proc_geno1 <- checkGenotypes(geno_data = easyfulcrum::raw_geno1, fulc_data = anno_fulc1, 
@@ -75,7 +78,11 @@ join_genofulc1 <- joinGenoFulc(geno = proc_geno1, fulc = anno_fulc1, dir = dir1)
 # }
 
 ## ----message = FALSE----------------------------------------------------------
-final_data1 <- procPhotos(dir = dir1, data = join_genofulc1, max_dim = 500, overwrite = T, CeNDR = TRUE)
+# final_data1 <- procPhotos(dir = dir1, data = join_genofulc1,
+#                           max_dim = 500, overwrite = T, 
+#                           CeNDR = TRUE)
+final_data1 <- easyfulcrum::final_data1
+head(final_data1)
 
 ## -----------------------------------------------------------------------------
 flag1.4 <- makeSpSheet(data = join_genofulc1,

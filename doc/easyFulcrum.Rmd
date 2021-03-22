@@ -23,9 +23,12 @@ Install and load the package:
 ```{r setup}
 # install.packages("devtools")
 # devtools::install_github("AndersenLab/easyfulcrum")
+# setwd("~/Desktop")
+
 library(easyfulcrum)
-setwd("~/Desktop")
 ```
+
+As you may have noticed in the previous code chunk, fully running the **easyfulcrum** package relies heavily on the placement of files in appropriate directories for read in into the package pipeline. This makes the the universal building of this vignette impossible as a users personal directory cannot be specified. Therefore, certain lines of code and the running of certain functions is commented out as to not be part of the local vignette build. We will specify when this is the case.
 
 ### Directory structure:
 
@@ -35,9 +38,11 @@ Every collection project should be contained in its own repository. The reposito
 
 See the [Nematode Collection Protocol](https://docs.google.com/document/d/1aPgPDYobpxzr0BQYgvUsjPWnAGXZmCSQKQ4sDGBXuYM/edit) protocol for more details.<br>
 
+As this depends on a users personal subfolder structure, this function is commented out.
+
 ```{r warning = F, message = F}
-makeDirStructure(startdir = "~/Desktop/",
-                 projectdirname = "2020JanuaryHawaii")
+# makeDirStructure(startdir = "~/Desktop/",
+#                  projectdirname = "2020JanuaryHawaii")
 ```
 
 The `data` directory contains the  `raw` and `processed` subdirectories.<br>
@@ -55,12 +60,15 @@ The first group of functions operates to clean the results from the Fulcrum `.cs
 
 #### readFulcrum:
 
-`readFulcrum` takes a `dir` argument that specifies the repository in use to read in Fulcrum `.csv`s (in the example case, the `raw_data1` object is automatically loaded).
+`readFulcrum` takes a `dir` argument that specifies the repository in use to read in Fulcrum `.csv`s. This will be useful throughout the package.
+
+As this depends on a users personal subfolder structure, this function is commented out (`raw_data1` object is automatically loaded as the example raw fulcrum data).
 
 ```{r}
 dir1 <- "~/Desktop/2020JanuaryHawaii"
 # raw_fulc1 <- readFulcrum(dir = dir1)
-names(easyfulcrum::raw_fulc1)
+raw_fulc1 <- easyfulcrum::raw_fulc1
+names(raw_fulc1)
 ```
 
 #### procFulcrum:
@@ -129,13 +137,16 @@ Details on how to create genotyping google sheets can be found in the [Nematode 
 
 #### readGenotypes:
 
-`readGenotypes` reads in genotyping data from an appropriate Google Sheet with requisite `gsKey` (in this case, the `raw_geno1` is loaded with the package). The `col_types` variable will specify of what column types the data should be.<br>
+`readGenotypes` reads in genotyping data from an appropriate Google Sheet with requisite `gsKey`. The `col_types` variable will specify of what column types the data should be.<br>
 
 For more details on reading in genotyping sheets, look into the [googlesheets4](https://googlesheets4.tidyverse.org/articles/articles/read-sheets.html) package (which underlies this function), as well as further information on how to [specify](https://googlesheets4.tidyverse.org/reference/range_read.html#column-specification) the `col_types` if needed.<br>
 
+As this depends on a users connection to the appropriate google doc, this function is commented out (`raw_geno1` object is automatically loaded as the example raw geno data).
+
 ```{r}
 # raw_geno1 <- readGenotypes(gsKey = c("1_6u4sk_Zj-Hm5d_058Lg8WYWLe7BZHGTWxXcH6EsDUI"))
-head(easyfulcrum::raw_geno1)
+raw_geno1 <- easyfulcrum::raw_geno1
+head(raw_geno1)
 ```
 
 #### checkGenotypes:
@@ -187,8 +198,14 @@ The final function processes and resizes images, adding details to a final dataf
 
 `procPhotos` processes the raw sample photos and adds information regarding them to the final data frame of data, which is also saved in _data/processed/fulcrum_. Setting the `CeNDR` option to `TRUE` will place photos of samples meeting CeNDR criteria to an appropriate subfolder.
 
+As this depends on a users personal subfolder structure and it containing the proper images, this function is commented out (`final_data1` object is automatically loaded as the example final merged data). This also means that the resized images will not visible in the vignette build.
+
 ```{r message = FALSE}
-final_data1 <- procPhotos(dir = dir1, data = join_genofulc1, max_dim = 500, overwrite = T, CeNDR = TRUE)
+# final_data1 <- procPhotos(dir = dir1, data = join_genofulc1,
+#                           max_dim = 500, overwrite = T, 
+#                           CeNDR = TRUE)
+final_data1 <- easyfulcrum::final_data1
+head(final_data1)
 ```
 
 ### Generating summary and output files:

@@ -63,9 +63,9 @@
 #' }
 #' @name genotypeTypes
 
-#' Initial raw_data1 list of dataframes
+#' Raw raw_fulc1 list of dataframes
 #'
-#' A list of five easyfulcrum dataframes with purposeful errors created
+#' A list of five fulcrums dataframes with purposeful errors created
 #'
 #' @format A list of five data frames:
 #' \describe{
@@ -77,7 +77,7 @@
 #' }
 #' @name raw_fulc1
 
-#' Initial geno_data1 data frame
+#' Raw geno_data1 data frame
 #'
 #' A genotyping data frame with purposeful errors created
 #'
