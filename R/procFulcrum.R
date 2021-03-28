@@ -78,7 +78,7 @@ procFulcrum <- function(data) {
       # looks for commas in the sample_photo name
       dplyr::mutate(flag_unusual_sample_photo_num = ifelse(is.na(stringr::str_count(sample_photo, pattern = ",")) |
                                                              stringr::str_count(sample_photo, pattern = ",") != 0, TRUE, FALSE)) %>%
-      # break apart mutliple sample photos. This takes the first sample photo and warns if additional photos are discarded
+      # break apart multiple sample photos. This takes the first sample photo and warns if additional photos are discarded
       tidyr::separate(col = sample_photo, into = c("sample_photo1", "sample_photo2", "sample_photo3"), sep = ",", extra = "drop", fill = "right")
 
     # add to processed list

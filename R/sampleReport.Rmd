@@ -1,5 +1,5 @@
 ---
-title: "<span style='font-size: 30px'>2020FebruaryAustralia Report"
+title: "<span style='font-size: 30px'>2020JanuaryHawaii Report"
 author: "Matteo Di Bernardo"
 date: "`r format(Sys.time(), '%d %b %Y')`"
 output:
@@ -26,8 +26,6 @@ knitr::opts_knit$set(root.dir = '..')
 ```
 
 ```{r, include=F, echo=F, warning = F, message=F}
-# Target species map function
-# Map_collection function for reviewing collection locations
 map_target_species <- function(df, color_use) {
   
   icos <- iconList(
@@ -146,13 +144,15 @@ DT::datatable(personnel_isolation_dates, colnames = "Dates of isolation:",
 
 ## Collections
 
+The first of these tables describes the presence of nematodes on a collection plate, where "yes" signifies that worms are present, "no" signifies that no worms are present, and "tracks" denotes that only tracks are observed, but there are no visible worms. 
+
 ```{r, echo=F, warning = F, message=T}
 # temporary table to collect enumerations on certain quantities of interest
 collection_counts_1 <- df %>%
   dplyr::filter(!is.na(c_label)) %>%
   dplyr::mutate(class = 
                   ifelse(grepl("^Caeno",species_id),species_id,
-                         ifelse(!is.na(species_id),"other-Caeno",
+                         ifelse(!is.na(species_id),"other-Caenorhabditis",
                                 ifelse((pcr_product_ssu == 1 & pcr_product_its2 == 0),"non-Caenorhabditis",
                                 ifelse((pcr_product_ssu == 0 & pcr_product_its2 == 0),"Unknown nematode",
                                 ifelse((pcr_product_its2 = 1 & is.na(species_id)),"its2 genotype missing",NA)))))) %>%
@@ -161,8 +161,8 @@ collection_counts_1 <- df %>%
                                        "C. elegans",
                                        "C. tropicalis",
                                        "C. briggsae",
-                                       "other-Caeno",
-                                       "non-Caeno",
+                                       "other-Caenorhabditis",
+                                       "non-Caenorhabditis",
                                        "unknown nematode", 
                                        "no nematode")) %>%
   dplyr::arrange(collection_class) %>%
@@ -234,6 +234,85 @@ target_map
 <br> <font color="orange">*orange points*</font>  are collections with tracks on sample. 
 <br> <font color="black">*black points*</font>  are collections that were NA. 
 
+### All collections plots
+
+```{r, fig.height=8, fig.width=8, echo=F, warning = F, message=F}
+stat_df <- df %>%
+  dplyr::distinct(project, c_label, .keep_all = T) %>%
+  dplyr::select(project, c_label, s_label, species_id, proc_ambient_temperature,
+                ambient_humidity, proc_substrate_temperature, collection_altitude) %>%
+  tidyr::gather(env_par, value, proc_ambient_temperature,ambient_humidity,
+                proc_substrate_temperature, collection_altitude)
+
+plot_atemp <- ggplot(data = stat_df %>% dplyr::filter(env_par == "proc_ambient_temperature")) +
+  geom_boxplot(aes(x = env_par, y = value), outlier.color = NA) +
+  geom_jitter(aes(x = env_par, y = value, shape = project), size = 1.5, width = .25) +
+  theme_bw() +
+  theme(axis.title = element_text(size = 8, color = "black"),
+        axis.text = element_text(size = 8, color = "black")) + 
+  labs(x = "", y = "Ambient temperature (°C)") +
+  theme(axis.text.x = element_text(size = 9, face = "italic", color = "black"),
+        axis.text.y = element_text(size = 9, face = "plain", color = "black"),
+        axis.title.x = element_text(size = 9, face = "bold", color = "black"),
+        axis.title.y = element_text(size = 9, face = "bold", color = "black"),
+        plot.margin = unit(c(0,1,1,1), "lines"),
+        legend.position = "none")
+plot_stemp <- ggplot(data = stat_df %>% dplyr::filter(env_par == "proc_substrate_temperature")) +
+  geom_boxplot(aes(x = env_par,y = value), outlier.color = NA) +
+  geom_jitter(aes(x = env_par,y = value, shape = project), size = 1.5, width = .25) +
+  theme_bw() +
+  theme(axis.title = element_text(size = 8, color = "black"),
+        axis.text = element_text(size = 8, color = "black")) + 
+  labs(x = "", y = "Substrate temperature (°C)") +
+  theme(axis.text.x = element_text(size = 9, face = "italic", color = "black"),
+        axis.text.y = element_text(size = 9, face = "plain", color = "black"),
+        axis.title.x = element_text(size = 9, face = "bold", color = "black"),
+        axis.title.y = element_text(size = 9, face = "bold", color = "black"),
+        plot.margin = unit(c(0,1,1,1), "lines"),
+        legend.position = "none")
+plot_ahum <- ggplot(data = stat_df %>% dplyr::filter(env_par == "ambient_humidity")) +
+  geom_boxplot(aes(x = env_par, y = value), outlier.color = NA) +
+  geom_jitter(aes(x = env_par, y = value, shape = project), size = 1.5, width = .25) +
+  theme_bw() +
+  theme(axis.title = element_text(size = 8, color = "black"),
+        axis.text = element_text(size = 8, color = "black")) + 
+  labs(x = "", y = "Ambient humidity (%)") +
+  theme(axis.text.x = element_text(size = 9, face = "italic", color = "black"),
+        axis.text.y = element_text(size = 9, face = "plain", color = "black"),
+        axis.title.x = element_text(size = 9, face = "bold", color = "black"),
+        axis.title.y = element_text(size = 9, face = "bold", color = "black"),
+        plot.margin = unit(c(0,1,1,1), "lines"),
+        legend.position = "none")
+plot_elev <- ggplot(data = stat_df %>% dplyr::filter(env_par == "collection_altitude")) +
+  geom_boxplot(aes(x = env_par, y = value), outlier.color = NA) +
+  geom_jitter(aes(x = env_par, y = value, shape = project), size = 1.5, width = .25) +
+  theme_bw() +
+  theme(axis.title = element_text(size = 8, color = "black"),
+        axis.text = element_text(size = 8, color = "black")) + 
+  labs(x = "", y = "Elevation (m)") +
+  theme(axis.text.x = element_text(size = 9, face = "italic", color = "black"),
+        axis.text.y = element_text(size = 9, face = "plain", color = "black"),
+        axis.title.x = element_text(size = 9, face = "bold", color = "black"),
+        axis.title.y = element_text(size = 9, face = "bold", color = "black"),
+        plot.margin = unit(c(0,1,1,1), "lines"),
+        legend.position = "none")
+
+cowplot::plot_grid(plot_atemp, plot_stemp, plot_ahum, plot_elev,
+                   ncol = 2, nrow = 2, align = "hv", axis = "l")
+```
+
+### All collections table
+
+```{r, echo=F, warning = F, message=F}
+target_df <- df %>%
+  dplyr::select(c_label,s_label,species_id,proc_ambient_temperature,ambient_humidity,
+                proc_substrate_temperature,collection_altitude, substrate,
+                landscape, collection_by, collection_location, collection_island,
+                collection_trail)
+
+DT::datatable(target_df, rownames = FALSE, filter = "none", options = list(dom = 'ftrp', scrollX = '200px'))
+```
+
 ## Isolations
 
 ```{r, echo=F, warning = F, message=T}
@@ -267,9 +346,9 @@ DT::datatable(isolation_species_id, colnames = c("isolation class","number of is
               rownames = FALSE, filter = "none", options = list(dom = 't'))
 ```
 
-## Target species
+## Selfing *Caenorhabditis* species
 
-### Target species map
+### Selfing *Caenorhabditis* map
 
 ```{r, fig.height=5, fig.width=10, echo=F, warning = F, message=F}
 target_df <- df %>%
@@ -296,7 +375,7 @@ target_map <-  map_target_species(target_df,"color")
 target_map
 ```
 
-### Target species plots
+### Selfing *Caenorhabditis* plots
 
 ```{r, fig.height=8, fig.width=8, echo=F, warning = F, message=F}
 stat_df <- df%>%
@@ -374,7 +453,7 @@ cowplot::plot_grid(plot_atemp, plot_stemp, plot_ahum, plot_elev,
                    ncol = 2, nrow = 2, align = "hv", axis = "l")
 ```
 
-### Target species table
+### Selfing *Caenorhabditis* table
 
 ```{r, echo=F, warning = F, message=F}
 target_df <- df %>% dplyr::filter(species_id %in% c("Caenorhabditis elegans", 
@@ -388,7 +467,7 @@ target_df <- df %>% dplyr::filter(species_id %in% c("Caenorhabditis elegans",
 DT::datatable(target_df, rownames = FALSE, filter = "none", options = list(dom = 'ftrp', scrollX = '200px'))
 ```
 
-### Selfing Caenorhabditis species
+### Selfing *Caenorhabditis* species
 
 #### C. elegans
 
