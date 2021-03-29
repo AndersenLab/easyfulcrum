@@ -168,7 +168,7 @@ flag1.3 <- checkGenotypes(geno_data = raw_geno1, fulc_data = anno_fulc1,
 `joinGenoFulc` will join the joined Fulcrum data frame with the genotyping information. This function will also save the processed genotyping information in _data/processed/genotypes_ if desired.
 
 ```{r}
-join_genofulc1 <- joinGenoFulc(geno = proc_geno1, fulc = anno_fulc1, dir = dir1)
+join_genofulc1 <- joinGenoFulc(geno = proc_geno1, fulc = anno_fulc1, dir = NULL)
 ```
 
 ### Reading, resizing, and joining collection images:
@@ -210,15 +210,15 @@ head(final_data1)
 
 ### Generating summary and output files:
 
-We include two functions for generating sample output from `final_data1`. This final dataframe can otherwise be used as needed by the user.
+We include two functions for generating sample output from `final_data1`. This final dataframe can otherwise be used as needed by the user. As these depend on a users personal subfolder structure, they are commented out. 
 
 #### makeSpSheet:
 
 `makeSpSheet` generates a species specific `.csv` file for the species of interest (`target_sp`) and writes it to the `/reports` subdirectory. This function simplifies the output of the final dataframe, pulling variables of particular interest for a user specified species of interest. It also  returns a dataframe with flags for these select samples.
 
 ```{r}
-flag1.4 <- makeSpSheet(data = join_genofulc1,
-                    target_sp = "Caenorhabditis Briggsae", dir = dir1)
+# flag1.4 <- makeSpSheet(data = join_genofulc1,
+#                     target_sp = "Caenorhabditis Briggsae", dir = dir1)
 ```
 
 #### sampleReport:
@@ -228,9 +228,9 @@ flag1.4 <- makeSpSheet(data = join_genofulc1,
 Please feel free to edit this file as you require, the first command will copy the file .Rmd file into `/scripts` sub-directory. We suggest specifying a location for output of the .html file, such as the `/reports` sub-directory.
 
 ```{r message = F}
-file.copy("../R/sampleReport.Rmd", paste(dir1,"scripts",sep = "/"))
-
-rmarkdown::render(paste(dir1,"scripts","sampleReport.Rmd",sep = "/"),
-                  output_dir = paste(dir1,"reports",sep = "/"),
-                  output_format	= "html_document")
+# file.copy("../R/sampleReport.Rmd", paste(dir1,"scripts",sep = "/"))
+# 
+# rmarkdown::render(paste(dir1,"scripts","sampleReport.Rmd",sep = "/"),
+#                   output_dir = paste(dir1,"reports",sep = "/"),
+#                   output_format	= "html_document")
 ```

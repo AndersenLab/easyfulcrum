@@ -12,7 +12,7 @@
 
 <meta name="author" content="Author: Matteo Di Bernardo" />
 
-<meta name="date" content="2021-03-28" />
+<meta name="date" content="2021-03-29" />
 
 <title>easyFulcrum</title>
 
@@ -336,7 +336,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">easyFulcrum</h1>
 <h4 class="author">Author: Matteo Di Bernardo</h4>
-<h4 class="date">28 Mar 2021</h4>
+<h4 class="date">29 Mar 2021</h4>
 
 
 
@@ -623,7 +623,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <div id="joingenofulc" class="section level4">
 <h4>joinGenoFulc:</h4>
 <p><code>joinGenoFulc</code> will join the joined Fulcrum data frame with the genotyping information. This function will also save the processed genotyping information in <em>data/processed/genotypes</em> if desired.</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a>join_genofulc1 &lt;-<span class="st"> </span><span class="kw">joinGenoFulc</span>(<span class="dt">geno =</span> proc_geno1, <span class="dt">fulc =</span> anno_fulc1, <span class="dt">dir =</span> dir1)</span>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a>join_genofulc1 &lt;-<span class="st"> </span><span class="kw">joinGenoFulc</span>(<span class="dt">geno =</span> proc_geno1, <span class="dt">fulc =</span> anno_fulc1, <span class="dt">dir =</span> <span class="ot">NULL</span>)</span>
 <span id="cb13-2"><a href="#cb13-2"></a><span class="co">#&gt; Joining, by = &quot;s_label&quot;</span></span></code></pre></div>
 </div>
 </div>
@@ -697,94 +697,22 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 </div>
 <div id="generating-summary-and-output-files" class="section level3">
 <h3>Generating summary and output files:</h3>
-<p>We include two functions for generating sample output from <code>final_data1</code>. This final dataframe can otherwise be used as needed by the user.</p>
+<p>We include two functions for generating sample output from <code>final_data1</code>. This final dataframe can otherwise be used as needed by the user. As these depend on a users personal subfolder structure, they are commented out.</p>
 <div id="makespsheet" class="section level4">
 <h4>makeSpSheet:</h4>
 <p><code>makeSpSheet</code> generates a species specific <code>.csv</code> file for the species of interest (<code>target_sp</code>) and writes it to the <code>/reports</code> subdirectory. This function simplifies the output of the final dataframe, pulling variables of particular interest for a user specified species of interest. It also returns a dataframe with flags for these select samples.</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a>flag1<span class="fl">.4</span> &lt;-<span class="st"> </span><span class="kw">makeSpSheet</span>(<span class="dt">data =</span> join_genofulc1,</span>
-<span id="cb15-2"><a href="#cb15-2"></a>                    <span class="dt">target_sp =</span> <span class="st">&quot;Caenorhabditis Briggsae&quot;</span>, <span class="dt">dir =</span> dir1)</span>
-<span id="cb15-3"><a href="#cb15-3"></a><span class="co">#&gt; [1] &quot;There are 8 strains with an email address for sampled_by:&quot;</span></span>
-<span id="cb15-4"><a href="#cb15-4"></a><span class="co">#&gt; [1] &quot;ECA2499&quot; &quot;ECA2501&quot; &quot;ECA2503&quot; &quot;ECA2506&quot; &quot;ECA2507&quot; &quot;ECA2509&quot; &quot;ECA2511&quot;</span></span>
-<span id="cb15-5"><a href="#cb15-5"></a><span class="co">#&gt; [8] &quot;ECA2513&quot;</span></span>
-<span id="cb15-6"><a href="#cb15-6"></a><span class="co">#&gt; [1] &quot;There are 8 strains with an email address for isolated_by:&quot;</span></span>
-<span id="cb15-7"><a href="#cb15-7"></a><span class="co">#&gt; [1] &quot;ECA2499&quot; &quot;ECA2501&quot; &quot;ECA2503&quot; &quot;ECA2506&quot; &quot;ECA2507&quot; &quot;ECA2509&quot; &quot;ECA2511&quot;</span></span>
-<span id="cb15-8"><a href="#cb15-8"></a><span class="co">#&gt; [8] &quot;ECA2513&quot;</span></span>
-<span id="cb15-9"><a href="#cb15-9"></a><span class="co">#&gt; [1] &quot;There are 9 strains with a species name not in the target species list:&quot;</span></span>
-<span id="cb15-10"><a href="#cb15-10"></a><span class="co">#&gt; [1] &quot;ECA2499&quot; &quot;ECA2501&quot; &quot;ECA2503&quot; &quot;ECA2505&quot; &quot;ECA2506&quot; &quot;ECA2507&quot; &quot;ECA2509&quot;</span></span>
-<span id="cb15-11"><a href="#cb15-11"></a><span class="co">#&gt; [8] &quot;ECA2511&quot; &quot;ECA2513&quot;</span></span>
-<span id="cb15-12"><a href="#cb15-12"></a><span class="co">#&gt; [1] &quot;There are 1 strains with an unusual substrate class:&quot;</span></span>
-<span id="cb15-13"><a href="#cb15-13"></a><span class="co">#&gt; [1] &quot;ECA2505&quot;</span></span>
-<span id="cb15-14"><a href="#cb15-14"></a><span class="co">#&gt; [1] &quot;please classify substrate as one of the following:&quot;</span></span>
-<span id="cb15-15"><a href="#cb15-15"></a><span class="co">#&gt; Arthropod</span></span>
-<span id="cb15-16"><a href="#cb15-16"></a><span class="co">#&gt; Bait</span></span>
-<span id="cb15-17"><a href="#cb15-17"></a><span class="co">#&gt; Compost</span></span>
-<span id="cb15-18"><a href="#cb15-18"></a><span class="co">#&gt; Fungus</span></span>
-<span id="cb15-19"><a href="#cb15-19"></a><span class="co">#&gt; Mollusk</span></span>
-<span id="cb15-20"><a href="#cb15-20"></a><span class="co">#&gt; Moss</span></span>
-<span id="cb15-21"><a href="#cb15-21"></a><span class="co">#&gt; NA</span></span>
-<span id="cb15-22"><a href="#cb15-22"></a><span class="co">#&gt; Rotting_flower</span></span>
-<span id="cb15-23"><a href="#cb15-23"></a><span class="co">#&gt; Rotting_nut/pod/seed/fruit</span></span>
-<span id="cb15-24"><a href="#cb15-24"></a><span class="co">#&gt; Rotting_stem</span></span>
-<span id="cb15-25"><a href="#cb15-25"></a><span class="co">#&gt; Rotting_wood</span></span>
-<span id="cb15-26"><a href="#cb15-26"></a><span class="co">#&gt; Soil</span></span>
-<span id="cb15-27"><a href="#cb15-27"></a><span class="co">#&gt; Vegetal_litter/mixNULL</span></span>
-<span id="cb15-28"><a href="#cb15-28"></a><span class="co">#&gt; [1] &quot;There are 1 strains with an unusual landscape class:&quot;</span></span>
-<span id="cb15-29"><a href="#cb15-29"></a><span class="co">#&gt; [1] &quot;ECA2505&quot;</span></span>
-<span id="cb15-30"><a href="#cb15-30"></a><span class="co">#&gt; [1] &quot;please classify landscape as one of the following:&quot;</span></span>
-<span id="cb15-31"><a href="#cb15-31"></a><span class="co">#&gt; Agricultural_land</span></span>
-<span id="cb15-32"><a href="#cb15-32"></a><span class="co">#&gt; Forest</span></span>
-<span id="cb15-33"><a href="#cb15-33"></a><span class="co">#&gt; Rural_garden</span></span>
-<span id="cb15-34"><a href="#cb15-34"></a><span class="co">#&gt; Urban_garden</span></span>
-<span id="cb15-35"><a href="#cb15-35"></a><span class="co">#&gt; Botanical_garden_or_zoo</span></span>
-<span id="cb15-36"><a href="#cb15-36"></a><span class="co">#&gt; Beach</span></span>
-<span id="cb15-37"><a href="#cb15-37"></a><span class="co">#&gt; Dry_shrubland</span></span>
-<span id="cb15-38"><a href="#cb15-38"></a><span class="co">#&gt; Wet_shrubland</span></span>
-<span id="cb15-39"><a href="#cb15-39"></a><span class="co">#&gt; Riverside</span></span>
-<span id="cb15-40"><a href="#cb15-40"></a><span class="co">#&gt; GrasslandNULL</span></span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a><span class="co"># flag1.4 &lt;- makeSpSheet(data = join_genofulc1,</span></span>
+<span id="cb15-2"><a href="#cb15-2"></a><span class="co">#                     target_sp = &quot;Caenorhabditis Briggsae&quot;, dir = dir1)</span></span></code></pre></div>
 </div>
 <div id="samplereport" class="section level4">
 <h4>sampleReport:</h4>
 <p><code>sampleReport</code> is a markdown file that will generate a simple description of the data in the project based on <code>final_data1</code>. The file will generate output to summarize collection project metadata (such as who conducted the respective processes and on what dates they were completed), to generate summary tables of collection and isolation data, to produce visual maps of where the collections in the project were acquired, and finally to graph basic box and whisker plots of substrate temperature, ambient temperature, humidity, and elevation for the project.</p>
 <p>Please feel free to edit this file as you require, the first command will copy the file .Rmd file into <code>/scripts</code> sub-directory. We suggest specifying a location for output of the .html file, such as the <code>/reports</code> sub-directory.</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a><span class="kw">file.copy</span>(<span class="st">&quot;../R/sampleReport.Rmd&quot;</span>, <span class="kw">paste</span>(dir1,<span class="st">&quot;scripts&quot;</span>,<span class="dt">sep =</span> <span class="st">&quot;/&quot;</span>))</span>
-<span id="cb16-2"><a href="#cb16-2"></a><span class="co">#&gt; [1] FALSE</span></span>
-<span id="cb16-3"><a href="#cb16-3"></a></span>
-<span id="cb16-4"><a href="#cb16-4"></a>rmarkdown<span class="op">::</span><span class="kw">render</span>(<span class="kw">paste</span>(dir1,<span class="st">&quot;scripts&quot;</span>,<span class="st">&quot;sampleReport.Rmd&quot;</span>,<span class="dt">sep =</span> <span class="st">&quot;/&quot;</span>),</span>
-<span id="cb16-5"><a href="#cb16-5"></a>                  <span class="dt">output_dir =</span> <span class="kw">paste</span>(dir1,<span class="st">&quot;reports&quot;</span>,<span class="dt">sep =</span> <span class="st">&quot;/&quot;</span>),</span>
-<span id="cb16-6"><a href="#cb16-6"></a>                  <span class="dt">output_format =</span> <span class="st">&quot;html_document&quot;</span>)</span>
-<span id="cb16-7"><a href="#cb16-7"></a><span class="co">#&gt; Warning in in_dir(input_dir(), evaluate(code, envir = env, new_device =</span></span>
-<span id="cb16-8"><a href="#cb16-8"></a><span class="co">#&gt; FALSE, : You changed the working directory to /Users/matteodibernardo/Desktop/</span></span>
-<span id="cb16-9"><a href="#cb16-9"></a><span class="co">#&gt; 2020JanuaryHawaii/data/processed/fulcrum (probably via setwd()). It will be</span></span>
-<span id="cb16-10"><a href="#cb16-10"></a><span class="co">#&gt; restored to /Users/matteodibernardo/Desktop/2020JanuaryHawaii. See the Note</span></span>
-<span id="cb16-11"><a href="#cb16-11"></a><span class="co">#&gt; section in ?knitr::knit</span></span>
-<span id="cb16-12"><a href="#cb16-12"></a><span class="co">#&gt; Warning in validateCoords(lng, lat, funcName): Data contains 1 rows with either</span></span>
-<span id="cb16-13"><a href="#cb16-13"></a><span class="co">#&gt; missing or invalid lat/lon values and will be ignored</span></span>
-<span id="cb16-14"><a href="#cb16-14"></a></span>
-<span id="cb16-15"><a href="#cb16-15"></a><span class="co">#&gt; Warning in validateCoords(lng, lat, funcName): Data contains 1 rows with either</span></span>
-<span id="cb16-16"><a href="#cb16-16"></a><span class="co">#&gt; missing or invalid lat/lon values and will be ignored</span></span>
-<span id="cb16-17"><a href="#cb16-17"></a><span class="co">#&gt; Warning: Unknown levels in `f`: Caenorhabditis elegans, Caenorhabditis</span></span>
-<span id="cb16-18"><a href="#cb16-18"></a><span class="co">#&gt; tropicalis</span></span>
-<span id="cb16-19"><a href="#cb16-19"></a><span class="co">#&gt; Warning: Removed 1 rows containing non-finite values (stat_boxplot).</span></span>
-<span id="cb16-20"><a href="#cb16-20"></a><span class="co">#&gt; Warning: Removed 1 rows containing missing values (geom_point).</span></span>
-<span id="cb16-21"><a href="#cb16-21"></a><span class="co">#&gt; Warning: Removed 1 rows containing non-finite values (stat_boxplot).</span></span>
-<span id="cb16-22"><a href="#cb16-22"></a><span class="co">#&gt; Warning: Removed 1 rows containing missing values (geom_point).</span></span>
-<span id="cb16-23"><a href="#cb16-23"></a><span class="co">#&gt; Warning: Removed 1 rows containing non-finite values (stat_boxplot).</span></span>
-<span id="cb16-24"><a href="#cb16-24"></a><span class="co">#&gt; Warning: Removed 1 rows containing missing values (geom_point).</span></span>
-<span id="cb16-25"><a href="#cb16-25"></a><span class="co">#&gt; Warning: Removed 1 rows containing non-finite values (stat_boxplot).</span></span>
-<span id="cb16-26"><a href="#cb16-26"></a><span class="co">#&gt; Warning: Removed 1 rows containing missing values (geom_point).</span></span>
-<span id="cb16-27"><a href="#cb16-27"></a><span class="co">#&gt; Warning in validateCoords(lng, lat, funcName): Data contains 1 rows with either</span></span>
-<span id="cb16-28"><a href="#cb16-28"></a><span class="co">#&gt; missing or invalid lat/lon values and will be ignored</span></span>
-<span id="cb16-29"><a href="#cb16-29"></a><span class="co">#&gt; Warning: Unknown levels in `f`: Caenorhabditis elegans, Caenorhabditis</span></span>
-<span id="cb16-30"><a href="#cb16-30"></a><span class="co">#&gt; tropicalis</span></span>
-<span id="cb16-31"><a href="#cb16-31"></a><span class="co">#&gt; Warning: Removed 1 rows containing non-finite values (stat_boxplot).</span></span>
-<span id="cb16-32"><a href="#cb16-32"></a><span class="co">#&gt; Warning: Removed 1 rows containing missing values (geom_point).</span></span>
-<span id="cb16-33"><a href="#cb16-33"></a><span class="co">#&gt; Warning: Removed 1 rows containing non-finite values (stat_boxplot).</span></span>
-<span id="cb16-34"><a href="#cb16-34"></a><span class="co">#&gt; Warning: Removed 1 rows containing missing values (geom_point).</span></span>
-<span id="cb16-35"><a href="#cb16-35"></a><span class="co">#&gt; Warning: Removed 1 rows containing non-finite values (stat_boxplot).</span></span>
-<span id="cb16-36"><a href="#cb16-36"></a><span class="co">#&gt; Warning: Removed 1 rows containing missing values (geom_point).</span></span>
-<span id="cb16-37"><a href="#cb16-37"></a><span class="co">#&gt; Warning: Removed 1 rows containing non-finite values (stat_boxplot).</span></span>
-<span id="cb16-38"><a href="#cb16-38"></a><span class="co">#&gt; Warning: Removed 1 rows containing missing values (geom_point).</span></span>
-<span id="cb16-39"><a href="#cb16-39"></a><span class="co">#&gt; /Applications/RStudio.app/Contents/MacOS/pandoc/pandoc +RTS -K512m -RTS sampleReport.utf8.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output /Users/matteodibernardo/Desktop/2020JanuaryHawaii/reports/sampleReport.html --lua-filter /Library/Frameworks/R.framework/Versions/4.0/Resources/library/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /Library/Frameworks/R.framework/Versions/4.0/Resources/library/rmarkdown/rmarkdown/lua/latex-div.lua --self-contained --variable bs3=TRUE --standalone --section-divs --table-of-contents --toc-depth 4 --variable toc_float=1 --variable toc_selectors=h1,h2,h3,h4 --variable toc_collapsed=1 --variable toc_smooth_scroll=1 --variable toc_print=1 --template /Library/Frameworks/R.framework/Versions/4.0/Resources/library/rmarkdown/rmd/h/default.html --no-highlight --variable highlightjs=1 --variable theme=bootstrap --include-in-header /var/folders/y8/61hdswn12r52s0310b9ht1780000gn/T//RtmpRS3JjO/rmarkdown-str316150b8266c.html --mathjax --variable &#39;mathjax-url:https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML&#39;</span></span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a><span class="co"># file.copy(&quot;../R/sampleReport.Rmd&quot;, paste(dir1,&quot;scripts&quot;,sep = &quot;/&quot;))</span></span>
+<span id="cb16-2"><a href="#cb16-2"></a><span class="co"># </span></span>
+<span id="cb16-3"><a href="#cb16-3"></a><span class="co"># rmarkdown::render(paste(dir1,&quot;scripts&quot;,&quot;sampleReport.Rmd&quot;,sep = &quot;/&quot;),</span></span>
+<span id="cb16-4"><a href="#cb16-4"></a><span class="co">#                   output_dir = paste(dir1,&quot;reports&quot;,sep = &quot;/&quot;),</span></span>
+<span id="cb16-5"><a href="#cb16-5"></a><span class="co">#                   output_format   = &quot;html_document&quot;)</span></span></code></pre></div>
 </div>
 </div>
 

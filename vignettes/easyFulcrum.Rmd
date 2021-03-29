@@ -168,7 +168,7 @@ flag1.3 <- checkGenotypes(geno_data = raw_geno1, fulc_data = anno_fulc1,
 `joinGenoFulc` will join the joined Fulcrum data frame with the genotyping information. This function will also save the processed genotyping information in _data/processed/genotypes_ if desired.
 
 ```{r}
-join_genofulc1 <- joinGenoFulc(geno = proc_geno1, fulc = anno_fulc1, dir = dir1)
+join_genofulc1 <- joinGenoFulc(geno = proc_geno1, fulc = anno_fulc1, dir = NULL)
 ```
 
 ### Reading, resizing, and joining collection images:

@@ -57,7 +57,7 @@ flag1.3 <- checkGenotypes(geno_data = raw_geno1, fulc_data = anno_fulc1,
                           return_geno = FALSE, return_flags = TRUE)
 
 ## -----------------------------------------------------------------------------
-join_genofulc1 <- joinGenoFulc(geno = proc_geno1, fulc = anno_fulc1, dir = dir1)
+join_genofulc1 <- joinGenoFulc(geno = proc_geno1, fulc = anno_fulc1, dir = NULL)
 
 ## ----message = F, include = F-------------------------------------------------
 #This chunk of code will move the photos required for this trial run into the appropriate folder for raw photos, according to what `dir1` is specified. 
@@ -85,13 +85,13 @@ final_data1 <- easyfulcrum::final_data1
 head(final_data1)
 
 ## -----------------------------------------------------------------------------
-flag1.4 <- makeSpSheet(data = join_genofulc1,
-                    target_sp = "Caenorhabditis Briggsae", dir = dir1)
+# flag1.4 <- makeSpSheet(data = join_genofulc1,
+#                     target_sp = "Caenorhabditis Briggsae", dir = dir1)
 
 ## ----message = F--------------------------------------------------------------
-file.copy("../R/sampleReport.Rmd", paste(dir1,"scripts",sep = "/"))
-
-rmarkdown::render(paste(dir1,"scripts","sampleReport.Rmd",sep = "/"),
-                  output_dir = paste(dir1,"reports",sep = "/"),
-                  output_format	= "html_document")
+# file.copy("../R/sampleReport.Rmd", paste(dir1,"scripts",sep = "/"))
+# 
+# rmarkdown::render(paste(dir1,"scripts","sampleReport.Rmd",sep = "/"),
+#                   output_dir = paste(dir1,"reports",sep = "/"),
+#                   output_format	= "html_document")
 
