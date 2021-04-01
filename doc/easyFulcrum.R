@@ -85,8 +85,8 @@ final_data1 <- easyfulcrum::final_data1
 head(final_data1)
 
 ## -----------------------------------------------------------------------------
-# flag1.4 <- makeSpSheet(data = join_genofulc1,
-#                     target_sp = "Caenorhabditis Briggsae", dir = dir1)
+# flag1.4 <- makeSpSheet(data = final_data1,
+#                     target_sp = "Caenorhabditis briggsae", dir = dir1)
 
 ## ----message = F--------------------------------------------------------------
 # file.copy("../R/sampleReport.Rmd", paste(dir1,"scripts",sep = "/"))

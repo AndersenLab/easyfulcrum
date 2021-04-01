@@ -12,7 +12,7 @@
 
 <meta name="author" content="Author: Matteo Di Bernardo" />
 
-<meta name="date" content="2021-03-29" />
+<meta name="date" content="2021-04-01" />
 
 <title>easyFulcrum</title>
 
@@ -336,7 +336,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">easyFulcrum</h1>
 <h4 class="author">Author: Matteo Di Bernardo</h4>
-<h4 class="date">29 Mar 2021</h4>
+<h4 class="date">01 Apr 2021</h4>
 
 
 
@@ -388,7 +388,8 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 </div>
 <div id="checktemperatures" class="section level4">
 <h4>checkTemperatures:</h4>
-<p><code>checkTemperatures</code> identifies flags in three temperature variables. Setting the <code>return_flags</code> option to <code>TRUE</code> will return a list of three data frames that pulls only the rows where each of the three flag types appear. The function automatically prints the rows where the flags exist.</p>
+<p><code>checkTemperatures</code> identifies flags in three temperature variables. Setting the <code>return_flags</code> option to <code>TRUE</code> will return a list of three data frames that pulls only the rows where each of the three flag types appear. The function automatically prints the rows where the flags exist.<br></p>
+<p><code>procFulcrum</code> function assumes that, when <code>raw_substrate_temperature</code> or <code>raw_ambient_temperature</code> temperatures are above 40 degrees, the temperatures were mistakenly input as Fahrenheit rather than Celsius, and converts these values to Celsius. It will also notice when both <code>raw_ambient_temperature</code> and <code>raw_ambient_humidity</code> get stuck on the same value for 5 or more measurements in a row. These are the three flags returned above.<br></p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>flag1<span class="fl">.1</span> &lt;-<span class="st"> </span><span class="kw">checkTemperatures</span>(<span class="dt">data =</span> proc_fulc1, <span class="dt">return_flags =</span> <span class="ot">TRUE</span>)</span>
 <span id="cb5-2"><a href="#cb5-2"></a><span class="co">#&gt; &gt;&gt;&gt; Checking substrate temperature</span></span>
 <span id="cb5-3"><a href="#cb5-3"></a><span class="co">#&gt; [1] &quot;There are 1 rows with flagged substrate temperature:&quot;</span></span>
@@ -452,7 +453,6 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <span id="cb5-61"><a href="#cb5-61"></a><span class="co">#&gt; 13            45540 secs     2020-01-22 22:39:10</span></span>
 <span id="cb5-62"><a href="#cb5-62"></a><span class="co">#&gt; 14            47400 secs     2020-01-22 23:10:25</span></span>
 <span id="cb5-63"><a href="#cb5-63"></a><span class="co">#&gt; 15            51780 secs     2020-01-23 00:23:02</span></span></code></pre></div>
-<p><code>procFulcrum</code> function assumes that, when <code>raw_substrate_temperature</code> or <code>raw_ambient_temperature</code> temperatures are above 40 degrees, the temperatures were mistakenly input as Fahrenheit rather than Celsius, and converts these values to Celsius. It will also notice when both <code>raw_ambient_temperature</code> and <code>raw_ambient_humidity</code> get stuck on the same value for 5 or more measurements in a row. These are the three flags returned above.<br></p>
 </div>
 <div id="fixtemperatures" class="section level4">
 <h4>fixTemperatures:</h4>
@@ -466,7 +466,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 </div>
 <div id="joinfulcrum" class="section level4">
 <h4>joinFulcrum:</h4>
-<p><code>joinFulcrum</code> joins the Fulcrum dataframes. The function works to first join the processed nematode field sampling dataframe to the processed nematode isolation dataframe via unique collection labels (<code>c_label</code>). Following this join, it selects a “best” photo for each unique c label based on the existence of a matching photo id in the processed nematode field sampling sample photo dataframe, before joining the aggregated data to this dataframe as well. Finally, the complete merge of the dataframes is achieved when the processed nematode isolation s labeled plates is joined to this large dataframe on the basis of isolation id (<code>s_label</code>).<br></p>
+<p><code>joinFulcrum</code> joins the Fulcrum dataframes. The function works to first join the processed nematode field sampling dataframe to the processed nematode isolation dataframe via unique collection labels (<code>c_label</code>). Following this join, it selects a “best” photo for each unique C-label based on the existence of a matching photo id in the processed nematode field sampling sample photo dataframe, before joining the aggregated data to this dataframe as well. Finally, the complete merge of the dataframes is achieved when the processed nematode isolation S-labeled plates is joined to this large dataframe on the basis of isolation id (<code>s_label</code>).<br></p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a>join_fulc1 &lt;-<span class="st"> </span><span class="kw">joinFulcrum</span>(<span class="dt">data =</span> proc_fulc1)</span>
 <span id="cb7-2"><a href="#cb7-2"></a><span class="co">#&gt; Attempting to join:</span></span>
 <span id="cb7-3"><a href="#cb7-3"></a><span class="co">#&gt; proc_fulc1$nematode_field_sampling_proc</span></span>
@@ -478,7 +478,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 </div>
 <div id="checkjoin" class="section level4">
 <h4>checkJoin:</h4>
-<p><code>checkJoin</code> conducts 10 different checks for flags in the joined Fulcrum data frame regarding extreme temperatures and altitude values, missing, improper, and/or duplicated c labels, missing, and/or duplicated isolation records corresponding to these c labels, and finally unusual sample photo numbers. The <code>return_flags</code> option is the same as in <code>checkTemperatures</code>, and the function automatically prints the rows where the flags exist. If desired, the user can manually edit values or correct mistakes in the underlying data based on these flags and quickly re-run the pipeline again.</p>
+<p><code>checkJoin</code> conducts 10 different checks for flags in the joined Fulcrum data frame regarding extreme temperatures and altitude values, missing, improper, and/or duplicated C-labels, missing, and/or duplicated isolation records corresponding to these C-labels, and finally unusual sample photo numbers. The <code>return_flags</code> option is the same as in <code>checkTemperatures</code>, and the function automatically prints the rows where the flags exist. If desired, the user can manually edit values or correct mistakes in the underlying data based on these flags and re-run the pipeline again.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>flag1<span class="fl">.2</span> &lt;-<span class="st"> </span><span class="kw">checkJoin</span>(<span class="dt">data =</span> join_fulc1, <span class="dt">return_flags =</span> <span class="ot">TRUE</span>)</span>
 <span id="cb8-2"><a href="#cb8-2"></a><span class="co">#&gt; &gt;&gt;&gt; Checking data classes</span></span>
 <span id="cb8-3"><a href="#cb8-3"></a><span class="co">#&gt; [1] &quot;There are 1 improperly classified variables&quot;</span></span>
@@ -564,7 +564,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 </div>
 <div id="checkgenotypes" class="section level4">
 <h4>checkGenotypes:</h4>
-<p><code>checkGenotypes</code> both processes the genotyping data (adds flags) and returns info on those flags if desired, regarding isolations missing, improper, and/or duplicated s labels, and other checks such as if species ID, strain name, proliferation label and its2 genotype are missing and expected based on data in the genotyping sheet. Setting the <code>return_geno</code> option to <code>TRUE</code> and the <code>return_flags</code> option to <code>FALSE</code> will return the processed genotyping data and print information on the flags. Setting the <code>return_geno</code> option to <code>FALSE</code> and the <code>return_flags</code> option to <code>TRUE</code> will return a list of data frames that detail the rows where the flags appear. Both of these cannot be <code>TRUE</code> at the same time.</p>
+<p><code>checkGenotypes</code> both processes the genotyping data (adds flags) and returns info on those flags if desired, regarding isolations missing, improper, and/or duplicated S-labels, and other checks such as if species ID, strain name, proliferation label and ITS2 genotype are missing and expected based on data in the genotyping sheet. Setting the <code>return_geno</code> option to <code>TRUE</code> and the <code>return_flags</code> option to <code>FALSE</code> will return the processed genotyping data and print information on the flags. Setting the <code>return_geno</code> option to <code>FALSE</code> and the <code>return_flags</code> option to <code>TRUE</code> will return a list of data frames that detail the rows where the flags appear. Both of these cannot be <code>TRUE</code> at the same time.</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a>proc_geno1 &lt;-<span class="st"> </span><span class="kw">checkGenotypes</span>(<span class="dt">geno_data =</span> easyfulcrum<span class="op">::</span>raw_geno1, <span class="dt">fulc_data =</span> anno_fulc1, </span>
 <span id="cb11-2"><a href="#cb11-2"></a>                                  <span class="dt">return_geno =</span> <span class="ot">TRUE</span>, <span class="dt">return_flags =</span> <span class="ot">FALSE</span>)</span>
 <span id="cb11-3"><a href="#cb11-3"></a><span class="co">#&gt; &gt;&gt;&gt; Checking data classes</span></span>
@@ -632,8 +632,8 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <p>The final function processes and resizes images, adding details to a final dataframe.<br></p>
 <div id="procphotos" class="section level4">
 <h4>procPhotos:</h4>
-<p><code>procPhotos</code> processes the raw sample photos and adds information regarding them to the final data frame of data, which is also saved in <em>data/processed/fulcrum</em>. Setting the <code>CeNDR</code> option to <code>TRUE</code> will place photos of samples meeting CeNDR criteria to an appropriate subfolder.</p>
-<p>As this depends on a users personal subfolder structure (<code>dir1</code>) and it containing the proper images, this function is commented out (<code>final_data1</code> object is automatically loaded as the example final merged data). This also means that the resized images will not visible in the vignette build.</p>
+<p><code>procPhotos</code> processes the raw sample photos and adds information regarding them to the final data frame of data, which is also saved in <em>data/processed/fulcrum</em>. Setting the <code>CeNDR</code> option to <code>TRUE</code> will place photos of samples meeting CeNDR criteria into an appropriate subfolder.</p>
+<p>As this depends on a users personal subfolder structure (<code>dir1</code>) and it containing the proper images, this function is commented out (<code>final_data1</code> object is automatically loaded as the example final merged data). Because <code>procPhotos</code> is not executed, images are not moved or resized for the purposes of the vignette build.</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a><span class="co"># final_data1 &lt;- procPhotos(dir = dir1, data = join_genofulc1,</span></span>
 <span id="cb14-2"><a href="#cb14-2"></a><span class="co">#                           max_dim = 500, overwrite = T, </span></span>
 <span id="cb14-3"><a href="#cb14-3"></a><span class="co">#                           CeNDR = TRUE)</span></span>
@@ -700,9 +700,10 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <p>We include two functions for generating sample output from <code>final_data1</code>. This final dataframe can otherwise be used as needed by the user. As these depend on a users personal subfolder structure, they are commented out.</p>
 <div id="makespsheet" class="section level4">
 <h4>makeSpSheet:</h4>
-<p><code>makeSpSheet</code> generates a species specific <code>.csv</code> file for the species of interest (<code>target_sp</code>) and writes it to the <code>/reports</code> subdirectory. This function simplifies the output of the final dataframe, pulling variables of particular interest for a user specified species of interest. It also returns a dataframe with flags for these select samples.</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a><span class="co"># flag1.4 &lt;- makeSpSheet(data = join_genofulc1,</span></span>
-<span id="cb15-2"><a href="#cb15-2"></a><span class="co">#                     target_sp = &quot;Caenorhabditis Briggsae&quot;, dir = dir1)</span></span></code></pre></div>
+<p><code>makeSpSheet</code> generates a species specific <code>.csv</code> file for the species of interest (<code>target_sp</code>) and writes it to the <code>/reports</code> subdirectory. This function simplifies the output of the final dataframe, pulling variables of particular interest for a user specified species of interest. In addition, this function standardizes an output dataframe to meet the specifications of submitting to the CaeNDR.<br></p>
+<p>It also returns a dataframe with flags for these select samples, and prints a description of these flags.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a><span class="co"># flag1.4 &lt;- makeSpSheet(data = final_data1,</span></span>
+<span id="cb15-2"><a href="#cb15-2"></a><span class="co">#                     target_sp = &quot;Caenorhabditis briggsae&quot;, dir = dir1)</span></span></code></pre></div>
 </div>
 <div id="samplereport" class="section level4">
 <h4>sampleReport:</h4>

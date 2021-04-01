@@ -127,7 +127,7 @@ personnel_isolation_dates <- data.frame(isolation_dates)
 
 # print nice tables 
 DT::datatable(personnel_projects, colnames = "easyFulcrum project name:", 
-              rownames = FALSE, filter = "none", options = list(dom = 't'))
+              rownames = FALSE, filter = "none", options = list(dom = 't',ordering=F))
 
 DT::datatable(personnel_collectors, colnames = "Participants in collection:", 
               rownames = FALSE, filter = "none", options = list(dom = 't'))
@@ -144,7 +144,7 @@ DT::datatable(personnel_isolation_dates, colnames = "Dates of isolation:",
 
 ## Collections
 
-The first of these tables describes the presence of nematodes on a collection plate, where "yes" signifies that worms are present, "no" signifies that no worms are present, and "tracks" denotes that only tracks are observed, but there are no visible worms. 
+The first of these tables describes the presence of nematodes on a collection plate, where "yes" signifies that worms are present, "no" signifies that no worms are present, and "tracks" denotes that only tracks are observed, but no worms were found. 
 
 ```{r, echo=F, warning = F, message=T}
 # temporary table to collect enumerations on certain quantities of interest
@@ -198,6 +198,23 @@ DT::datatable(collection_worms_on_sample, colnames = c("worms on sample","number
 
 DT::datatable(collection_species_id, colnames = c("collection class","number of collections"),
               rownames = FALSE, filter = "none", options = list(dom = 't')) 
+```
+
+### All collections table
+
+```{r, echo=F, warning = F, message=F}
+collections_df <- df %>%
+  dplyr::select(c_label,s_label,species_id,proc_ambient_temperature,ambient_humidity,
+                proc_substrate_temperature,collection_altitude, substrate,
+                landscape, collection_by)
+
+DT::datatable(collections_df, rownames = FALSE, colnames = c("C-label", "S-label",
+                                                        "SpeciesID", "AmbientTemp",
+                                                        "AmbientHumidity",
+                                                        "SubstrateTemp", "Altitude", 
+                                                        "Substrate", "Landscape",
+                                                        "CollectedBy"),
+              filter = "none", options = list(dom = 'ftrp', scrollX = '200px'))
 ```
 
 ### All collections map
@@ -301,18 +318,6 @@ cowplot::plot_grid(plot_atemp, plot_stemp, plot_ahum, plot_elev,
                    ncol = 2, nrow = 2, align = "hv", axis = "l")
 ```
 
-### All collections table
-
-```{r, echo=F, warning = F, message=F}
-target_df <- df %>%
-  dplyr::select(c_label,s_label,species_id,proc_ambient_temperature,ambient_humidity,
-                proc_substrate_temperature,collection_altitude, substrate,
-                landscape, collection_by, collection_location, collection_island,
-                collection_trail)
-
-DT::datatable(target_df, rownames = FALSE, filter = "none", options = list(dom = 'ftrp', scrollX = '200px'))
-```
-
 ## Isolations
 
 ```{r, echo=F, warning = F, message=T}
@@ -347,6 +352,25 @@ DT::datatable(isolation_species_id, colnames = c("isolation class","number of is
 ```
 
 ## Selfing *Caenorhabditis* species
+
+### Selfing *Caenorhabditis* table
+
+```{r, echo=F, warning = F, message=F}
+selfing_df <- df %>% dplyr::filter(species_id %in% c("Caenorhabditis elegans", 
+                                                    "Caenorhabditis tropicalis", 
+                                                    "Caenorhabditis briggsae")) %>%
+  dplyr::select(c_label,s_label,species_id,proc_ambient_temperature,ambient_humidity,
+                proc_substrate_temperature,collection_altitude, substrate,
+                landscape, collection_by)
+
+DT::datatable(selfing_df, rownames = FALSE, colnames = c("C-label", "S-label",
+                                                        "SpeciesID", "AmbientTemp",
+                                                        "AmbientHumidity",
+                                                        "SubstrateTemp", "Altitude", 
+                                                        "Substrate", "Landscape",
+                                                        "CollectedBy"),
+              filter = "none", options = list(dom = 'ftrp', scrollX = '200px'))
+```
 
 ### Selfing *Caenorhabditis* map
 
@@ -453,20 +477,6 @@ cowplot::plot_grid(plot_atemp, plot_stemp, plot_ahum, plot_elev,
                    ncol = 2, nrow = 2, align = "hv", axis = "l")
 ```
 
-### Selfing *Caenorhabditis* table
-
-```{r, echo=F, warning = F, message=F}
-target_df <- df %>% dplyr::filter(species_id %in% c("Caenorhabditis elegans", 
-                                                    "Caenorhabditis tropicalis", 
-                                                    "Caenorhabditis briggsae")) %>%
-  dplyr::select(c_label,s_label,species_id,proc_ambient_temperature,ambient_humidity,
-                proc_substrate_temperature,collection_altitude, substrate,
-                landscape, collection_by, collection_location, collection_island,
-                collection_trail)
-
-DT::datatable(target_df, rownames = FALSE, filter = "none", options = list(dom = 'ftrp', scrollX = '200px'))
-```
-
 ### Selfing *Caenorhabditis* species
 
 #### C. elegans
@@ -480,6 +490,21 @@ elegans_eval <- ifelse(df %>%
 if(elegans_eval == FALSE) {
   warning("No collections in this project isolated C. elegans samples")
 }
+```
+
+```{r, echo=F, warning = F, message=F, eval=elegans_eval}
+elegans_df <- df %>% dplyr::filter(species_id == "Caenorhabditis elegans") %>%
+  dplyr::select(c_label,s_label,species_id,proc_ambient_temperature,ambient_humidity,
+                proc_substrate_temperature,collection_altitude, substrate,
+                landscape, collection_by)
+
+DT::datatable(elegans_df, rownames = FALSE, colnames = c("C-label", "S-label",
+                                                        "SpeciesID", "AmbientTemp",
+                                                        "AmbientHumidity",
+                                                        "SubstrateTemp", "Altitude", 
+                                                        "Substrate", "Landscape",
+                                                        "CollectedBy"),
+              filter = "none", options = list(dom = 'ftrp', scrollX = '200px'))
 ```
 
 ```{r, fig.height=5, fig.width=10, echo=F, warning = F, message=F, eval=elegans_eval}
@@ -507,16 +532,6 @@ target_df <- df %>%
 target_map <-  map_target_species(target_df,"color")
 
 target_map
-```
-
-```{r, echo=F, warning = F, message=F, eval=elegans_eval}
-elegans_df <- df %>% dplyr::filter(species_id == "Caenorhabditis elegans") %>%
-  dplyr::select(c_label,s_label,proc_ambient_temperature,ambient_humidity,
-                proc_substrate_temperature,collection_altitude, substrate,
-                landscape, collection_by, collection_location, collection_island,
-                collection_trail)
-
-DT::datatable(elegans_df, rownames = FALSE, filter = "none", options = list(dom = 'ftrp', scrollX = '200px'))
 ```
 
 ```{r, fig.height=8, fig.width=8, echo=F, warning = F, message=F, eval=elegans_eval}
@@ -607,6 +622,21 @@ if(briggsae_eval == FALSE) {
 }
 ```
 
+```{r, echo=F, warning = F, message=F, eval=briggsae_eval}
+briggsae_df <- df %>% dplyr::filter(species_id == "Caenorhabditis briggsae") %>%
+  dplyr::select(c_label,s_label,species_id,proc_ambient_temperature,ambient_humidity,
+                proc_substrate_temperature,collection_altitude, substrate,
+                landscape, collection_by)
+
+DT::datatable(briggsae_df, rownames = FALSE, colnames = c("C-label", "S-label",
+                                                        "SpeciesID", "AmbientTemp",
+                                                        "AmbientHumidity",
+                                                        "SubstrateTemp", "Altitude", 
+                                                        "Substrate", "Landscape",
+                                                        "CollectedBy"),
+              filter = "none", options = list(dom = 'ftrp', scrollX = '200px'))
+```
+
 ```{r, fig.height=5, fig.width=10, echo=F, warning = F, message=F, eval=briggsae_eval}
 target_df <- df %>%
   dplyr::group_by(c_label, species_id) %>%
@@ -632,16 +662,6 @@ target_df <- df %>%
 target_map <-  map_target_species(target_df,"color")
 
 target_map
-```
-
-```{r, echo=F, warning = F, message=F, eval=briggsae_eval}
-briggsae_df <- df %>% dplyr::filter(species_id == "Caenorhabditis briggsae") %>%
-  dplyr::select(c_label,s_label,proc_ambient_temperature,ambient_humidity,
-                proc_substrate_temperature,collection_altitude, substrate,
-                landscape, collection_by, collection_location, collection_island,
-                collection_trail)
-
-DT::datatable(briggsae_df, rownames = FALSE, filter = "none", options = list(dom = 'ftrp',scrollX = '200px'))
 ```
 
 ```{r, fig.height=8, fig.width=8, echo=F, warning = F, message=F, eval=briggsae_eval}
@@ -732,6 +752,21 @@ if(tropicalis_eval == FALSE) {
 }
 ```
 
+```{r, echo=F, warning = F, message=F, eval=tropicalis_eval}
+tropicalis_df <- df %>% dplyr::filter(species_id == "Caenorhabditis tropicalis") %>%
+  dplyr::select(c_label,s_label,species_id,proc_ambient_temperature,ambient_humidity,
+                proc_substrate_temperature,collection_altitude, substrate,
+                landscape, collection_by)
+
+DT::datatable(tropicalis_df, rownames = FALSE, colnames = c("C-label", "S-label",
+                                                        "SpeciesID", "AmbientTemp",
+                                                        "AmbientHumidity",
+                                                        "SubstrateTemp", "Altitude", 
+                                                        "Substrate", "Landscape",
+                                                        "CollectedBy"),
+              filter = "none", options = list(dom = 'ftrp', scrollX = '200px'))
+```
+
 ```{r, fig.height=5, fig.width=10, echo=F, warning = F, message=F, eval=tropicalis_eval}
 target_df <- df %>%
   dplyr::group_by(c_label, species_id) %>%
@@ -757,16 +792,6 @@ target_df <- df %>%
 target_map <-  map_target_species(target_df,"color")
 
 target_map
-```
-
-```{r, echo=F, warning = F, message=F, eval=tropicalis_eval}
-tropicalis_df <- df %>% dplyr::filter(species_id == "Caenorhabditis tropicalis") %>%
-  dplyr::select(c_label,s_label,proc_ambient_temperature,ambient_humidity,
-                proc_substrate_temperature,collection_altitude, substrate,
-                landscape, collection_by, collection_location, collection_island,
-                collection_trail)
-
-DT::datatable(tropicalis_df, rownames = FALSE, filter = "none", options = list(dom = 'ftrp',scrollX = '200px'))
 ```
 
 ```{r, fig.height=8, fig.width=8, echo=F, warning = F, message=F, eval=tropicalis_eval}

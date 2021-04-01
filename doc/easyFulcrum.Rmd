@@ -81,13 +81,13 @@ proc_fulc1 <- procFulcrum(data = raw_fulc1)
 
 #### checkTemperatures:
 
-`checkTemperatures` identifies flags in three temperature variables. Setting the `return_flags` option to `TRUE` will return a list of three data frames that pulls only the rows where each of the three flag types appear. The function automatically prints the rows where the flags exist.
+`checkTemperatures` identifies flags in three temperature variables. Setting the `return_flags` option to `TRUE` will return a list of three data frames that pulls only the rows where each of the three flag types appear. The function automatically prints the rows where the flags exist.<br>
+
+`procFulcrum` function assumes that, when `raw_substrate_temperature` or `raw_ambient_temperature` temperatures are above 40 degrees, the temperatures were mistakenly input as Fahrenheit rather than Celsius, and converts these values to Celsius. It will also notice when both `raw_ambient_temperature` and `raw_ambient_humidity` get stuck on the same value for 5 or more measurements in a row. These are the three flags returned above.<br>
 
 ```{r}
 flag1.1 <- checkTemperatures(data = proc_fulc1, return_flags = TRUE)
 ```
-
-`procFulcrum` function assumes that, when `raw_substrate_temperature` or `raw_ambient_temperature` temperatures are above 40 degrees, the temperatures were mistakenly input as Fahrenheit rather than Celsius, and converts these values to Celsius. It will also notice when both `raw_ambient_temperature` and `raw_ambient_humidity` get stuck on the same value for 5 or more measurements in a row. These are the three flags returned above.<br>
 
 #### fixTemperatures: 
 
@@ -105,7 +105,7 @@ The flag variables will be maintained, so rerunning `checkTemperatures` on the c
 
 #### joinFulcrum:
 
-`joinFulcrum` joins the Fulcrum dataframes. The function works to first join the processed nematode field sampling dataframe to the processed nematode isolation dataframe via unique collection labels (`c_label`). Following this join, it selects a “best” photo for each unique c label based on the existence of a matching photo id in the processed nematode field sampling sample photo dataframe, before joining the aggregated data to this dataframe as well. Finally, the complete merge of the dataframes is achieved when the processed nematode isolation s labeled plates is joined to this large dataframe on the basis of isolation id (`s_label`).<br>
+`joinFulcrum` joins the Fulcrum dataframes. The function works to first join the processed nematode field sampling dataframe to the processed nematode isolation dataframe via unique collection labels (`c_label`). Following this join, it selects a “best” photo for each unique C-label based on the existence of a matching photo id in the processed nematode field sampling sample photo dataframe, before joining the aggregated data to this dataframe as well. Finally, the complete merge of the dataframes is achieved when the processed nematode isolation S-labeled plates is joined to this large dataframe on the basis of isolation id (`s_label`).<br>
 
 ```{r}
 join_fulc1 <- joinFulcrum(data = proc_fulc1)
@@ -113,7 +113,7 @@ join_fulc1 <- joinFulcrum(data = proc_fulc1)
 
 #### checkJoin:
 
-`checkJoin` conducts 10 different checks for flags in the joined Fulcrum data frame regarding extreme temperatures and altitude values, missing, improper, and/or duplicated c labels, missing, and/or duplicated isolation records corresponding to these c labels, and finally unusual sample photo numbers. The `return_flags` option is the same as in `checkTemperatures`, and the function automatically prints the rows where the flags exist. If desired, the user can manually edit values or correct mistakes in the underlying data based on these flags and quickly re-run the pipeline again.
+`checkJoin` conducts 10 different checks for flags in the joined Fulcrum data frame regarding extreme temperatures and altitude values, missing, improper, and/or duplicated C-labels, missing, and/or duplicated isolation records corresponding to these C-labels, and finally unusual sample photo numbers. The `return_flags` option is the same as in `checkTemperatures`, and the function automatically prints the rows where the flags exist. If desired, the user can manually edit values or correct mistakes in the underlying data based on these flags and re-run the pipeline again.
 
 ```{r}
 flag1.2 <- checkJoin(data = join_fulc1, return_flags = TRUE)
@@ -151,7 +151,7 @@ head(raw_geno1)
 
 #### checkGenotypes:
 
-`checkGenotypes` both processes the genotyping data (adds flags) and returns info on those flags if desired, regarding isolations missing, improper, and/or duplicated s labels, and other checks such as if species ID, strain name, proliferation label and its2 genotype are missing and expected based on data in the genotyping sheet. Setting the `return_geno` option to `TRUE` and the `return_flags` option to `FALSE` will return the processed genotyping data and print information on the flags. Setting the `return_geno` option to `FALSE` and the `return_flags` option to `TRUE` will return a list of data frames that detail the rows where the flags appear. Both of these cannot be `TRUE` at the same time.
+`checkGenotypes` both processes the genotyping data (adds flags) and returns info on those flags if desired, regarding isolations missing, improper, and/or duplicated S-labels, and other checks such as if species ID, strain name, proliferation label and ITS2 genotype are missing and expected based on data in the genotyping sheet. Setting the `return_geno` option to `TRUE` and the `return_flags` option to `FALSE` will return the processed genotyping data and print information on the flags. Setting the `return_geno` option to `FALSE` and the `return_flags` option to `TRUE` will return a list of data frames that detail the rows where the flags appear. Both of these cannot be `TRUE` at the same time.
 
 ```{r}
 proc_geno1 <- checkGenotypes(geno_data = easyfulcrum::raw_geno1, fulc_data = anno_fulc1, 
@@ -196,9 +196,9 @@ The final function processes and resizes images, adding details to a final dataf
 
 #### procPhotos:
 
-`procPhotos` processes the raw sample photos and adds information regarding them to the final data frame of data, which is also saved in _data/processed/fulcrum_. Setting the `CeNDR` option to `TRUE` will place photos of samples meeting CeNDR criteria to an appropriate subfolder.
+`procPhotos` processes the raw sample photos and adds information regarding them to the final data frame of data, which is also saved in _data/processed/fulcrum_. Setting the `CeNDR` option to `TRUE` will place photos of samples meeting CeNDR criteria into an appropriate subfolder.
 
-As this depends on a users personal subfolder structure (`dir1`) and it containing the proper images, this function is commented out (`final_data1` object is automatically loaded as the example final merged data). This also means that the resized images will not visible in the vignette build.
+As this depends on a users personal subfolder structure (`dir1`) and it containing the proper images, this function is commented out (`final_data1` object is automatically loaded as the example final merged data). Because `procPhotos` is not executed, images are not moved or resized for the purposes of the vignette build.
 
 ```{r message = FALSE}
 # final_data1 <- procPhotos(dir = dir1, data = join_genofulc1,
@@ -214,11 +214,13 @@ We include two functions for generating sample output from `final_data1`. This f
 
 #### makeSpSheet:
 
-`makeSpSheet` generates a species specific `.csv` file for the species of interest (`target_sp`) and writes it to the `/reports` subdirectory. This function simplifies the output of the final dataframe, pulling variables of particular interest for a user specified species of interest. It also  returns a dataframe with flags for these select samples.
+`makeSpSheet` generates a species specific `.csv` file for the species of interest (`target_sp`) and writes it to the `/reports` subdirectory. This function simplifies the output of the final dataframe, pulling variables of particular interest for a user specified species of interest. In addition, this function standardizes an output dataframe to meet the specifications of submitting to the CaeNDR.<br>
+
+It also  returns a dataframe with flags for these select samples, and prints a description of these flags.
 
 ```{r}
-# flag1.4 <- makeSpSheet(data = join_genofulc1,
-#                     target_sp = "Caenorhabditis Briggsae", dir = dir1)
+# flag1.4 <- makeSpSheet(data = final_data1,
+#                     target_sp = "Caenorhabditis briggsae", dir = dir1)
 ```
 
 #### sampleReport:
