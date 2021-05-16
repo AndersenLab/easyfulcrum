@@ -36,11 +36,9 @@ FtoC <- function(F) {
 makeDirStructure <- function(startdir, projectdirname) {
   # creates empty directory folders as required
   dir.create(file.path(startdir, projectdirname, "data", "raw", "fulcrum", "photos"), recursive = TRUE)
-  dir.create(file.path(startdir, projectdirname, "data", "raw", "sanger"), recursive = TRUE)
   dir.create(file.path(startdir, projectdirname, "data", "raw", "annotate"), recursive = TRUE)
   dir.create(file.path(startdir, projectdirname, "data", "processed", "fulcrum"), recursive = TRUE)
   dir.create(file.path(startdir, projectdirname, "data", "processed", "genotypes"), recursive = TRUE)
-  dir.create(file.path(startdir, projectdirname, "data", "processed", "sanger"), recursive = TRUE)
   dir.create(file.path(startdir, projectdirname, "reports"), recursive = TRUE)
   dir.create(file.path(startdir, projectdirname, "scripts"), recursive = TRUE)
 }
