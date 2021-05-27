@@ -133,7 +133,7 @@ anno_fulc1 <- annotateFulcrum(data = join_fulc1, dir = NULL)
 
 This second group of functions operates to clean the results from the collection specific Google Sheet of genotyping results.<br>
 
-Details on how to create genotyping Google Sheets can be found in the [Nematode Collection Protocol](https://docs.google.com/document/d/1aPgPDYobpxzr0BQYgvUsjPWnAGXZmCSQKQ4sDGBXuYM/edit), look for "wild_isolate_genotyping_template".<br>
+Details on how to create genotyping Google Sheets can be found in the [Nematode Collection Protocol](https://docs.google.com/document/d/1aPgPDYobpxzr0BQYgvUsjPWnAGXZmCSQKQ4sDGBXuYM/edit), look for "wild_isolate_genotyping_template". A template is [linked](https://docs.google.com/spreadsheets/d/1pvdpujuJDTYaMwjjDlivjAnO0MrQuDguU2kRLs9eemQ/edit#gid=0)<br>
 
 #### readGenotypes:
 
