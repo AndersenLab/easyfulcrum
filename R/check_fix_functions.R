@@ -3,8 +3,8 @@
 #' \code{checkTemperatures} checks for flags (3) regarding raw temperature parameters.
 #'
 #' Will return the flagged rows (and neighboring rows if appropriate), and necessary columns for flag visualization on \code{procFulcrum} output.
-#' The returned fulcrum_id} can be used in \code{fixTemperatures} to make changes to these raw temperature parameters.
-#' See \code{fixTemperatures} documentation for details on how to make these changes.
+#' The returned \code{fulcrum_id} can be used in \code{fixTemperatures} to make changes to these raw temperature parameters.
+#' See \code{fixTemperatures} documentation for information on how to make these changes.
 #' flagged substrate temperature: occurs when substrate temperature > 40,
 #' \code{procFulcrum} will automatically convert to celsius (assumes temperature incorrectly in fahrenheit).
 #' flagged ambient temperature: occurs when ambient temperature > 40,
@@ -108,7 +108,6 @@ checkTemperatures <- function(data, return_flags = FALSE) {
 #' will automatically convert to celsius (assumes temperature incorrectly in fahrenheit).
 #' flagged ambient run temperature: occurs when ambient humidity and temperature are repeated in subsequent measurements,
 #' this is meant to flag values if probe is stuck, \code{procFulcrum} does not automatically modify anything for this flag.
-#'
 #' We advise re-running \code{checkTemperatures()} on the saved output of \code{fixTemperatures()} to ensure that wanted edits have appropriately occurred.
 #'
 #' @param data list format output of \code{procFulcrum}.

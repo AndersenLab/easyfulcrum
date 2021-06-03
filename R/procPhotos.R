@@ -21,7 +21,9 @@
 #' @export
 #'
 
-procPhotos <- function(dir, data, max_dim = 500, overwrite = FALSE, CeNDR = FALSE, pub_url = "https://storage.googleapis.com/elegansvariation.org/photos/isolation/fulcrum/") {
+procPhotos <- function(dir, data, max_dim = 500, overwrite = FALSE, CeNDR = FALSE,
+                       pub_url = "https://storage.googleapis.com/elegansvariation.org/photos/isolation/fulcrum/") {
+
   # edit pub_url to take into account project name and subfolder
   project_url <- glue::glue("{pub_url}",tail(strsplit(dir,"/")[[1]],1),"/sampling_thumbs/")
   # edit dir to be appropriate for path to photos
