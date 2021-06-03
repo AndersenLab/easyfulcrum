@@ -21,5 +21,13 @@ flagged ambient run temperature (and surrounding rows that cause flag to be trig
 \code{checkTemperatures} checks for flags (3) regarding raw temperature parameters.
 }
 \details{
-
+Will return the flagged rows (and neighboring rows if appropriate), and necessary columns for flag visualization on \code{procFulcrum} output.
+The returned \code{fulcrum_id} can be used in \code{fixTemperatures} to make changes to these raw temperature parameters.
+See \code{fixTemperatures} documentation for information on how to make these changes.
+flagged substrate temperature: occurs when substrate temperature > 40,
+\code{procFulcrum} will automatically convert to celsius (assumes temperature incorrectly in fahrenheit).
+flagged ambient temperature: occurs when ambient temperature > 40,
+\code{procFulcrum} will automatically convert to celsius (assumes temperature incorrectly in fahrenheit).
+flagged ambient run temperature: occurs when ambient humidity and temperature are repeated in subsequent measurements,
+this is meant to flag values if probe is stuck, \code{procFulcrum} does not automatically modify anything for this flag.
 }

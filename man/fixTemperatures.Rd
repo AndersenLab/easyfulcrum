@@ -35,6 +35,5 @@ flagged ambient temperature: occurs when ambient temperature > 40, \code{procFul
 will automatically convert to celsius (assumes temperature incorrectly in fahrenheit).
 flagged ambient run temperature: occurs when ambient humidity and temperature are repeated in subsequent measurements,
 this is meant to flag values if probe is stuck, \code{procFulcrum} does not automatically modify anything for this flag.
-
 We advise re-running \code{checkTemperatures()} on the saved output of \code{fixTemperatures()} to ensure that wanted edits have appropriately occurred.
 }
