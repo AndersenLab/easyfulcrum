@@ -2,7 +2,7 @@
 #'
 #' \code{readFulcrum} reads .csv files exported from Fulcrum into R
 #'
-#' @param dir The path to the base fulcrum directory, dir/data/raw/fulcrum should contain:
+#' @param dir The path to the base fulcrum project directory, dir/data/raw/fulcrum should contain:
 #' nematode_field_sampling.csv,
 #' nematode_field_sampling_sample_photo.csv,
 #' nematode_isolation.csv,
@@ -10,7 +10,7 @@
 #' nematode_isolation_photos.csv
 #'
 #' All five files are not required but it is recommended to use all exported files when possible.
-#' @return A list of dataframes named from the .csv files.
+#' @return A list of dataframes named from the .csv files. For example, see the table below.
 #' \tabular{ll}{
 #' nematode_field_sampling \tab nematode_field_sampling.csv\cr
 #' nematode_field_sampling_sample_photo \tab nematode_field_sampling_sample_photo.csv\cr
