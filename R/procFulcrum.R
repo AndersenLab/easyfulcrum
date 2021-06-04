@@ -42,7 +42,8 @@ procFulcrum <- function(data) {
                     -system_updated_at,
                     -date,
                     -sample_photo_caption, # not needed here, can bring in from photo export
-                    -sample_photo_url) %>% # make custom urls later with function
+                    -sample_photo_url,
+                    -updated_by, -version, -status, -assigned_to, -geometry) %>% # make custom urls later with function
       # this is UTC time (very important if you want to convert to local time)
       dplyr::mutate(collection_datetime_UTC = lubridate::ymd_hms(created_at, tz = "UTC")) %>%
       # again this is UTC date (very important if you want to convert to local date)
@@ -96,8 +97,8 @@ procFulcrum <- function(data) {
       dplyr::arrange(exif_gps_dop) %>%
       dplyr::ungroup() %>%
       dplyr::distinct(fulcrum_parent_id, .keep_all = T) %>%
-      dplyr::mutate(best_exif_gps_dop = TRUE) %>%
-      dplyr::select(fulcrum_id, exif_gps_latitude, exif_gps_longitude, exif_gps_altitude, best_exif_gps_dop, exif_gps_dop, best_sample_photo_caption = caption)
+      dplyr::mutate(best_photo_gps_dop_logical = TRUE) %>%
+      dplyr::select(fulcrum_id, exif_gps_latitude, exif_gps_longitude, exif_gps_altitude, best_photo_gps_dop_logical, best_photo_gps_dop = exif_gps_dop, best_photo_caption = caption)
 
     # add to list
     proc_data["field_sampling_sample_photo_proc"] <- list(field_sampling_sample_photo_proc)
@@ -111,16 +112,15 @@ procFulcrum <- function(data) {
       dplyr::group_by(c_label) %>%
       dplyr::mutate(flag_duplicated_isolation_for_c_label = ifelse(dplyr::n() > 1, TRUE, FALSE)) %>% # could use count here without grouping?
       dplyr::ungroup() %>%
-      dplyr::select(c_label_id = c_label,
-                    flag_duplicated_isolation_for_c_label,
+      dplyr::rename(c_label_id = c_label,
                     isolation_id = fulcrum_id,
                     isolation_datetime_UTC = system_created_at,
                     isolation_by = created_by,
                     isolation_date_UTC = date,
                     isolation_local_time = time, # Is this actually local time? or is it UTC?
                     isolation_latitude = latitude,
-                    isolation_longitude = longitude,
-                    -created_at, -project, -geometry, -photos, -photos_caption, -photos_url, -gps_altitude, -gps_horizontal_accuracy,
+                    isolation_longitude = longitude) %>%
+      dplyr::select(-created_at, -project, -geometry, -photos, -photos_caption, -photos_url, -gps_altitude, -gps_horizontal_accuracy,
                     -gps_vertical_accuracy, -gps_speed, -gps_course)
 
     # add to list

@@ -13,7 +13,16 @@
 #'   files with similar names will be written over. Default is FALSE.
 #' @param CeNDR Logical, determines whether to write CeNDR criteria for
 #'   qualifying photos to a subdirectory
-#' @param pub_url A public url that holds sample images named by C-label.
+#' @param pub_url A public url that holds sample images named by project then
+#'   C-label. For example, if the full url for C-0001 is
+#'   https://storage.googleapis.com/elegansvariation.org/photos/hawaii2017/C-0001.jpg,
+#'   the pub_url should be set to
+#'   https://storage.googleapis.com/elegansvariation.org/photos/. The project
+#'   name, C-label, and file extension will be filled by the function.
+#' @param select_vars Logical, TRUE  will return only the default variables,
+#'   FALSE will return all variables. FALSE is recommended if using customized
+#'   Fulcrum applications other than "Nematode field sampling" and "Nematode
+#'   isolation". TRUE is default.
 #' @return A new directory data/processed/fulcrum/photos. This directory
 #'   contains full size sample photos renamed with C-labels and a thumbnails
 #'   subfolder that contains resized images. A dataframe identical to input with
@@ -30,9 +39,21 @@
 #' @export
 #'
 
-procPhotos <- function(dir, data, max_dim = 500, overwrite = FALSE, CeNDR = FALSE, pub_url = "https://storage.googleapis.com/elegansvariation.org/photos/") {
+procPhotos <- function(dir, data, max_dim = 500, overwrite = FALSE, CeNDR = FALSE,
+                       pub_url = "https://storage.googleapis.com/elegansvariation.org/photos/", select_vars = T) {
   # edit pub_url to take into account project name and subfolder
   project_url <- glue::glue("{pub_url}{unique(data$project)}/")
+
+  # warn that more than one
+  if(length(unique(data$project)) > 1){
+    warning(glue::glue("{length(unique(data$project))} distinct collection projects in data, expected 1"))
+  }
+
+  # end if project NA
+  if(sum(is.na(data$project)) > 0){
+    stop("At least one NA detected in data$project, expected no NAs.")
+  }
+
   # edit dir to be appropriate for path to photos
   dir_photos <- glue::glue("{dir}/data/raw/fulcrum/photos")
   # make processed dir path
@@ -221,65 +242,6 @@ procPhotos <- function(dir, data, max_dim = 500, overwrite = FALSE, CeNDR = FALS
                                                           TRUE ~ NA_character_)) %>%
     dplyr::select(project:sample_photo1, sample_photo1_processed_url, orig_file_name:thumb_file_name, sample_photo2, sample_photo2_processed_url, orig_file_name2:thumb_file_name2,
                   sample_photo3, sample_photo3_processed_url, orig_file_name3:thumb_file_name3, everything())
-
-  # # make a md5 hash for sample photos and thubnails integrity
-  # message("Writing md5 hash for raw images and adding to data frame.")
-  # raw_hash <- dplyr::as_tibble(as.list(tools::md5sum(fs::dir_ls(glue::glue("{dir_photos}"), type = "file")))) %>%
-  #   tidyr::gather(key = raw_file, value = sample_photo_raw_photo_hash) %>%
-  #   dplyr::mutate(sample_photo_raw_file_name = stringr::str_extract(raw_file, pattern = ".{36}" %R% ".jpg"),
-  #                 sample_photo = stringr::str_replace(sample_photo_raw_file_name, pattern = ".jpg", replacement = "")) %>%
-  #   dplyr::select(-raw_file)
-  # # get hash 1
-  # raw_hash1 <- raw_hash %>%
-  #   dplyr::filter(sample_photo %in% data$sample_photo1)
-  # # get hash 2
-  # raw_hash2 <- raw_hash %>%
-  #   dplyr::filter(sample_photo %in% data$sample_photo2)
-  # # get hash 3
-  # raw_hash3 <- raw_hash %>%
-  #   dplyr::filter(sample_photo %in% data$sample_photo3)
-  #
-  # message("Writing md5 hash for thumbnail images and adding to data frame.")
-  # thumb_hash <- dplyr::as_tibble(as.list(tools::md5sum(fs::dir_ls(glue::glue("{processed_dir}/thumbnails"))))) %>%
-  #   tidyr::gather(key = thumb_file, value = sample_photo_resized_hash) %>%
-  #   dplyr::mutate(sample_photo_resized_file_name = stringr::str_extract(thumb_file, pattern = ALPHA %R% optional("-") %R% one_or_more(DGT) %R% optional("_") %R% one_or_more(DGT) %R% ".jpg"),
-  #                 c_label = stringr::str_extract(sample_photo_resized_file_name, pattern = ALPHA %R% optional("-") %R% one_or_more(DGT)),
-  #                 sample_photo_processed_file_name = sample_photo_resized_file_name)
-  #
-  # # get hash 1
-  # thumb_hash1 <- thumb_hash %>%
-  #   dplyr::filter(c_label %in% to_change1$c_label)
-  # # get hash 2
-  # thumb_hash2 <- thumb_hash %>%
-  #   dplyr::filter(c_label %in% to_change2$c_label)
-  # # get hash 3
-  # thumb_hash3 <- thumb_hash %>%
-  #   dplyr::filter(c_label %in% to_change3$c_label)
-  #
-  # # join hash to data frame
-  # data_out <- data %>%
-  #   dplyr::left_join(dplyr::select(raw_hash1, sample_photo1_hash = sample_photo_raw_photo_hash,
-  #                                  sample_photo1_raw_file_name = sample_photo_raw_file_name, sample_photo), by = c("sample_photo1" = "sample_photo")) %>%
-  #   dplyr::left_join(dplyr::select(raw_hash2, sample_photo2_hash = sample_photo_raw_photo_hash,
-  #                                  sample_photo2_raw_file_name = sample_photo_raw_file_name, sample_photo), by = c("sample_photo2" = "sample_photo")) %>%
-  #   dplyr::left_join(dplyr::select(raw_hash3, sample_photo3_hash = sample_photo_raw_photo_hash,
-  #                                  sample_photo3_raw_file_name = sample_photo_raw_file_name, sample_photo), by = c("sample_photo3" = "sample_photo")) %>%
-  #   dplyr::left_join(dplyr::select(thumb_hash1, sample_photo1_resized_hash = sample_photo_resized_hash,
-  #                                  sample_photo1_processed_file_name = sample_photo_processed_file_name,
-  #                                  sample_photo1_resized_file_name = sample_photo_resized_file_name, c_label), by = c("c_label" = "c_label")) %>%
-  #   dplyr::left_join(dplyr::select(thumb_hash2, sample_photo2_resized_hash = sample_photo_resized_hash,
-  #                                  sample_photo2_processed_file_name = sample_photo_processed_file_name,
-  #                                  sample_photo2_resized_file_name = sample_photo_resized_file_name, c_label), by = c("c_label" = "c_label")) %>%
-  #   dplyr::left_join(dplyr::select(thumb_hash3, sample_photo3_resized_hash = sample_photo_resized_hash,
-  #                                  sample_photo3_processed_file_name = sample_photo_processed_file_name,
-  #                                  sample_photo3_resized_file_name = sample_photo_resized_file_name, c_label), by = c("c_label" = "c_label"))  %>%
-  #   dplyr::mutate(sample_photo1_processed_url = ifelse(!is.na(sample_photo1_processed_file_name), glue::glue("{project_url}","{sample_photo1_processed_file_name}"), NA),
-  #                 sample_photo2_processed_url = ifelse(!is.na(sample_photo2_processed_file_name), glue::glue("{project_url}","{sample_photo2_processed_file_name}"), NA),
-  #                 sample_photo3_processed_url = ifelse(!is.na(sample_photo3_processed_file_name), glue::glue("{project_url}","{sample_photo3_processed_file_name}"), NA)) %>%
-  #   dplyr::select(project:sample_photo1, sample_photo1_raw_file_name, sample_photo1_processed_file_name, sample_photo1_hash, sample_photo1_resized_file_name, sample_photo1_resized_hash,
-  #               sample_photo2, sample_photo2_raw_file_name, sample_photo2_processed_file_name, sample_photo2_hash, sample_photo2_resized_file_name, sample_photo2_resized_hash,
-  #               sample_photo3, sample_photo3_raw_file_name, sample_photo3_processed_file_name, sample_photo3_hash, sample_photo3_resized_file_name, sample_photo3_resized_hash,
-  #               everything())
 
   # return
   message("DONE")

@@ -1,16 +1,18 @@
 #' annotateFulcrum
 #'
-#' \code{annotateFulcrum} Adds additional collection location information to the final Fulcrum dataframe
+#' \code{annotateFulcrum} Adds additional collection location information to the
+#' final Fulcrum dataframe
 #'
 #' @param data A single dataframe generated with the joinFulcrum function.
-#' @param dir The path to the base fulcrum directory, dir/data/raw/fulcrum should contain:
-#' island.csv,
-#' location.csv,
-#' trails.csv
-#'
-#' @return A single dataframe containing all Fulcrum data sources.
-#' This data frame contains all necessary variables from Fulcrum. It also contains data quality flags.
-#' The variable names match the data dictionary.
+#' @param dir The path to the base fulcrum directory, dir/data/raw/fulcrum
+#'   should contain: island.csv, location.csv, trails.csv
+#' @param select_vars Logical, TRUE  will return only the default variables,
+#'   FALSE will return all variables. FALSE is recommended if using customized
+#'   Fulcrum applications other than "Nematode field sampling" and "Nematode
+#'   isolation". TRUE is default.
+#' @return A single dataframe containing all Fulcrum data sources. This data
+#'   frame contains all necessary variables from Fulcrum. It also contains data
+#'   quality flags. The variable names match the data dictionary.
 #' @importFrom glue glue
 #' @import tibble
 #' @import dplyr
@@ -18,7 +20,7 @@
 #' @export
 #'
 
-annotateFulcrum <- function(data, dir = NULL) {
+annotateFulcrum <- function(data, dir = NULL, select_vars = T) {
   # import island csv
   island <- easyfulcrum::hawaii_islands
   # import location csv
@@ -99,75 +101,86 @@ annotateFulcrum <- function(data, dir = NULL) {
     dplyr::mutate(collection_trail = glue::glue("{list(unique(trail_coordinates$trail))[[1]][{collection_trail}]}")) %>%
     dplyr::ungroup() %>%
     dplyr::mutate(collection_trail = ifelse(collection_trail == "NA", NA_character_, collection_trail)) %>% # fix NAs
-    dplyr::full_join(joined_data) %>% # add back joined_data with NAs for complete collection
-    dplyr::select(project,
-                  c_label,
-                  s_label,
-                  flag_ambient_temperature,
-                  flag_ambient_temperature_extreme,
-                  flag_ambient_temperature_run,
-                  flag_substrate_temperature,
-                  flag_substrate_temperature_extreme,
-                  flag_unusual_sample_photo_num,
-                  flag_duplicated_c_label_field_sampling,
-                  flag_duplicated_isolation_for_c_label,
-                  flag_duplicated_s_label_isolation_s_labeled_plates,
-                  flag_missing_s_label_isolation_s_labeled_plates,
-                  flag_missing_isolation_record,
-                  collection_by,
-                  collection_datetime_UTC,
-                  collection_date_UTC,
-                  collection_local_time,
-                  collection_fulcrum_latitude,
-                  collection_fulcrum_longitude,
-                  exif_gps_latitude,
-                  exif_gps_longitude,
-                  collection_latitude,
-                  collection_longitude,
-                  collection_lat_long_method,
-                  collection_lat_long_method_diff,
-                  fulcrum_altitude,
-                  exif_gps_altitude,
-                  collection_altitude,
-                  collection_altitude_method,
-                  collection_location,
-                  collection_island,
-                  collection_trail,
-                  flag_collection_altitude_extreme,
-                  landscape,
-                  sky_view,
-                  ambient_humidity,
-                  substrate,
-                  substrate_notes,
-                  substrate_other,
-                  raw_ambient_temperature,
-                  proc_ambient_temperature,
-                  raw_substrate_temperature,
-                  proc_substrate_temperature,
-                  gridsect,
-                  gridsect_index,
-                  gridsect_radius,
-                  grid_sect_direction,
-                  sample_photo1,
-                  sample_photo2,
-                  sample_photo3,
-                  best_exif_dop_photo,
-                  best_sample_photo_caption,
-                  gps_course,
-                  gps_horizontal_accuracy,
-                  gps_speed,
-                  gps_vertical_accuracy,
-                  isolation_by,
-                  isolation_datetime_UTC,
-                  isolation_date_UTC,
-                  isolation_local_time,
-                  isolation_latitude,
-                  isolation_longitude,
-                  worms_on_sample,
-                  approximate_number_of_worms)
+    dplyr::full_join(joined_data) # add back joined_data with NAs for complete collection
 
+  # chose the selected data or not
+  if(select_vars == TRUE) {
+    fulc_data_selected <- fulc_data %>%
+      dplyr::select(project,
+                    c_label,
+                    s_label,
+                    flag_ambient_temperature,
+                    flag_ambient_temperature_extreme,
+                    flag_ambient_temperature_run,
+                    flag_substrate_temperature,
+                    flag_substrate_temperature_extreme,
+                    flag_unusual_sample_photo_num,
+                    flag_duplicated_c_label_field_sampling,
+                    flag_duplicated_isolation_for_c_label,
+                    flag_duplicated_s_label_isolation_s_labeled_plates,
+                    flag_missing_s_label_isolation_s_labeled_plates,
+                    flag_missing_isolation_record,
+                    collection_by,
+                    collection_datetime_UTC,
+                    collection_date_UTC,
+                    collection_local_time,
+                    collection_fulcrum_latitude,
+                    collection_fulcrum_longitude,
+                    exif_gps_latitude,
+                    exif_gps_longitude,
+                    collection_latitude,
+                    collection_longitude,
+                    collection_lat_long_method,
+                    collection_lat_long_method_diff,
+                    fulcrum_altitude,
+                    exif_gps_altitude,
+                    collection_altitude,
+                    collection_altitude_method,
+                    collection_location,
+                    collection_island,
+                    collection_trail,
+                    flag_collection_altitude_extreme,
+                    landscape,
+                    sky_view,
+                    ambient_humidity,
+                    substrate,
+                    substrate_notes,
+                    substrate_other,
+                    raw_ambient_temperature,
+                    proc_ambient_temperature,
+                    raw_substrate_temperature,
+                    proc_substrate_temperature,
+                    gridsect,
+                    gridsect_index,
+                    gridsect_radius,
+                    grid_sect_direction,
+                    sample_photo1,
+                    sample_photo2,
+                    sample_photo3,
+                    best_photo,
+                    best_photo_gps_dop,
+                    best_photo_caption,
+                    gps_course,
+                    gps_horizontal_accuracy,
+                    gps_speed,
+                    gps_vertical_accuracy,
+                    isolation_by,
+                    isolation_datetime_UTC,
+                    isolation_date_UTC,
+                    isolation_local_time,
+                    isolation_latitude,
+                    isolation_longitude,
+                    worms_on_sample,
+                    approximate_number_of_worms)
+  }
   # return data
-  return(fulc_data)
-
+  if(select_vars == TRUE){
+    message("returning selected data, set select_vars to FALSE if variables are missing")
+    return(fulc_data_selected)
+  }
+  else{
+    message("returning all data, set select_vars to TRUE if you want to select default variables")
+    return(fulc_data)
+  }
 }
 

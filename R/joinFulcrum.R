@@ -8,14 +8,18 @@
 #'   \code{procFulcrum} function. Valid \code{data} can include only Fulcrum
 #'   filed sampling data or all Fulcrum data including field sampling and
 #'   isolation data.
+#' @param select_vars Logical, TRUE  will return only the default variables,
+#'   FALSE will return all variables. FALSE is recommended if using customized
+#'   Fulcrum applications other than "Nematode field sampling" and "Nematode
+#'   isolation". TRUE is default.
 #' @return A single, joined dataframe from the processed dataframes supplied in
-#'   \code{data} list.
+#'   the \code{data} list.
 #' @importFrom glue glue
 #' @import geosphere
 #' @import dplyr
 #' @export
 
-joinFulcrum <- function(data) {
+joinFulcrum <- function(data, select_vars = T) {
   # prevent scientific notation
   options(scipen = 999)
 
@@ -28,23 +32,23 @@ joinFulcrum <- function(data) {
   }
 
   # join just sampling data
-  if(data_names$data_name %in% c("nematode_field_sampling_proc", "nematode_field_sampling_sample_photo_proc") &&
-     !(data_names$data_name %in% c("data$nematode_isolation_proc", "data$nematode_isolation_s_labeled_plates_proc", "data$nematode_isolation_photos_proc")) &&
+  if(!(FALSE %in% (data_names$data_name %in% c("field_sampling_proc", "field_sampling_sample_photo_proc"))) &&
+     !(data_names$data_name %in% c("isolation_proc", "isolation_s_labeled_plates_proc", "isolation_photos_proc")) &&
      nrow(data_names) == 2) {
     # send message
-    message("Complete fulcrum isolation data not detected, joining sampling data only.")
+    message("Complete fulcrum isolation data not detected, joining field sampling data only.")
 
     # join sampling data only
-    # join nematode_field_sampling_proc with nematode_isolation_proc
-    joined_data <- data$nematode_field_sampling_proc %>%
+    # join field_sampling_proc with isolation_proc
+    joined_data <- data$field_sampling_proc %>%
       dplyr::mutate(best_photo = case_when(
-        sample_photo1 %in% data$nematode_field_sampling_sample_photo_proc$fulcrum_id ~ sample_photo1,
-        sample_photo2 %in% data$nematode_field_sampling_sample_photo_proc$fulcrum_id ~ sample_photo2,
-        sample_photo3 %in% data$nematode_field_sampling_sample_photo_proc$fulcrum_id ~ sample_photo3,
-        !(sample_photo1 %in% data$nematode_field_sampling_sample_photo_proc$fulcrum_id) & !(sample_photo2 %in% data$nematode_field_sampling_sample_photo_proc$fulcrum_id) &
-          !(sample_photo3 %in% data$nematode_field_sampling_sample_photo_proc$fulcrum_id) ~ NA_character_)) %>%
-      # Join nematode_field_sampling_sample_photo to above. In some cases there is not position data from the photos, returns NA for exif.
-      dplyr::left_join(data$nematode_field_sampling_sample_photo_proc, by = c("best_photo" = "fulcrum_id")) %>%
+        sample_photo1 %in% data$field_sampling_sample_photo_proc$fulcrum_id ~ sample_photo1,
+        sample_photo2 %in% data$field_sampling_sample_photo_proc$fulcrum_id ~ sample_photo2,
+        sample_photo3 %in% data$field_sampling_sample_photo_proc$fulcrum_id ~ sample_photo3,
+        !(sample_photo1 %in% data$field_sampling_sample_photo_proc$fulcrum_id) & !(sample_photo2 %in% data$field_sampling_sample_photo_proc$fulcrum_id) &
+          !(sample_photo3 %in% data$field_sampling_sample_photo_proc$fulcrum_id) ~ NA_character_)) %>%
+      # Join field_sampling_sample_photo to above. In some cases there is not position data from the photos, returns NA for exif.
+      dplyr::left_join(data$field_sampling_sample_photo_proc, by = c("best_photo" = "fulcrum_id")) %>%
       # Create flag to track if lat and long come from record or photo
       dplyr::mutate(collection_lat_long_method = ifelse(is.na(exif_gps_latitude), "fulcrum", "photo")) %>%
       # In cases where lat/lon are not available from photo set to collection_fulcrum_latitude and collection_fulcrum_longitude
@@ -63,82 +67,86 @@ joinFulcrum <- function(data) {
                                                         ifelse(is.na(exif_gps_altitude) & is.na(fulcrum_altitude), NA, NA))),
                     collection_altitude_method = ifelse(collection_lat_long_method == "photo" & !(is.na(exif_gps_altitude)), "photo",
                                                         ifelse(is.na(exif_gps_altitude) & !(is.na(fulcrum_altitude)), "fulcrum",
-                                                               ifelse(is.na(exif_gps_altitude) & is.na(fulcrum_altitude), NA, NA)))) %>%
+                                                               ifelse(is.na(exif_gps_altitude) & is.na(fulcrum_altitude), NA, NA))))
+    if(select_vars == TRUE) {
       # set variable order
-      dplyr::select(project,
-                    c_label,
-                    flag_ambient_temperature,
-                    flag_ambient_temperature_run,
-                    flag_substrate_temperature,
-                    flag_unusual_sample_photo_num,
-                    flag_duplicated_c_label_field_sampling,
-                    collection_by,
-                    collection_datetime_UTC,
-                    collection_date_UTC,
-                    collection_local_time,
-                    collection_fulcrum_latitude,
-                    collection_fulcrum_longitude,
-                    exif_gps_latitude,
-                    exif_gps_longitude,
-                    collection_latitude,
-                    collection_longitude,
-                    collection_lat_long_method,
-                    collection_lat_long_method_diff,
-                    fulcrum_altitude,
-                    exif_gps_altitude,
-                    collection_altitude,
-                    collection_altitude_method,
-                    landscape,
-                    sky_view,
-                    ambient_humidity,
-                    substrate,
-                    substrate_notes,
-                    substrate_other,
-                    raw_ambient_temperature,
-                    proc_ambient_temperature,
-                    raw_substrate_temperature,
-                    proc_substrate_temperature,
-                    gridsect,
-                    gridsect_index,
-                    gridsect_radius,
-                    grid_sect_direction,
-                    sample_photo1,
-                    sample_photo2,
-                    sample_photo3,
-                    best_exif_dop_photo = best_photo,
-                    best_sample_photo_caption,
-                    gps_course,
-                    gps_horizontal_accuracy,
-                    gps_speed,
-                    gps_vertical_accuracy)
+      joined_data_selected <- join_data %>%
+        dplyr::select(project,
+                      c_label,
+                      flag_ambient_temperature,
+                      flag_ambient_temperature_run,
+                      flag_substrate_temperature,
+                      flag_unusual_sample_photo_num,
+                      flag_duplicated_c_label_field_sampling,
+                      collection_by,
+                      collection_datetime_UTC,
+                      collection_date_UTC,
+                      collection_local_time,
+                      collection_fulcrum_latitude,
+                      collection_fulcrum_longitude,
+                      exif_gps_latitude,
+                      exif_gps_longitude,
+                      collection_latitude,
+                      collection_longitude,
+                      collection_lat_long_method,
+                      collection_lat_long_method_diff,
+                      fulcrum_altitude,
+                      exif_gps_altitude,
+                      collection_altitude,
+                      collection_altitude_method,
+                      landscape,
+                      sky_view,
+                      ambient_humidity,
+                      substrate,
+                      substrate_notes,
+                      substrate_other,
+                      raw_ambient_temperature,
+                      proc_ambient_temperature,
+                      raw_substrate_temperature,
+                      proc_substrate_temperature,
+                      gridsect,
+                      gridsect_index,
+                      gridsect_radius,
+                      grid_sect_direction,
+                      sample_photo1,
+                      sample_photo2,
+                      sample_photo3,
+                      best_photo, # used to be best_exif_dop_photo
+                      best_photo_gps_dop,
+                      best_photo_caption,
+                      gps_course,
+                      gps_horizontal_accuracy,
+                      gps_speed,
+                      gps_vertical_accuracy)
+    }
   }
 
   # join all data
-  else if(data_names$data_name %in% c("nematode_field_sampling_proc", "nematode_field_sampling_sample_photo_proc","data$nematode_isolation_proc",
-                                      "data$nematode_isolation_s_labeled_plates_proc", "data$nematode_isolation_photos_proc") &&
+  else if(!(FALSE %in% (data_names$data_name %in% c("field_sampling_proc", "field_sampling_sample_photo_proc","isolation_proc",
+                                                    "isolation_s_labeled_plates_proc", "isolation_photos_proc"))) &&
           nrow(data_names) == 5) {
     # send message
     message("Complete fulcrum data detected, joining all data.")
 
-    # join nematode_field_sampling_proc with nematode_isolation_proc
-    joined_data <- dplyr::full_join(data$nematode_isolation_proc, data$nematode_field_sampling_proc, by = c("c_label_id" = "fulcrum_id")) %>%
+    # join field_sampling_proc with isolation_proc
+    joined_data <- dplyr::full_join(data$isolation_proc, data$field_sampling_proc, by = c("c_label_id" = "fulcrum_id")) %>%
       dplyr::select(c_label,
                     everything(),
                     -c_label_id) %>%
       # provide best_photo for joining
       dplyr::mutate(best_photo = case_when(
-        sample_photo1 %in% data$nematode_field_sampling_sample_photo_proc$fulcrum_id ~ sample_photo1,
-        sample_photo2 %in% data$nematode_field_sampling_sample_photo_proc$fulcrum_id &
-          !(sample_photo1 %in% data$nematode_field_sampling_sample_photo_proc$fulcrum_id) &
-          !(sample_photo3 %in% data$nematode_field_sampling_sample_photo_proc$fulcrum_id) ~ sample_photo2,
-        sample_photo3 %in% data$nematode_field_sampling_sample_photo_proc$fulcrum_id &
-          !(sample_photo1 %in% data$nematode_field_sampling_sample_photo_proc$fulcrum_id) &
-          !(sample_photo2 %in% data$nematode_field_sampling_sample_photo_proc$fulcrum_id) ~ sample_photo3,
-        !(sample_photo1 %in% data$nematode_field_sampling_sample_photo_proc$fulcrum_id) &
-          !(sample_photo2 %in% data$nematode_field_sampling_sample_photo_proc$fulcrum_id) &
-          !(sample_photo3 %in% data$nematode_field_sampling_sample_photo_proc$fulcrum_id) ~ NA_character_)) %>%
-      # Join nematode_field_sampling_sample_photo to above. In some cases there is not position data from the photos, returns NA for exif.
-      dplyr::left_join(data$nematode_field_sampling_sample_photo_proc, by = c("best_photo" = "fulcrum_id")) %>%
+        sample_photo1 %in% data$field_sampling_sample_photo_proc$fulcrum_id ~ sample_photo1,
+        sample_photo2 %in% data$field_sampling_sample_photo_proc$fulcrum_id &
+          !(sample_photo1 %in% data$field_sampling_sample_photo_proc$fulcrum_id) &
+          !(sample_photo3 %in% data$field_sampling_sample_photo_proc$fulcrum_id) ~ sample_photo2,
+        sample_photo3 %in% data$field_sampling_sample_photo_proc$fulcrum_id &
+          !(sample_photo1 %in% data$field_sampling_sample_photo_proc$fulcrum_id) &
+          !(sample_photo2 %in% data$field_sampling_sample_photo_proc$fulcrum_id) ~ sample_photo3,
+        !(sample_photo1 %in% data$field_sampling_sample_photo_proc$fulcrum_id) &
+          !(sample_photo2 %in% data$field_sampling_sample_photo_proc$fulcrum_id) &
+          !(sample_photo3 %in% data$field_sampling_sample_photo_proc$fulcrum_id) ~ NA_character_)) %>%
+      # Join field_sampling_sample_photo to above. In some cases there is not position data from the photos, returns NA for exif.
+      dplyr::left_join(data$field_sampling_sample_photo_proc, by = c("best_photo" = "fulcrum_id")) %>%
       # Create flag to track if lat and long come from record or photo
       dplyr::mutate(collection_lat_long_method = ifelse(is.na(exif_gps_latitude), "fulcrum", "photo")) %>%
       # In cases where lat/lon are not available from photo set to collection_fulcrum_latitude and collection_fulcrum_longitude
@@ -168,76 +176,89 @@ joinFulcrum <- function(data) {
                     flag_ambient_temperature_extreme = ifelse(proc_ambient_temperature > 40 | proc_ambient_temperature < 0,
                                                               TRUE, FALSE)) %>%
       dplyr::ungroup() %>%
-      # join c-plates to s-plates with nematode_isolation_s_labeled_plates
-      dplyr::full_join(data$nematode_isolation_s_labeled_plates_proc, .,  by = c("fulcrum_parent_id" = "isolation_id")) %>%
-      dplyr::select(-fulcrum_parent_id, -updated_by, -version, -geometry, -assigned_to, -status) %>%
+      # join c-plates to s-plates with isolation_s_labeled_plates
+      dplyr::full_join(data$isolation_s_labeled_plates_proc, .,  by = c("fulcrum_parent_id" = "isolation_id")) %>%
+      dplyr::select(-fulcrum_parent_id)
+
+    # chose the selected data or not
+    if(select_vars == TRUE) {
       # set varible order
-      dplyr::select(project,
-                    c_label,
-                    s_label,
-                    flag_ambient_temperature,
-                    flag_ambient_temperature_extreme,
-                    flag_ambient_temperature_run,
-                    flag_substrate_temperature,
-                    flag_substrate_temperature_extreme,
-                    flag_unusual_sample_photo_num,
-                    flag_duplicated_c_label_field_sampling,
-                    flag_duplicated_isolation_for_c_label,
-                    flag_duplicated_s_label_isolation_s_labeled_plates,
-                    flag_missing_s_label_isolation_s_labeled_plates,
-                    flag_missing_isolation_record,
-                    collection_by,
-                    collection_datetime_UTC,
-                    collection_date_UTC,
-                    collection_local_time,
-                    collection_fulcrum_latitude,
-                    collection_fulcrum_longitude,
-                    exif_gps_latitude,
-                    exif_gps_longitude,
-                    collection_latitude,
-                    collection_longitude,
-                    collection_lat_long_method,
-                    collection_lat_long_method_diff,
-                    fulcrum_altitude,
-                    exif_gps_altitude,
-                    collection_altitude,
-                    collection_altitude_method,
-                    flag_collection_altitude_extreme,
-                    landscape,
-                    sky_view,
-                    ambient_humidity,
-                    substrate,
-                    substrate_notes,
-                    substrate_other,
-                    raw_ambient_temperature,
-                    proc_ambient_temperature,
-                    raw_substrate_temperature,
-                    proc_substrate_temperature,
-                    gridsect,
-                    gridsect_index,
-                    gridsect_radius,
-                    grid_sect_direction,
-                    sample_photo1,
-                    sample_photo2,
-                    sample_photo3,
-                    best_exif_dop_photo = best_photo,
-                    best_sample_photo_caption,
-                    gps_course,
-                    gps_horizontal_accuracy,
-                    gps_speed,
-                    gps_vertical_accuracy,
-                    isolation_by,
-                    isolation_datetime_UTC,
-                    isolation_date_UTC,
-                    isolation_local_time,
-                    isolation_latitude,
-                    isolation_longitude,
-                    worms_on_sample,
-                    approximate_number_of_worms)
+      joined_data_selected <- joined_data %>%
+        dplyr::select(project,
+                      c_label,
+                      s_label,
+                      flag_ambient_temperature,
+                      flag_ambient_temperature_extreme,
+                      flag_ambient_temperature_run,
+                      flag_substrate_temperature,
+                      flag_substrate_temperature_extreme,
+                      flag_unusual_sample_photo_num,
+                      flag_duplicated_c_label_field_sampling,
+                      flag_duplicated_isolation_for_c_label,
+                      flag_duplicated_s_label_isolation_s_labeled_plates,
+                      flag_missing_s_label_isolation_s_labeled_plates,
+                      flag_missing_isolation_record,
+                      collection_by,
+                      collection_datetime_UTC,
+                      collection_date_UTC,
+                      collection_local_time,
+                      collection_fulcrum_latitude,
+                      collection_fulcrum_longitude,
+                      exif_gps_latitude,
+                      exif_gps_longitude,
+                      collection_latitude,
+                      collection_longitude,
+                      collection_lat_long_method,
+                      collection_lat_long_method_diff,
+                      fulcrum_altitude,
+                      exif_gps_altitude,
+                      collection_altitude,
+                      collection_altitude_method,
+                      flag_collection_altitude_extreme,
+                      landscape,
+                      sky_view,
+                      ambient_humidity,
+                      substrate,
+                      substrate_notes,
+                      substrate_other,
+                      raw_ambient_temperature,
+                      proc_ambient_temperature,
+                      raw_substrate_temperature,
+                      proc_substrate_temperature,
+                      gridsect,
+                      gridsect_index,
+                      gridsect_radius,
+                      grid_sect_direction,
+                      sample_photo1,
+                      sample_photo2,
+                      sample_photo3,
+                      best_photo, # used to be best_exif_dop_photo
+                      best_photo_gps_dop,
+                      best_photo_caption,
+                      gps_course,
+                      gps_horizontal_accuracy,
+                      gps_speed,
+                      gps_vertical_accuracy,
+                      isolation_by,
+                      isolation_datetime_UTC,
+                      isolation_date_UTC,
+                      isolation_local_time,
+                      isolation_latitude,
+                      isolation_longitude,
+                      worms_on_sample,
+                      approximate_number_of_worms)
+    }
   }
   else {
     message("Invalid list of dataframes supplied to joinFulcrum. Are there 5 or 2 processed dataframes in the list? If so, are they named correctly? These conditions must be satisfied for joinFulcrum to work.")
   }
   # return data
-  return(joined_data)
+  if(select_vars == TRUE){
+    message("returning joined and selected data, set select_vars to FALSE if variables are missing")
+    return(joined_data_selected)
+  }
+  else{
+    message("returning joined data, set select_vars to TRUE if you want to select default variables")
+    return(joined_data)
+  }
 }

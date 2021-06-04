@@ -1,17 +1,26 @@
 #' joinGenoFulc
 #'
-#' \code{joinGenoFulc} joins the collection data output from the \code{procFulcrum} function
-#' with the genotyping data output from the \code{checkGenotypes} function.
+#' \code{joinGenoFulc} joins the collection data output from the
+#' \code{procFulcrum} function with the genotyping data output from the
+#' \code{checkGenotypes} function.
 #'
-#' @param fulc a collection data frame output from the \code{procFulcrum} function.
-#' @param geno a genotyping data frame output from the \code{loadGenotypes} function.
-#' @param dir OPTIONAL, the path to the base fulcrum directory, if passed will save the genotyping data in data/processed/genotypes.
-#' @return A single collection dataframe with variables described in the data dictionary.
+#' @param fulc a collection data frame output from the \code{procFulcrum}
+#'   function.
+#' @param geno a genotyping data frame output from the \code{loadGenotypes}
+#'   function.
+#' @param dir OPTIONAL, the path to the base fulcrum directory, if passed will
+#'   save the genotyping data in data/processed/genotypes.
+#' @param select_vars Logical, TRUE  will return only the default variables,
+#'   FALSE will return all variables. FALSE is recommended if using customized
+#'   Fulcrum applications other than "Nematode field sampling" and "Nematode
+#'   isolation". TRUE is default.
+#' @return A single collection dataframe with variables described in the data
+#'   dictionary.
 #' @import dplyr
 #' @export
 #'
 
-joinGenoFulc <- function(geno, fulc, dir = NULL) {
+joinGenoFulc <- function(geno, fulc, dir = NULL, select_vars = T) {
   # Save the finalized genotyping sheet if given
   if(is.character(dir)){
     saveRDS(object = geno,
@@ -21,8 +30,12 @@ joinGenoFulc <- function(geno, fulc, dir = NULL) {
 
   # Join genotyping sheet with collection and isolation data
   out_dat <- fulc %>%
-    dplyr::full_join(geno) %>%
+    dplyr::full_join(geno)
+
+  # chose the selected data or not
+  if(select_vars == TRUE) {
     # Reorder variables
+  out_dat_selected <- out_dat %>%
     dplyr::select(project,
                   c_label,
                   s_label,
@@ -64,8 +77,9 @@ joinGenoFulc <- function(geno, fulc, dir = NULL) {
                   sample_photo1,
                   sample_photo2,
                   sample_photo3,
-                  best_exif_dop_photo,
-                  best_sample_photo_caption,
+                  best_photo, #best_exif_dop_photo,
+                  best_photo_gps_dop,
+                  best_photo_caption,
                   isolation_by,
                   isolation_datetime_UTC,
                   isolation_date_UTC,
@@ -100,6 +114,14 @@ joinGenoFulc <- function(geno, fulc, dir = NULL) {
                   flag_missing_s_label_genotyping,
                   flag_duplicated_s_label_genotyping,
                   flag_unusual_target_species_name)
-
-  return(out_dat)
+  }
+  # return data
+  if(select_vars == TRUE){
+    message("returning selected data, set select_vars to FALSE if variables are missing")
+    return(out_dat_selected)
+  }
+  else{
+    message("returning all data, set select_vars to TRUE if you want to select default variables")
+    return(out_dat)
+  }
 }
