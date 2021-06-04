@@ -12,10 +12,10 @@ procFulcrum(data)
 \value{
 A list of up to five processed dataframes.
 \tabular{ll}{
-nematode_field_sampling_proc \tab a processed dataframe from the nematode_field_sampling.csv\cr
-nematode_field_sampling_sample_photo_proc \tab a processed dataframe from the nematode_field_sampling_sample_photo.csv\cr
-nematode_isolation_proc \tab a processed dataframe from the nematode_isolation.csv\cr
-nematode_isolation_s_labeled_plates_proc \tab a processed dataframe from the nematode_isolation_s_labeled_plates.csv\cr
+field_sampling_proc \tab a processed dataframe from the nematode_field_sampling.csv\cr
+field_field_sampling_sample_photo_proc \tab a processed dataframe from the nematode_field_sampling_sample_photo.csv\cr
+isolation_proc \tab a processed dataframe from the nematode_isolation.csv\cr
+isolation_s_labeled_plates_proc \tab a processed dataframe from the nematode_isolation_s_labeled_plates.csv\cr
 nematode_isolation_photos_proc \tab a processed dataframe from the nematode_isolation_photos.csv\cr
 }
 }

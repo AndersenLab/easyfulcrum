@@ -10,27 +10,47 @@ procPhotos(
   max_dim = 500,
   overwrite = FALSE,
   CeNDR = FALSE,
- 
-    pub_url = "https://storage.googleapis.com/elegansvariation.org/photos/isolation/fulcrum/"
+  pub_url = "https://storage.googleapis.com/elegansvariation.org/photos/",
+  select_vars = T
 )
 }
 \arguments{
-\item{dir}{The path to the base fulcrum directory, raw/fulcrum/photos should contain the photos for the project}
+\item{dir}{The full path to the fulcrum project directory, raw/fulcrum/photos
+must contain the raw sample photos.}
 
 \item{data}{a data frame output from the \code{joinGenoFulc} function.}
 
-\item{max_dim}{This value sets the maximum dimension of the resized images in pixels. The default value is 500.}
+\item{max_dim}{This value sets the maximum dimension of the resized images in
+pixels. The default value is 500, which makes nice thumbnails.}
 
-\item{overwrite}{Logical, passed to fs::file_copy. If TRUE then existing files with similar names will be written over. Default is FALSE.}
+\item{overwrite}{Logical, passed to fs::file_copy. If TRUE then existing
+files with similar names will be written over. Default is FALSE.}
 
-\item{CeNDR}{Logical, determines whether to write CeNDR criteria qualifying photos to a subdirectory}
+\item{CeNDR}{Logical, determines whether to write CeNDR criteria for
+qualifying photos to a subdirectory}
+
+\item{pub_url}{A public url that holds sample images named by project then
+C-label. For example, if the full url for C-0001 is
+https://storage.googleapis.com/elegansvariation.org/photos/hawaii2017/C-0001.jpg,
+the pub_url should be set to
+https://storage.googleapis.com/elegansvariation.org/photos/. The project
+name, C-label, and file extension will be filled by the function.}
+
+\item{select_vars}{Logical, TRUE  will return only the default variables,
+FALSE will return all variables. FALSE is recommended if using customized
+Fulcrum applications other than "Nematode field sampling" and "Nematode
+isolation". TRUE is default.}
 }
 \value{
-A folder named processed_photos in the data/processed/fulcrum directory. The folder contains full size sample photos renamed with strain names.
-A thumbnails subfolder is also returned within the processed_photos folder. This folder contains resized images. A dataframe identical to input \code{data}
-with md5 hash values and file names for all photos, also saved as an rds file in data/processed/fulcrum directory.
-If \code{CeNDR} is set to TRUE other subfolders will be made with those images.
+A new directory data/processed/fulcrum/photos. This directory
+  contains full size sample photos renamed with C-labels and a thumbnails
+  subfolder that contains resized images. A dataframe identical to input with
+  file names for all photos, which is also saved as an rds file in
+  data/processed/fulcrum directory. If \code{CeNDR} is set to TRUE other
+  subfolders will be made with those images.
 }
 \description{
-\code{procPhotos} copies raw sample photos from the Fulcrum export and renames them to strain_name for use with CeNDR. The function also resizes images.
+\code{procPhotos} copies raw sample photos, renames them with the C-label,
+and pastes them in data/processed/fulcrum/photos folder. The function also
+makes thumbnails for use with interactive maps.
 }

@@ -4,21 +4,25 @@
 \alias{annotateFulcrum}
 \title{annotateFulcrum}
 \usage{
-annotateFulcrum(data, dir = NULL)
+annotateFulcrum(data, dir = NULL, select_vars = T)
 }
 \arguments{
 \item{data}{A single dataframe generated with the joinFulcrum function.}
 
-\item{dir}{The path to the base fulcrum directory, dir/data/raw/fulcrum should contain:
-island.csv,
-location.csv,
-trails.csv}
+\item{dir}{The path to the base fulcrum directory, dir/data/raw/fulcrum
+should contain: island.csv, location.csv, trails.csv}
+
+\item{select_vars}{Logical, TRUE  will return only the default variables,
+FALSE will return all variables. FALSE is recommended if using customized
+Fulcrum applications other than "Nematode field sampling" and "Nematode
+isolation". TRUE is default.}
 }
 \value{
-A single dataframe containing all Fulcrum data sources.
-This data frame contains all necessary variables from Fulcrum. It also contains data quality flags.
-The variable names match the data dictionary.
+A single dataframe containing all Fulcrum data sources. This data
+  frame contains all necessary variables from Fulcrum. It also contains data
+  quality flags. The variable names match the data dictionary.
 }
 \description{
-\code{annotateFulcrum} Adds additional collection location information to the final Fulcrum dataframe
+\code{annotateFulcrum} Adds additional collection location information to the
+final Fulcrum dataframe
 }
