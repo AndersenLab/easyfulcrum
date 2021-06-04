@@ -40,7 +40,9 @@
 
 
 <meta property="og:title" content="procPhotos — procPhotos" />
-<meta property="og:description" content="procPhotos copies raw sample photos from the Fulcrum export and renames them to strain_name for use with CeNDR. The function also resizes images." />
+<meta property="og:description" content="procPhotos copies raw sample photos, renames them with the C-label,
+and pastes them in data/processed/fulcrum/photos folder. The function also
+makes thumbnails for use with interactive maps." />
 
 
 
@@ -95,7 +97,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/easyFulcrum.html">easyFulcrum</a>
+      <a href="../articles/easyFulcrum.html">easyFulcrum vignette</a>
     </li>
   </ul>
 </li>
@@ -121,7 +123,9 @@
     </div>
 
     <div class="ref-description">
-    <p><code>procPhotos</code> copies raw sample photos from the Fulcrum export and renames them to strain_name for use with CeNDR. The function also resizes images.</p>
+    <p><code>procPhotos</code> copies raw sample photos, renames them with the C-label,
+and pastes them in data/processed/fulcrum/photos folder. The function also
+makes thumbnails for use with interactive maps.</p>
     </div>
 
     <pre class="usage"><span class='fu'>procPhotos</span><span class='op'>(</span>
@@ -130,8 +134,8 @@
   max_dim <span class='op'>=</span> <span class='fl'>500</span>,
   overwrite <span class='op'>=</span> <span class='cn'>FALSE</span>,
   CeNDR <span class='op'>=</span> <span class='cn'>FALSE</span>,
- 
-    pub_url <span class='op'>=</span> <span class='st'>"https://storage.googleapis.com/elegansvariation.org/photos/isolation/fulcrum/"</span>
+  pub_url <span class='op'>=</span> <span class='st'>"https://storage.googleapis.com/elegansvariation.org/photos/"</span>,
+  select_vars <span class='op'>=</span> <span class='cn'>T</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -139,7 +143,8 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>dir</th>
-      <td><p>The path to the base fulcrum directory, raw/fulcrum/photos should contain the photos for the project</p></td>
+      <td><p>The full path to the fulcrum project directory, raw/fulcrum/photos
+must contain the raw sample photos.</p></td>
     </tr>
     <tr>
       <th>data</th>
@@ -147,24 +152,45 @@
     </tr>
     <tr>
       <th>max_dim</th>
-      <td><p>This value sets the maximum dimension of the resized images in pixels. The default value is 500.</p></td>
+      <td><p>This value sets the maximum dimension of the resized images in
+pixels. The default value is 500, which makes nice thumbnails.</p></td>
     </tr>
     <tr>
       <th>overwrite</th>
-      <td><p>Logical, passed to fs::file_copy. If TRUE then existing files with similar names will be written over. Default is FALSE.</p></td>
+      <td><p>Logical, passed to fs::file_copy. If TRUE then existing
+files with similar names will be written over. Default is FALSE.</p></td>
     </tr>
     <tr>
       <th>CeNDR</th>
-      <td><p>Logical, determines whether to write CeNDR criteria qualifying photos to a subdirectory</p></td>
+      <td><p>Logical, determines whether to write CeNDR criteria for
+qualifying photos to a subdirectory</p></td>
+    </tr>
+    <tr>
+      <th>pub_url</th>
+      <td><p>A public url that holds sample images named by project then
+C-label. For example, if the full url for C-0001 is
+https://storage.googleapis.com/elegansvariation.org/photos/hawaii2017/C-0001.jpg,
+the pub_url should be set to
+https://storage.googleapis.com/elegansvariation.org/photos/. The project
+name, C-label, and file extension will be filled by the function.</p></td>
+    </tr>
+    <tr>
+      <th>select_vars</th>
+      <td><p>Logical, TRUE  will return only the default variables,
+FALSE will return all variables. FALSE is recommended if using customized
+Fulcrum applications other than "Nematode field sampling" and "Nematode
+isolation". TRUE is default.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A folder named processed_photos in the data/processed/fulcrum directory. The folder contains full size sample photos renamed with strain names.
-A thumbnails subfolder is also returned within the processed_photos folder. This folder contains resized images. A dataframe identical to input <code>data</code>
-with md5 hash values and file names for all photos, also saved as an rds file in data/processed/fulcrum directory.
-If <code>CeNDR</code> is set to TRUE other subfolders will be made with those images.</p>
+    <p>A new directory data/processed/fulcrum/photos. This directory
+  contains full size sample photos renamed with C-labels and a thumbnails
+  subfolder that contains resized images. A dataframe identical to input with
+  file names for all photos, which is also saved as an rds file in
+  data/processed/fulcrum directory. If <code>CeNDR</code> is set to TRUE other
+  subfolders will be made with those images.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

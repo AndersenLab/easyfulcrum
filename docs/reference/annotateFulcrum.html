@@ -40,7 +40,8 @@
 
 
 <meta property="og:title" content="annotateFulcrum — annotateFulcrum" />
-<meta property="og:description" content="annotateFulcrum Adds additional collection location information to the final Fulcrum dataframe" />
+<meta property="og:description" content="annotateFulcrum Adds additional collection location information to the
+final Fulcrum dataframe" />
 
 
 
@@ -95,7 +96,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/easyFulcrum.html">easyFulcrum</a>
+      <a href="../articles/easyFulcrum.html">easyFulcrum vignette</a>
     </li>
   </ul>
 </li>
@@ -121,10 +122,11 @@
     </div>
 
     <div class="ref-description">
-    <p><code>annotateFulcrum</code> Adds additional collection location information to the final Fulcrum dataframe</p>
+    <p><code>annotateFulcrum</code> Adds additional collection location information to the
+final Fulcrum dataframe</p>
     </div>
 
-    <pre class="usage"><span class='fu'>annotateFulcrum</span><span class='op'>(</span><span class='va'>data</span>, dir <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>annotateFulcrum</span><span class='op'>(</span><span class='va'>data</span>, dir <span class='op'>=</span> <span class='cn'>NULL</span>, select_vars <span class='op'>=</span> <span class='cn'>T</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -135,18 +137,23 @@
     </tr>
     <tr>
       <th>dir</th>
-      <td><p>The path to the base fulcrum directory, dir/data/raw/fulcrum should contain:
-island.csv,
-location.csv,
-trails.csv</p></td>
+      <td><p>The path to the base fulcrum directory, dir/data/raw/fulcrum
+should contain: island.csv, location.csv, trails.csv</p></td>
+    </tr>
+    <tr>
+      <th>select_vars</th>
+      <td><p>Logical, TRUE  will return only the default variables,
+FALSE will return all variables. FALSE is recommended if using customized
+Fulcrum applications other than "Nematode field sampling" and "Nematode
+isolation". TRUE is default.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A single dataframe containing all Fulcrum data sources.
-This data frame contains all necessary variables from Fulcrum. It also contains data quality flags.
-The variable names match the data dictionary.</p>
+    <p>A single dataframe containing all Fulcrum data sources. This data
+  frame contains all necessary variables from Fulcrum. It also contains data
+  quality flags. The variable names match the data dictionary.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

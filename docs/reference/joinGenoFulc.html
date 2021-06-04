@@ -40,8 +40,9 @@
 
 
 <meta property="og:title" content="joinGenoFulc — joinGenoFulc" />
-<meta property="og:description" content="joinGenoFulc joins the collection data output from the procFulcrum function
-with the genotyping data output from the checkGenotypes function." />
+<meta property="og:description" content="joinGenoFulc joins the collection data output from the
+procFulcrum function with the genotyping data output from the
+checkGenotypes function." />
 
 
 
@@ -96,7 +97,7 @@ with the genotyping data output from the checkGenotypes function." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/easyFulcrum.html">easyFulcrum</a>
+      <a href="../articles/easyFulcrum.html">easyFulcrum vignette</a>
     </li>
   </ul>
 </li>
@@ -122,32 +123,44 @@ with the genotyping data output from the checkGenotypes function." />
     </div>
 
     <div class="ref-description">
-    <p><code>joinGenoFulc</code> joins the collection data output from the <code>procFulcrum</code> function
-with the genotyping data output from the <code>checkGenotypes</code> function.</p>
+    <p><code>joinGenoFulc</code> joins the collection data output from the
+<code>procFulcrum</code> function with the genotyping data output from the
+<code>checkGenotypes</code> function.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>joinGenoFulc</span><span class='op'>(</span><span class='va'>geno</span>, <span class='va'>fulc</span>, dir <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>joinGenoFulc</span><span class='op'>(</span><span class='va'>geno</span>, <span class='va'>fulc</span>, dir <span class='op'>=</span> <span class='cn'>NULL</span>, select_vars <span class='op'>=</span> <span class='cn'>T</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>geno</th>
-      <td><p>a genotyping data frame output from the <code>loadGenotypes</code> function.</p></td>
+      <td><p>a genotyping data frame output from the <code>loadGenotypes</code>
+function.</p></td>
     </tr>
     <tr>
       <th>fulc</th>
-      <td><p>a collection data frame output from the <code>procFulcrum</code> function.</p></td>
+      <td><p>a collection data frame output from the <code>procFulcrum</code>
+function.</p></td>
     </tr>
     <tr>
       <th>dir</th>
-      <td><p>OPTIONAL, the path to the base fulcrum directory, if passed will save the genotyping data in data/processed/genotypes.</p></td>
+      <td><p>OPTIONAL, the path to the base fulcrum directory, if passed will
+save the genotyping data in data/processed/genotypes.</p></td>
+    </tr>
+    <tr>
+      <th>select_vars</th>
+      <td><p>Logical, TRUE  will return only the default variables,
+FALSE will return all variables. FALSE is recommended if using customized
+Fulcrum applications other than "Nematode field sampling" and "Nematode
+isolation". TRUE is default.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A single collection dataframe with variables described in the data dictionary.</p>
+    <p>A single collection dataframe with variables described in the data
+  dictionary.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

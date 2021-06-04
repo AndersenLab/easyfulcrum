@@ -25,7 +25,7 @@ readGenotypes <- function(gsKey, col_types = "cDDdcdcddddddDcDDdcdcdddddddcdcccd
   for(i in unique(gsKey)){
     # get data from sheet
     geno <- googlesheets4::read_sheet(i, range = "genotyping template", col_types = col_types) %>%
-      dplyr::filter(!is.na(s_label))
+      dplyr::filter(!is.na(project_id))
 
     genotyping_sheet <- rbind(genotyping_sheet, geno)
   }

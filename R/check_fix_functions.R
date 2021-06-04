@@ -327,7 +327,7 @@ checkGenotypes <- function(geno_data, fulc_data, return_geno = TRUE, return_flag
   s_label_in_fulcrum_not_in_genotyping <- fulc_data %>%
     dplyr::filter(!is.na(s_label)) %>%
     dplyr::filter(!(s_label %in% geno_data$s_label))
-  print(paste("There are", nrow(s_label_in_fulcrum_not_in_genotyping), "s labels in the Fulcrum data but not in the genotyping data, these s labels are:", sep = " "))
+  print(paste("There are", nrow(s_label_in_fulcrum_not_in_genotyping), "s labels in the genotyping data but not in the Fulcrum data, these s labels are:", sep = " "))
   if(nrow(s_label_in_fulcrum_not_in_genotyping) > 0){print(s_label_in_fulcrum_not_in_genotyping$s_label)}
 
   message(">>> Checking genotyping process")
