@@ -12,7 +12,7 @@ makeSpSheet(
 )
 }
 \arguments{
-\item{data}{a checked dataframe generated from the \code{joinGenoFulc} function.}
+\item{data}{a checked dataframe generated from the \code{procPhotos} function.}
 
 \item{target_sp}{a vector of target species names with full genus and species names. Default target species names are:
 Caenorhabditis briggsae, Caenorhabditis elegans, Caenorhabditis tropicalis.}

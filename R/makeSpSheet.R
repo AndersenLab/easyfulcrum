@@ -2,7 +2,7 @@
 #'
 #' \code{makeSpSheet} produces a species sheet .csv file for target species
 #'
-#' @param data a checked dataframe generated from the \code{joinGenoFulc} function.
+#' @param data a checked dataframe generated from the \code{procPhotos} function.
 #' @param target_sp a vector of target species names with full genus and species names. Default target species names are:
 #' Caenorhabditis briggsae, Caenorhabditis elegans, Caenorhabditis tropicalis.
 #' @param dir The path to the base fulcrum directory, species sheet will be saved as reports/spSheet.csv
