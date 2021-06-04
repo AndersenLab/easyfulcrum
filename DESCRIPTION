@@ -35,10 +35,10 @@ Imports:
     fs,
     cowplot,
     leaflet,
-    DT
-Suggests:
-    knitr,
+    DT,
     rmarkdown
+Suggests:
+    knitr
 Depends: 
     R (>= 3.5.0)
 VignetteBuilder: knitr
