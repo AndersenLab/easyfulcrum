@@ -26,8 +26,8 @@ The **easyfulcrum** R package offers an organized workflow for processing ecolog
 ### Fulcrum installation and application customization
 The Fulcrum data collection application can be downloaded online (https://www.fulcrumapp.com). Users can customize our field collection and isolation applications following our Fulcrum templates.<br>
 
-The template for the Nematode field sampling application is here: [https://www.fulcrumapp.com/apps/nematode-field-sampling]<br>
-The Nematode isolation template is here: [https://www.fulcrumapp.com/apps/nematode-isolation]<br>
+* The template for the Nematode field sampling application is here: [https://www.fulcrumapp.com/apps/nematode-field-sampling]<br>
+* The Nematode isolation template is here: [https://www.fulcrumapp.com/apps/nematode-isolation]<br>
 
 In order for **easyfulcrum** to work with custom applications, users should save their field sampling application and isolation applications with a unique identifier  in the place of our nematode prefix, e.g. `yeast field sampling` and `yeast isolation`<br>
 
