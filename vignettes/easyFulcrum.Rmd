@@ -16,7 +16,22 @@ knitr::opts_chunk$set(
 )
 ```
 
-The **easyfulcrum** package is a tool to work with data from Fulcrum exports, Google Sheets containing corresponding genotyping results, and images from collection.
+The **easyfulcrum** package is a tool to process and analyze ecological field sampling data generated using the Fulcrum mobile application.
+
+### What is Fulcrum?
+Fulcrum is a customizable, geographic data-collection platform compatible with Apple iOS and Google Android devices that allows users to collect rich, location-based data. To facilitate large-scale ecological surveys of nematodes that are difficult to identify in the field, we developed two Fulcrum applications, but these applications are easily extensible to other organisms as well. Fulcrum uses a powerful GUI to help users customize data-collection applications even when they have no coding or database administration knowledge, which makes Fulcrum’s robust, cloud-based database adaptable  to sampling nearly any species from nature. The “Nematode field sampling” application allows the user to organize various ecological data types associated with the substrate sampled in the field, such as environmental parameters and substrate characteristics, using their mobile device. The “Nematode isolation” application helps organize data associated with the specimens isolated from samples after they have been brought into the laboratory. Two key advantages of our approach are improvements in sampling efficiency and data organization, which translate into more sampling per researcher and greater accuracy when linking isolated specimens back to the ecological data at the sampling site.<br>
+
+The **easyfulcrum** R package offers an organized workflow for processing ecological sampling data generated using the Fulcrum mobile application. **easyfulcrum** provides simple and efficient functions to clean, process, and visualize ecological field sampling and isolation data collected using custom Fulcrum applications. It also provides functions to join these data with genotype information if organisms isolated from the field are identified using molecular barcodes. Together, the Fulcrum mobile application and **easyfulcrum** R package allow researchers to easily implement mobile data-collection, cloud-based databases, and standardized data analysis tools to improve ecological sampling accuracy and efficiency, while simultaneously enabling reproducible analysis and downstream integration with other R packages.<br>
+
+### Fulcrum installation and application customization
+The Fulcrum data collection application can be downloaded online (https://www.fulcrumapp.com). Users can customize our field collection and isolation applications following our Fulcrum templates.<br>
+
+The template for the Nematode field sampling application is here: [https://www.fulcrumapp.com/apps/nematode-field-sampling]<br>
+The Nematode isolation template is here: [https://www.fulcrumapp.com/apps/nematode-isolation]<br>
+
+In order for **easyfulcrum** to work with custom applications, users should save their field sampling application and isolation applications with a unique identifier  in the place of our nematode prefix, e.g. `yeast field sampling` and `yeast isolation`<br>
+
+### easyfulcrum installation:
 
 Install the package via devtools (>= 2.4.1):
 
@@ -31,8 +46,6 @@ Load the package:
 library(easyfulcrum)
 ```
 
-Fully running the **easyfulcrum** package relies heavily on the placement of files in appropriate directories for read in into the package pipeline. This makes the the universal building of this vignette impossible as a users personal directory cannot be specified.
-
 ### Directory structure:
 
 The `makeDirStructure` function makes a standardized directory of folders for the **easyfulcrum** run, taking a base directory (`startdir`) and the project name (`projectdirname`) as inputs.<br> 
@@ -40,7 +53,7 @@ The `makeDirStructure` function makes a standardized directory of folders for th
 Every collection project should be contained in its own directory. The directory name should follow the `YearMonthPlace` format used for Fulcrum collection projects, e.g. `2020JanuaryHawaii`.<br>
 
 ```{r warning = F, message = F}
-makeDirStructure(startdir = "~/Desktop/",
+makeDirStructure(startdir = "~/Desktop",
                  projectdirname = "2020JanuaryHawaii")
 ```
 
@@ -53,6 +66,14 @@ The `reports` directory holds **easyfulcrum** function outputs. These outputs wi
 
 Following `makeDirStructure`, the user adds collection `.csv` and `.jpg` files into the appropriate subfolder locations.
 
+We include example files from a small collection to use with this vignette. To copy these files into the project directory yoy just made we
+include a helper function called `loadExampleFiles`. This function is not used in the normal **easyfulcrum** workflow. Note, the (`startdir`) and (`projectdirname`) should be identical to arugments above for the `makeDirStructure` function.
+
+```{r warning = F, message = F}
+loadExampleFiles(startdir = "~/Desktop",
+                 projectdirname = "2020JanuaryHawaii")
+```
+
 ### Reading, processing, and joining Fulcrum results:
 
 The first group of functions cleans the results from the Fulcrum `.csv` files.<br>
@@ -61,12 +82,11 @@ The first group of functions cleans the results from the Fulcrum `.csv` files.<b
 
 `readFulcrum` takes a `dir` argument that specifies the directory to read in Fulcrum `.csv` files. This will be useful throughout the package.
 
-As running this function depends on a users personal subfolder structure, it will not be functional using `dir1` and without the raw `.csv` files. For this reason, the `raw_fulc1` object is also contained in the package for the user.
 
 ```{r message = F}
 dir1 <- "~/Desktop/2020JanuaryHawaii"
-raw_fulc1 <- readFulcrum(dir = dir1)
-names(raw_fulc1)
+raw_fulc_1 <- readFulcrum(dir = dir1)
+
 ```
 
 #### procFulcrum:
@@ -179,7 +199,7 @@ proc_geno1 <- checkGenotypes(geno_data = raw_geno1, fulc_data = anno_fulc1,
 If the user is using **easyfulcrum** on customized Fulcrum applications other than "Nematode field sampling" and "Nematode isolation", it is recommended that `select_vars` is set to `FALSE`, such that `joinGenoFulc` does not only return the default variables.
 
 ```{r}
-join_genofulc1 <- joinGenoFulc(geno = proc_geno1, fulc = anno_fulc1, dir = NULL)
+join_genofulc1 <- joinGenoFulc(geno = proc_geno1, fulc = anno_fulc1, dir = NULL, select_vars = T)
 ```
 
 ### Reading, resizing, and joining collection images:
@@ -188,13 +208,15 @@ The final function processes and resizes images, adding details to a final dataf
 
 #### procPhotos:
 
-`procPhotos` processes the raw sample photos and adds information regarding them to the final data frame of data, which is also saved in _data/processed/fulcrum_. Setting the `CeNDR` option to `TRUE` will place photos of samples meeting CeNDR criteria into an appropriate subfolder.
+`procPhotos` copies raw sample photos, renames them with the C-label, makes a new directory _data/processed/fulcrum/photos_ and pstes the renamed files there. The function also makes thumbnails for use with interactive maps and places these in the _data/processed/fulcrum/photos/thumbnails_ direcotry. Setting the `CeNDR` option to `TRUE` will rename photos of samples meeting CeNDR criteria with the name of the nematode strains isolated from the sample and paste them in the _data/processed/fulcrum/photos/CeNDR_ directory.
 
-As running this function depends on a users personal subfolder structure, it will not be functional using `dir1` and without the raw photo files. For this reason, the `final_data1` object is also contained in the package for the user.
+The function will also accept a public url (`pub_url`) for hosting the sample photos renamed by C-label. A compatible public url should follow the `commonStringProject/C-label.jpg` format. For example, if the full url for C-0001 is https://storage.googleapis.com/elegansvariation.org/photos/hawaii2017/C-0001.jpg,
+(`pub_url`) should be set to `https://storage.googleapis.com/elegansvariation.org/photos/`
 
 ```{r message = FALSE}
 final_data1 <- procPhotos(dir = dir1, data = join_genofulc1,
                           max_dim = 500, overwrite = T,
+                          pub_url = "https://storage.googleapis.com/elegansvariation.org/photos/",
                           CeNDR = TRUE)
 head(final_data1)
 ```
@@ -205,9 +227,9 @@ We include two functions for generating sample output from `final_data1`. This f
 
 #### makeSpSheet:
 
-`makeSpSheet` generates a species specific `.csv` file for the species of interest (`target_sp`) and writes it to the `/reports` subdirectory. This function simplifies the output of the final dataframe, pulling variables of particular interest for a user specified species of interest. In addition, this function standardizes an output dataframe to meet the specifications of submitting to the CaeNDR.<br>
+`makeSpSheet` generates a species specific `.csv` file for the species of interest (`target_sp`) and writes it to the `/reports` subdirectory. This function simplifies the output of the final dataframe, pulling variables of particular interest for a user specified species of interest. This function is wrritten to stanadradize the output dataframe to meet the specifications for submitting wild nematode collections to the Caenorhabditis Natural Diversity Resource (CaeNDR). For this reason the `makeSpSheet` function is likely only applicable to nematode sampling projects.<br>
 
-It also  returns a dataframe with flags for these select samples, and prints a description of these flags.
+`makeSpSheet` also returns a dataframe with flags for these select samples, and prints a description of these flags.
 
 ```{r}
 flag1.4 <- makeSpSheet(data = final_data1,
@@ -216,7 +238,7 @@ flag1.4 <- makeSpSheet(data = final_data1,
 
 #### generateReport:
 
-We provide a function, `generateReport`, that interfaces between `final_data1` and `sampleReport.Rmd`, a markdown file that will generate a simple description of the project. `generateReport` saves `sampleReport.Rmd` into the `/scripts` sub-directory, and generates a `.html` file in the `/reports` sub-directory, that includes: a summary collection project metadata (such as who conducted the respective processes and on what dates they were completed), summary tables of collection and isolation data, visual maps of where the collections in the project were acquired, and finally basic box and whisker plots of substrate temperature, ambient temperature, humidity, and elevation for the project.
+We provide a function, `generateReport`, that interfaces between `final_data1` and `sampleReport.Rmd`, a markdown file that will generate an interactive overview of the entire sampling project. `generateReport` saves `sampleReport.Rmd` into the `/scripts` sub-directory, and generates a `.html` file in the `/reports` sub-directory, that includes: a summary collection project metadata (such as who conducted the respective processes and on what dates they were completed), summary tables of collection and isolation data, interactive maps of where the collections in the project were acquired, and box plots showing the distributions of various environmental parameters at all collection sites. These parameters include substrate temperature, ambient temperature, humidity, and elevation.
 
 Please feel free to edit the `sampleReport.Rmd` as you require once it is moved into the `/scripts` sub-directory.
 
