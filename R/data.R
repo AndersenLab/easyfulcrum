@@ -63,30 +63,3 @@
 #' }
 #' @name genotypeTypes
 
-#' Raw raw_fulc1 list of dataframes
-#'
-#' A list of five fulcrums dataframes with purposeful errors created
-#'
-#' @format A list of five data frames:
-#' \describe{
-#'   \item{nematode_field_sampling_sample_photo}
-#'   \item{nematode_field_sampling}
-#'   \item{nematode_isolation_photos}
-#'   \item{nematode_isolation_s_labeled_plates}
-#'   \item{nematode_isolation}
-#' }
-#' @name raw_fulc1
-
-#' Raw geno_data1 data frame
-#'
-#' A genotyping data frame with purposeful errors created
-#'
-#' @format A data frame with 1044 rows and 38 variables:
-#' @name raw_geno1
-
-#' Final final_data1 data frame
-#'
-#' A final processed data frame with purposeful errors created
-#'
-#' @format A data frame with 66 rows and 95 variables:
-#' @name final_data1

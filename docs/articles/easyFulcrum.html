@@ -5,13 +5,13 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>easyFulcrum vignette • easyfulcrum</title>
+<title>easyFulcrum • easyfulcrum</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="easyFulcrum vignette">
+<script src="../pkgdown.js"></script><meta property="og:title" content="easyFulcrum">
 <meta property="og:description" content="easyfulcrum">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -54,7 +54,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/easyFulcrum.html">easyFulcrum vignette</a>
+      <a href="../articles/easyFulcrum.html">easyFulcrum</a>
     </li>
   </ul>
 </li>
@@ -72,10 +72,10 @@
       </header><script src="easyFulcrum_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>easyFulcrum vignette</h1>
+      <h1 data-toc-skip>easyFulcrum</h1>
                         <h4 class="author">Author: Matteo Di Bernardo</h4>
             
-            <h4 class="date">04 Jun 2021</h4>
+            <h4 class="date">06 Jun 2021</h4>
       
       
       <div class="hidden name"><code>easyFulcrum.Rmd</code></div>
@@ -84,7 +84,28 @@
 
     
     
-<p>The <strong>easyfulcrum</strong> package is a tool to work with data from Fulcrum exports, Google Sheets containing corresponding genotyping results, and images from collection.</p>
+<p>The <strong>easyfulcrum</strong> package is a tool to process and analyze ecological field sampling data generated using the Fulcrum mobile application.<br></p>
+<p>The <strong>easyfulcrum</strong> R package offers an organized workflow for processing ecological sampling data generated using the Fulcrum mobile application. <strong>easyfulcrum</strong> provides simple and efficient functions to clean, process, and visualize ecological field sampling and isolation data collected using custom Fulcrum applications. It also provides functions to join these data with genotype information if organisms isolated from the field are identified using molecular barcodes. Together, the Fulcrum mobile application and <strong>easyfulcrum</strong> R package allow researchers to easily implement mobile data-collection, cloud-based databases, and standardized data analysis tools to improve ecological sampling accuracy and efficiency.<br></p>
+<div id="what-is-fulcrum" class="section level3">
+<h3 class="hasAnchor">
+<a href="#what-is-fulcrum" class="anchor"></a>What is Fulcrum?</h3>
+<p>Fulcrum is a customizable, geographic data-collection platform compatible with Apple iOS and Google Android devices that allows users to collect rich, location-based data. To facilitate large-scale ecological surveys of nematodes that are difficult to identify in the field, we developed two Fulcrum applications. The Nematode field sampling application allows the user to organize various ecological data types associated with the substrate sampled in the field, such as environmental parameters and substrate characteristics. The “Nematode isolation” application helps organize data associated with the specimens isolated from samples after they have been brought into the laboratory.<br></p>
+</div>
+<div id="fulcrum-installation-and-application-customization" class="section level3">
+<h3 class="hasAnchor">
+<a href="#fulcrum-installation-and-application-customization" class="anchor"></a>Fulcrum installation and application customization</h3>
+<p>The Fulcrum data collection application can be downloaded online (<a href="https://www.fulcrumapp.com" class="uri">https://www.fulcrumapp.com</a>). Fulcrum uses a powerful GUI to help users customize data-collection applications even when they have no coding or database administration knowledge, which makes Fulcrum’s robust, cloud-based database adaptable to sampling nearly any species from nature. If desired, users can customize our field collection and isolation applications following our Fulcrum templates.<br></p>
+<ul>
+<li>The template for the Nematode field sampling application is here: [<a href="https://www.fulcrumapp.com/apps/nematode-field-sampling" class="uri">https://www.fulcrumapp.com/apps/nematode-field-sampling</a>]<br>
+</li>
+<li>The Nematode isolation template is here: [<a href="https://www.fulcrumapp.com/apps/nematode-isolation" class="uri">https://www.fulcrumapp.com/apps/nematode-isolation</a>]<br>
+</li>
+</ul>
+<p>Users can use the applications as is, but in order for <strong>easyfulcrum</strong> to work with custom applications, users should save their field sampling application and isolation applications with a unique identifier in the place of our nematode prefix, e.g. fungus field sampling and fungus isolation.<br></p>
+</div>
+<div id="easyfulcrum-installation" class="section level3">
+<h3 class="hasAnchor">
+<a href="#easyfulcrum-installation" class="anchor"></a>easyfulcrum installation:</h3>
 <p>Install the package via devtools (&gt;= 2.4.1):</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span>
@@ -92,18 +113,22 @@
 <p>Load the package:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">easyfulcrum</span><span class="op">)</span></code></pre></div>
-<p>Fully running the <strong>easyfulcrum</strong> package relies heavily on the placement of files in appropriate directories for read in into the package pipeline. This makes the the universal building of this vignette impossible as a users personal directory cannot be specified.</p>
+</div>
 <div id="directory-structure" class="section level3">
 <h3 class="hasAnchor">
 <a href="#directory-structure" class="anchor"></a>Directory structure:</h3>
 <p>The <code>makeDirStructure</code> function makes a standardized directory of folders for the <strong>easyfulcrum</strong> run, taking a base directory (<code>startdir</code>) and the project name (<code>projectdirname</code>) as inputs.<br></p>
 <p>Every collection project should be contained in its own directory. The directory name should follow the <code>YearMonthPlace</code> format used for Fulcrum collection projects, e.g. <code>2020JanuaryHawaii</code>.<br></p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/makeDirStructure.html">makeDirStructure</a></span><span class="op">(</span>startdir <span class="op">=</span> <span class="st">"~/Desktop/"</span>,
+<code class="sourceCode R"><span class="fu"><a href="../reference/makeDirStructure.html">makeDirStructure</a></span><span class="op">(</span>startdir <span class="op">=</span> <span class="st">"~/Desktop"</span>,
                  projectdirname <span class="op">=</span> <span class="st">"2020JanuaryHawaii"</span><span class="op">)</span></code></pre></div>
 <p>The <code>data</code> directory contains the <code>raw</code> and <code>processed</code> subdirectories.<br> - <code>raw/fulcrum</code> holds the <code>.csv</code> files exported from Fulcrum and <code>raw/fulcrum/photos</code> contains <code>.jpg</code> files exported from Fulcrum.<br> - <code>raw/annotate</code> can hold spatial location files <code>island.csv</code>, <code>location.csv</code>, and <code>trail.csv</code> that the user generates for mapping the collection sites.<br> - <code>processed/fulcrum</code> holds <strong>easyfulcrum</strong> function outputs.<br></p>
 <p>The <code>reports</code> directory holds <strong>easyfulcrum</strong> function outputs. These outputs will be generated by the user processing script(s) saved in the <code>scripts</code> directory.<br></p>
 <p>Following <code>makeDirStructure</code>, the user adds collection <code>.csv</code> and <code>.jpg</code> files into the appropriate subfolder locations.</p>
+<p>We include example files from a small collection to use with this vignette. To copy these files into the project directory you just made we include a helper function called <code>loadExampleFiles</code>. This function is not used in the normal <strong>easyfulcrum</strong> workflow. Note, the (<code>startdir</code>) and (<code>projectdirname</code>) should be identical to arguments above for the <code>makeDirStructure</code> function.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/loadExampleFiles.html">loadExampleFiles</a></span><span class="op">(</span>startdir <span class="op">=</span> <span class="st">"~/Desktop"</span>,
+                 projectdirname <span class="op">=</span> <span class="st">"2020JanuaryHawaii"</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="reading-processing-and-joining-fulcrum-results" class="section level3">
 <h3 class="hasAnchor">
@@ -113,23 +138,16 @@
 <h4 class="hasAnchor">
 <a href="#readfulcrum" class="anchor"></a>readFulcrum:</h4>
 <p><code>readFulcrum</code> takes a <code>dir</code> argument that specifies the directory to read in Fulcrum <code>.csv</code> files. This will be useful throughout the package.</p>
-<p>As running this function depends on a users personal subfolder structure, it will not be functional using <code>dir1</code> and without the raw <code>.csv</code> files. For this reason, the <code>raw_fulc1</code> object is also contained in the package for the user.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">dir1</span> <span class="op">&lt;-</span> <span class="st">"~/Desktop/2020JanuaryHawaii"</span>
-<span class="va">raw_fulc1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/readFulcrum.html">readFulcrum</a></span><span class="op">(</span>dir <span class="op">=</span> <span class="va">dir1</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">raw_fulc1</span><span class="op">)</span>
-<span class="co">#&gt; [1] "nematode_field_sampling_sample_photo"</span>
-<span class="co">#&gt; [2] "nematode_field_sampling"             </span>
-<span class="co">#&gt; [3] "nematode_isolation_photos"           </span>
-<span class="co">#&gt; [4] "nematode_isolation_s_labeled_plates" </span>
-<span class="co">#&gt; [5] "nematode_isolation"</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">dir</span> <span class="op">&lt;-</span> <span class="st">"~/Desktop/2020JanuaryHawaii"</span>
+<span class="va">raw_fulc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/readFulcrum.html">readFulcrum</a></span><span class="op">(</span>dir <span class="op">=</span> <span class="va">dir</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="procfulcrum" class="section level4">
 <h4 class="hasAnchor">
 <a href="#procfulcrum" class="anchor"></a>procFulcrum:</h4>
 <p><code>procFulcrum</code> processes individual data frames and adds flags for unexpected data.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">proc_fulc1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/procFulcrum.html">procFulcrum</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">raw_fulc1</span><span class="op">)</span>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">proc_fulc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/procFulcrum.html">procFulcrum</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">raw_fulc</span><span class="op">)</span>
 <span class="co">#&gt; Processing nematode_field_sampling</span>
 <span class="co">#&gt; Processing nematode_field_sampling_sample_photo</span>
 <span class="co">#&gt; Processing nematode_isolation</span>
@@ -141,8 +159,8 @@
 <a href="#checktemperatures" class="anchor"></a>checkTemperatures:</h4>
 <p><code>checkTemperatures</code> identifies flags in three temperature variables. Setting the <code>return_flags</code> option to <code>TRUE</code> will return a list of three data frames that pulls only the rows where each of the three flag types appear. The function automatically prints the rows where the flags exist.<br></p>
 <p><code>procFulcrum</code> function assumes that, when <code>raw_substrate_temperature</code> or <code>raw_ambient_temperature</code> temperatures are above 40 degrees, the temperatures were mistakenly input as Fahrenheit rather than Celsius, and converts these values to Celsius. It will also notice when both <code>raw_ambient_temperature</code> and <code>raw_ambient_humidity</code> get stuck on the same value for 5 or more measurements in a row. These are the three flags returned above.<br></p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">flag1.1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/checkTemperatures.html">checkTemperatures</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">proc_fulc1</span>, return_flags <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">flag1.1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/checkTemperatures.html">checkTemperatures</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">proc_fulc</span>, return_flags <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="co">#&gt; &gt;&gt;&gt; Checking substrate temperature</span>
 <span class="co">#&gt; [1] "There are 1 rows with flagged substrate temperature:"</span>
 <span class="co">#&gt;                             fulcrum_id raw_substrate_temperature</span>
@@ -190,31 +208,31 @@
 <span class="co">#&gt; 14                     15.3             90.2                        FALSE</span>
 <span class="co">#&gt; 15                     15.3             87.8                        FALSE</span>
 <span class="co">#&gt;    collection_local_time collection_datetime_UTC</span>
-<span class="co">#&gt; 1               11:51:00     2020-01-19 21:51:26</span>
-<span class="co">#&gt; 2               11:58:00     2020-01-19 21:58:02</span>
-<span class="co">#&gt; 3               11:59:00     2020-01-19 21:59:02</span>
-<span class="co">#&gt; 4               12:02:00     2020-01-19 22:02:01</span>
-<span class="co">#&gt; 5               12:15:00     2020-01-19 22:15:15</span>
-<span class="co">#&gt; 6               12:43:00     2020-01-19 22:43:04</span>
-<span class="co">#&gt; 7               12:46:00     2020-01-19 22:46:11</span>
-<span class="co">#&gt; 8               12:54:00     2020-01-19 22:54:01</span>
-<span class="co">#&gt; 9               10:42:00     2020-01-22 20:42:55</span>
-<span class="co">#&gt; 10              10:50:00     2020-01-22 20:50:48</span>
-<span class="co">#&gt; 11              11:12:00     2020-01-22 21:12:29</span>
-<span class="co">#&gt; 12              12:37:00     2020-01-22 22:37:28</span>
-<span class="co">#&gt; 13              12:39:00     2020-01-22 22:39:10</span>
-<span class="co">#&gt; 14              13:10:00     2020-01-22 23:10:25</span>
-<span class="co">#&gt; 15              14:23:00     2020-01-23 00:23:02</span></code></pre></div>
+<span class="co">#&gt; 1                  42660     2020-01-19 21:51:26</span>
+<span class="co">#&gt; 2                  43080     2020-01-19 21:58:02</span>
+<span class="co">#&gt; 3                  43140     2020-01-19 21:59:02</span>
+<span class="co">#&gt; 4                  43320     2020-01-19 22:02:01</span>
+<span class="co">#&gt; 5                  44100     2020-01-19 22:15:15</span>
+<span class="co">#&gt; 6                  45780     2020-01-19 22:43:04</span>
+<span class="co">#&gt; 7                  45960     2020-01-19 22:46:11</span>
+<span class="co">#&gt; 8                  46440     2020-01-19 22:54:01</span>
+<span class="co">#&gt; 9                  38520     2020-01-22 20:42:55</span>
+<span class="co">#&gt; 10                 39000     2020-01-22 20:50:48</span>
+<span class="co">#&gt; 11                 40320     2020-01-22 21:12:29</span>
+<span class="co">#&gt; 12                 45420     2020-01-22 22:37:28</span>
+<span class="co">#&gt; 13                 45540     2020-01-22 22:39:10</span>
+<span class="co">#&gt; 14                 47400     2020-01-22 23:10:25</span>
+<span class="co">#&gt; 15                 51780     2020-01-23 00:23:02</span></code></pre></div>
 </div>
 <div id="fixtemperatures" class="section level4">
 <h4 class="hasAnchor">
 <a href="#fixtemperatures" class="anchor"></a>fixTemperatures:</h4>
 <p><code>fixTemperatures</code> takes a) <code>fulcrum_id</code>s that need to be reverted <em>back to their original values</em> (if readings above 40 degrees were truly in Celsius) for both substrate temperatures (<code>substrate_temperature_ids</code>) and ambient temperatures (<code>ambient_temperature_ids</code>) as well as b) <code>fulcrum_id</code>s for which humidity and temperature readings need to be set to NA due to a stuck measurement device (<code>ambient_temperature_run_ids</code>).</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">proc_fulc1_clean</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fixTemperatures.html">fixTemperatures</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">proc_fulc1</span>,
-                                  substrate_temperature_ids <span class="op">=</span> <span class="st">"a7db618d-44cc-4b4a-bc67-871306029274"</span>,
-                                  ambient_temperature_ids <span class="op">=</span> <span class="st">"b1f20ae4-c5c2-426f-894a-e1f46c2fa693"</span>,
-                                  ambient_temperature_run_ids<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"dda77efe-d73c-48e9-aefb-b508e613256b"</span>,
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">proc_fulc_clean</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fixTemperatures.html">fixTemperatures</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">proc_fulc</span>,
+                                   substrate_temperature_ids <span class="op">=</span> <span class="st">"a7db618d-44cc-4b4a-bc67-871306029274"</span>,
+                                   ambient_temperature_ids <span class="op">=</span> <span class="st">"b1f20ae4-c5c2-426f-894a-e1f46c2fa693"</span>,
+                                   ambient_temperature_run_ids<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"dda77efe-d73c-48e9-aefb-b508e613256b"</span>,
                                                                  <span class="st">"93de14a0-40ab-4793-8614-ab1512ab158c"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p>The flag variables will be maintained, so rerunning <code>checkTemperatures</code> on the cleaned processed fulcrum data will ensure that corrections have been implemented as desired.</p>
 </div>
@@ -223,14 +241,14 @@
 <a href="#joinfulcrum" class="anchor"></a>joinFulcrum:</h4>
 <p><code>joinFulcrum</code> joins the Fulcrum dataframes. The function works to first join the processed field sampling dataframe to the processed isolation dataframe via unique collection labels (<code>c_label</code>). Following this join, it selects a “best” photo for each unique C-label based on the existence of a matching photo id in the processed field sampling sample photo dataframe, before joining the aggregated data to this dataframe as well. Finally, the complete merge of the dataframes is achieved when the processed isolation S-labeled plates is joined to this large dataframe on the basis of isolation id (<code>s_label</code>).<br></p>
 <p>If the user is using <strong>easyfulcrum</strong> on customized Fulcrum applications other than “Nematode field sampling” and “Nematode isolation”, it is recommended that <code>select_vars</code> is set to <code>FALSE</code>, such that <code>joinFulcrum</code> does not only return the default variables.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">join_fulc1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/joinFulcrum.html">joinFulcrum</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">proc_fulc1</span>, select_vars <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">join_fulc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/joinFulcrum.html">joinFulcrum</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">proc_fulc</span>, select_vars <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="co">#&gt; Attempting to join:</span>
-<span class="co">#&gt; proc_fulc1$field_sampling_proc</span>
-<span class="co">#&gt; proc_fulc1$field_sampling_sample_photo_proc</span>
-<span class="co">#&gt; proc_fulc1$isolation_proc</span>
-<span class="co">#&gt; proc_fulc1$isolation_s_labeled_plates_proc</span>
-<span class="co">#&gt; proc_fulc1$isolation_photos_proc</span>
+<span class="co">#&gt; proc_fulc$field_sampling_proc</span>
+<span class="co">#&gt; proc_fulc$field_sampling_sample_photo_proc</span>
+<span class="co">#&gt; proc_fulc$isolation_proc</span>
+<span class="co">#&gt; proc_fulc$isolation_s_labeled_plates_proc</span>
+<span class="co">#&gt; proc_fulc$isolation_photos_proc</span>
 <span class="co">#&gt; Complete fulcrum data detected, joining all data.</span>
 <span class="co">#&gt; returning joined and selected data, set select_vars to FALSE if variables are missing</span></code></pre></div>
 </div>
@@ -238,8 +256,8 @@
 <h4 class="hasAnchor">
 <a href="#checkjoin" class="anchor"></a>checkJoin:</h4>
 <p><code>checkJoin</code> conducts 10 different checks for flags in the joined Fulcrum data frame regarding extreme temperatures and altitude values, missing, improper, and/or duplicated C-labels, missing, and/or duplicated isolation records corresponding to these C-labels, and finally unusual sample photo numbers. The <code>return_flags</code> option is the same as in <code>checkTemperatures</code>, and the function automatically prints the rows where the flags exist. If desired, the user can manually edit values or correct mistakes in the underlying data based on these flags and re-run the pipeline again.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">flag1.2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/checkJoin.html">checkJoin</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">join_fulc1</span>, return_flags <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">flag1.2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/checkJoin.html">checkJoin</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">join_fulc</span>, return_flags <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="co">#&gt; &gt;&gt;&gt; Checking data classes</span>
 <span class="co">#&gt; [1] "There are 1 improperly classified variables"</span>
 <span class="co">#&gt; [1] "isolation_date_UTC"</span>
@@ -247,23 +265,23 @@
 <span class="co">#&gt; &gt;&gt;&gt; Checking duplicated c labels</span>
 <span class="co">#&gt; [1] "There are 2 rows with duplicated c labels, these c labels are:"</span>
 <span class="co">#&gt; [1] "C-5134" "C-5134"</span>
-<span class="co">#&gt; [1] "Duplicated c labels are found in nematode_field_sampling.csv"</span>
+<span class="co">#&gt; [1] "Duplicated c labels are found in the ...field_sampling.csv"</span>
 <span class="co">#&gt; &gt;&gt;&gt; Checking unusual sample photo number</span>
 <span class="co">#&gt; [1] "There are 6 rows with unusual sample photo numbers, their c labels are:"</span>
 <span class="co">#&gt; [1] "C-5121" "C-5121" "C-5121" "C-5121" "C-5121" "C-5121"</span>
-<span class="co">#&gt; [1] "Unusual sample photo number are found in nematode_field_sampling.csv"</span>
+<span class="co">#&gt; [1] "Unusual sample photo number are found in the ...field_sampling.csv"</span>
 <span class="co">#&gt; &gt;&gt;&gt; Checking duplicated isolation for c label</span>
 <span class="co">#&gt; [1] "There are 4 rows with duplicated isolation for c label, their c labels are:"</span>
 <span class="co">#&gt; [1] "C-5130" "C-5130" "C-5130" "C-5130"</span>
-<span class="co">#&gt; [1] "Duplicated isolation for c label are found in nematode_isolation.csv"</span>
+<span class="co">#&gt; [1] "Duplicated isolation for c label are found in the ...isolation.csv"</span>
 <span class="co">#&gt; &gt;&gt;&gt; Checking missing isolation records</span>
 <span class="co">#&gt; [1] "There are 4 rows with missing isolation records, their c labels are:"</span>
 <span class="co">#&gt; [1] "C-5130" "C-5130" "C-5130" "C-5133"</span>
-<span class="co">#&gt; [1] "Missing isolation records are found in nematode_isolation.csv"</span>
+<span class="co">#&gt; [1] "Missing isolation records are found in the ...isolation.csv"</span>
 <span class="co">#&gt; &gt;&gt;&gt; Checking extreme substrate temperatures</span>
 <span class="co">#&gt; [1] "There are 6 rows with extreme substrate temperatures, their c labels are:"</span>
 <span class="co">#&gt; [1] "C-5121" "C-5121" "C-5121" "C-5121" "C-5121" "C-5121"</span>
-<span class="co">#&gt; [1] "Extreme substrate temperatures are found in nematode_field_sampling.csv"</span>
+<span class="co">#&gt; [1] "Extreme substrate temperatures are found in the ...field_sampling.csv"</span>
 <span class="co">#&gt; &gt;&gt;&gt; Checking extreme ambient temperatures</span>
 <span class="co">#&gt; [1] "There are 3 rows with extreme ambient temperatures, their c labels are:"</span>
 <span class="co">#&gt; [1] "C-5126" "C-5126" "C-5126"</span>
@@ -287,8 +305,8 @@
 <p><code>annnotateFulcrum</code> adds spatial information to the joined Fulcrum data frame, noting if sample collections were collected on specific islands, trails, and/or locations. Examples islands, trails, and/or locations from Hawaii are automatically loaded with the package, but a user can specify manually made <code>.csv</code> files and place them in <em>data/raw/annotate</em>, specifying the base directory as <code>dir</code> in <code>annotateFulcrum</code> will override the example files.<br></p>
 <p>The <code>hawaii_islands</code> and <code>hawaii_locations</code> dataframes are composed of simple latitude and longitude starts and ends to create a bounding box, and <code>hawaii_trails</code> is composed of a character list of geojson polygon points from geojson output of that can be created on a <a href="https://boundingbox.klokantech.com/">bounding box online tool</a>.</p>
 <p>If the user is using <strong>easyfulcrum</strong> on customized Fulcrum applications other than “Nematode field sampling” and “Nematode isolation”, it is recommended that <code>select_vars</code> is set to <code>FALSE</code>, such that <code>annotateFulcrum</code> does not only return the default variables.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">anno_fulc1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/annotateFulcrum.html">annotateFulcrum</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">join_fulc1</span>, dir <span class="op">=</span> <span class="cn">NULL</span>, select_vars <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">anno_fulc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/annotateFulcrum.html">annotateFulcrum</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">join_fulc</span>, dir <span class="op">=</span> <span class="cn">NULL</span>, select_vars <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 </div>
 </div>
 <div id="reading-processing-and-joining-genotyping-google-sheet" class="section level3">
@@ -301,9 +319,9 @@
 <a href="#readgenotypes" class="anchor"></a>readGenotypes:</h4>
 <p><code>readGenotypes</code> reads in genotyping data from a Google Sheet with requisite <code>gsKey</code>. The <code>col_types</code> variable will specify of what column types the data should be.<br></p>
 <p>For more details on reading in genotyping sheets, look into the <a href="https://googlesheets4.tidyverse.org/articles/articles/read-sheets.html">googlesheets4</a> package (which underlies this function), as well as further information on how to <a href="https://googlesheets4.tidyverse.org/reference/range_read.html#column-specification">specify</a> the <code>col_types</code> if needed.<br></p>
-<p>As running this function depends on a users connection to the appropriate google doc, a <code>raw_geno1</code> object is included in the package.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">raw_geno1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/readGenotypes.html">readGenotypes</a></span><span class="op">(</span>gsKey <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"1iSGkGbhoyg-uq_l83UbiNdI_g4xqEkTxf3Ap0J7JGto"</span><span class="op">)</span><span class="op">)</span>
+<p>Running this function depends on a users connection to the appropriate Google Doc below, which is shared as view only.</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">raw_geno</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/readGenotypes.html">readGenotypes</a></span><span class="op">(</span>gsKey <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"1iSGkGbhoyg-uq_l83UbiNdI_g4xqEkTxf3Ap0J7JGto"</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; Using an auto-discovered, cached token.</span>
 <span class="co">#&gt; To suppress this message, modify your code or options to clearly consent to the use of a cached token.</span>
 <span class="co">#&gt; See gargle's "Non-interactive auth" vignette for more details:</span>
@@ -311,7 +329,7 @@
 <span class="co">#&gt; The googlesheets4 package is using a cached token for matteo.dibernardo@gmail.com.</span>
 <span class="co">#&gt; Reading from "2020JanuaryHawaii_wild_isolate_genotyping_easyFulcrum_vignette1"</span>
 <span class="co">#&gt; Range "'genotyping template'"</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">raw_geno1</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">raw_geno</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 6 x 38</span>
 <span class="co">#&gt;   project_id   shipment_sent_d… shipment_receive… shipment_number shipment_color</span>
 <span class="co">#&gt;   &lt;chr&gt;        &lt;date&gt;           &lt;date&gt;                      &lt;dbl&gt; &lt;chr&gt;         </span>
@@ -338,8 +356,8 @@
 <h4 class="hasAnchor">
 <a href="#checkgenotypes" class="anchor"></a>checkGenotypes:</h4>
 <p><code>checkGenotypes</code> both processes the genotyping data (adds flags) and returns info on those flags if desired, regarding isolations missing, improper, and/or duplicated S-labels, and other checks such as if species ID, strain name, proliferation label and ITS2 genotype are missing and expected based on data in the genotyping sheet. Setting the <code>return_geno</code> option to <code>TRUE</code> and the <code>return_flags</code> option to <code>FALSE</code> will return the processed genotyping data and print information on the flags. Setting the <code>return_geno</code> option to <code>FALSE</code> and the <code>return_flags</code> option to <code>TRUE</code> will return a list of data frames that detail the rows where the flags appear. Both of these cannot be <code>TRUE</code> at the same time.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">proc_geno1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/checkGenotypes.html">checkGenotypes</a></span><span class="op">(</span>geno_data <span class="op">=</span> <span class="va">raw_geno1</span>, fulc_data <span class="op">=</span> <span class="va">anno_fulc1</span>, 
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">proc_geno</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/checkGenotypes.html">checkGenotypes</a></span><span class="op">(</span>geno_data <span class="op">=</span> <span class="va">raw_geno</span>, fulc_data <span class="op">=</span> <span class="va">anno_fulc</span>, 
                                   return_geno <span class="op">=</span> <span class="cn">TRUE</span>, return_flags <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 <span class="co">#&gt; &gt;&gt;&gt; Checking data classes</span>
 <span class="co">#&gt; [1] "There are 0 improperly classified variables"</span>
@@ -365,8 +383,8 @@
 <span class="co">#&gt; [1] "O. myriophilus"</span>
 <span class="co">#&gt; [1] "There are 1 rows missing expected strain_name, these s labels are:"</span>
 <span class="co">#&gt; [1] "S-12775"</span></code></pre></div>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">flag1.3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/checkGenotypes.html">checkGenotypes</a></span><span class="op">(</span>geno_data <span class="op">=</span> <span class="va">raw_geno1</span>, fulc_data <span class="op">=</span> <span class="va">anno_fulc1</span>, 
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">flag1.3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/checkGenotypes.html">checkGenotypes</a></span><span class="op">(</span>geno_data <span class="op">=</span> <span class="va">raw_geno</span>, fulc_data <span class="op">=</span> <span class="va">anno_fulc</span>, 
                           return_geno <span class="op">=</span> <span class="cn">FALSE</span>, return_flags <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="co">#&gt; &gt;&gt;&gt; Checking data classes</span>
 <span class="co">#&gt; [1] "There are 0 improperly classified variables"</span>
@@ -392,13 +410,13 @@
 <span class="co">#&gt; [1] "O. myriophilus"</span>
 <span class="co">#&gt; [1] "There are 1 rows missing expected strain_name, these s labels are:"</span>
 <span class="co">#&gt; [1] "S-12775"</span></code></pre></div>
-<p>Based on these flags a new Google Document was made, eliminating rows with blank S-labels or S-labels in the genotyping data but not in the Fulcrum data. <code>raw_geno1</code> is overwritten with this data.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">raw_geno1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/readGenotypes.html">readGenotypes</a></span><span class="op">(</span>gsKey <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"1WlnmujvHBc3s5jwCtRPcT3oHkRvpU-RXXIBmJOV8Qb0"</span><span class="op">)</span><span class="op">)</span>
+<p>Based on these flags a new Google Document was made, eliminating rows with blank S-labels or S-labels in the genotyping data but not in the Fulcrum data. <code>raw_geno</code> and afterwards <code>proc_geno</code> is overwritten with this data.</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">raw_geno</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/readGenotypes.html">readGenotypes</a></span><span class="op">(</span>gsKey <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"1WlnmujvHBc3s5jwCtRPcT3oHkRvpU-RXXIBmJOV8Qb0"</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; Reading from "2020JanuaryHawaii_wild_isolate_genotyping_easyFulcrum_vignette2"</span>
 <span class="co">#&gt; Range "'genotyping template'"</span>
-<span class="va">proc_geno1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/checkGenotypes.html">checkGenotypes</a></span><span class="op">(</span>geno_data <span class="op">=</span> <span class="va">raw_geno1</span>, fulc_data <span class="op">=</span> <span class="va">anno_fulc1</span>, 
-                                  return_geno <span class="op">=</span> <span class="cn">TRUE</span>, return_flags <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+<span class="va">proc_geno</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/checkGenotypes.html">checkGenotypes</a></span><span class="op">(</span>geno_data <span class="op">=</span> <span class="va">raw_geno</span>, fulc_data <span class="op">=</span> <span class="va">anno_fulc</span>,
+                            return_geno <span class="op">=</span> <span class="cn">TRUE</span>, return_flags <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 <span class="co">#&gt; &gt;&gt;&gt; Checking data classes</span>
 <span class="co">#&gt; [1] "There are 0 improperly classified variables"</span>
 <span class="co">#&gt; &gt;&gt;&gt; Checking s labels</span>
@@ -425,8 +443,8 @@
 <a href="#joingenofulc" class="anchor"></a>joinGenoFulc:</h4>
 <p><code>joinGenoFulc</code> will join the joined Fulcrum data frame with the genotyping information. This function will also save the processed genotyping information in <em>data/processed/genotypes</em> if <code>dir</code> is set to the base folder of the project.</p>
 <p>If the user is using <strong>easyfulcrum</strong> on customized Fulcrum applications other than “Nematode field sampling” and “Nematode isolation”, it is recommended that <code>select_vars</code> is set to <code>FALSE</code>, such that <code>joinGenoFulc</code> does not only return the default variables.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">join_genofulc1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/joinGenoFulc.html">joinGenoFulc</a></span><span class="op">(</span>geno <span class="op">=</span> <span class="va">proc_geno1</span>, fulc <span class="op">=</span> <span class="va">anno_fulc1</span>, dir <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">join_genofulc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/joinGenoFulc.html">joinGenoFulc</a></span><span class="op">(</span>geno <span class="op">=</span> <span class="va">proc_geno</span>, fulc <span class="op">=</span> <span class="va">anno_fulc</span>, dir <span class="op">=</span> <span class="cn">NULL</span>, select_vars <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="co">#&gt; Joining, by = "s_label"</span>
 <span class="co">#&gt; returning selected data, set select_vars to FALSE if variables are missing</span></code></pre></div>
 </div>
@@ -438,13 +456,14 @@
 <div id="procphotos" class="section level4">
 <h4 class="hasAnchor">
 <a href="#procphotos" class="anchor"></a>procPhotos:</h4>
-<p><code>procPhotos</code> processes the raw sample photos and adds information regarding them to the final data frame of data, which is also saved in <em>data/processed/fulcrum</em>. Setting the <code>CeNDR</code> option to <code>TRUE</code> will place photos of samples meeting CeNDR criteria into an appropriate subfolder.</p>
-<p>As running this function depends on a users personal subfolder structure, it will not be functional using <code>dir1</code> and without the raw photo files. For this reason, the <code>final_data1</code> object is also contained in the package for the user.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">final_data1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/procPhotos.html">procPhotos</a></span><span class="op">(</span>dir <span class="op">=</span> <span class="va">dir1</span>, data <span class="op">=</span> <span class="va">join_genofulc1</span>,
-                          max_dim <span class="op">=</span> <span class="fl">500</span>, overwrite <span class="op">=</span> <span class="cn">T</span>,
-                          CeNDR <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">final_data1</span><span class="op">)</span>
+<p><code>procPhotos</code> copies raw sample photos, renames them with the C-label, makes a new directory <em>data/processed/fulcrum/photos</em> and pastes the renamed files there. The function also makes thumbnails for use with interactive maps and places these in the <em>data/processed/fulcrum/photos/thumbnails</em> direcotry. Setting the <code>CeNDR</code> option to <code>TRUE</code> will rename photos of samples meeting CeNDR criteria with the name of the nematode strains isolated from the sample and paste them in the <em>data/processed/fulcrum/photos/CeNDR</em> directory.</p>
+<p>The function will also accept a public url (<code>pub_url</code>) for hosting the sample photos renamed by C-label. A compatible public url should follow the <code>pub_url/Project/C-label.jpg</code> format. For example, if the full url for C-0001 is <a href="https://storage.googleapis.com/elegansvariation.org/photos/hawaii2017/C-0001.jpg" class="uri">https://storage.googleapis.com/elegansvariation.org/photos/hawaii2017/C-0001.jpg</a>, (<code>pub_url</code>) should be set to <code>https://storage.googleapis.com/elegansvariation.org/photos/</code></p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">final_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/procPhotos.html">procPhotos</a></span><span class="op">(</span>dir <span class="op">=</span> <span class="va">dir</span>, data <span class="op">=</span> <span class="va">join_genofulc</span>,
+                         max_dim <span class="op">=</span> <span class="fl">500</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span>,
+                         pub_url <span class="op">=</span> <span class="st">"https://storage.googleapis.com/elegansvariation.org/photos/"</span>,
+                         CeNDR <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">final_data</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 6 x 90</span>
 <span class="co">#&gt;   project           c_label s_label species_id strain_name collection_by        </span>
 <span class="co">#&gt;   &lt;chr&gt;             &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;      &lt;chr&gt;       &lt;chr&gt;                </span>
@@ -455,7 +474,7 @@
 <span class="co">#&gt; 5 2020JanuaryHawaii C-5115  S-12776 &lt;NA&gt;       &lt;NA&gt;        dec@u.northwestern.e…</span>
 <span class="co">#&gt; 6 2020JanuaryHawaii C-5115  S-12776 &lt;NA&gt;       &lt;NA&gt;        dec@u.northwestern.e…</span>
 <span class="co">#&gt; # … with 84 more variables: collection_datetime_UTC &lt;dttm&gt;,</span>
-<span class="co">#&gt; #   collection_date_UTC &lt;date&gt;, collection_local_time &lt;time&gt;,</span>
+<span class="co">#&gt; #   collection_date_UTC &lt;date&gt;, collection_local_time &lt;dbl&gt;,</span>
 <span class="co">#&gt; #   collection_fulcrum_latitude &lt;dbl&gt;, collection_fulcrum_longitude &lt;dbl&gt;,</span>
 <span class="co">#&gt; #   exif_gps_latitude &lt;dbl&gt;, exif_gps_longitude &lt;dbl&gt;,</span>
 <span class="co">#&gt; #   collection_latitude &lt;dbl&gt;, collection_longitude &lt;dbl&gt;,</span>
@@ -477,7 +496,7 @@
 <span class="co">#&gt; #   new_file_name3 &lt;glue&gt;, thumb_file_name3 &lt;glue&gt;, best_photo &lt;chr&gt;,</span>
 <span class="co">#&gt; #   best_photo_gps_dop &lt;dbl&gt;, best_photo_caption &lt;lgl&gt;, isolation_by &lt;chr&gt;,</span>
 <span class="co">#&gt; #   isolation_datetime_UTC &lt;chr&gt;, isolation_date_UTC &lt;chr&gt;,</span>
-<span class="co">#&gt; #   isolation_local_time &lt;time&gt;, isolation_latitude &lt;dbl&gt;,</span>
+<span class="co">#&gt; #   isolation_local_time &lt;dbl&gt;, isolation_latitude &lt;dbl&gt;,</span>
 <span class="co">#&gt; #   isolation_longitude &lt;dbl&gt;, worms_on_sample &lt;chr&gt;,</span>
 <span class="co">#&gt; #   approximate_number_of_worms &lt;chr&gt;, shipment_sent_date &lt;date&gt;,</span>
 <span class="co">#&gt; #   shipment_received_date &lt;date&gt;, proliferation_48 &lt;dbl&gt;,</span>
@@ -500,15 +519,14 @@
 <div id="generating-summary-and-output-files" class="section level3">
 <h3 class="hasAnchor">
 <a href="#generating-summary-and-output-files" class="anchor"></a>Generating summary and output files:</h3>
-<p>We include two functions for generating sample output from <code>final_data1</code>. This final dataframe can otherwise be used as needed by the user. As these depend on a users personal subfolder structure, they are commented out.</p>
+<p>We include two functions for generating sample output from <code>final_data</code>. This final dataframe can otherwise be used as needed by the user. As these depend on a users personal subfolder structure, they are commented out.</p>
 <div id="makespsheet" class="section level4">
 <h4 class="hasAnchor">
 <a href="#makespsheet" class="anchor"></a>makeSpSheet:</h4>
-<p><code>makeSpSheet</code> generates a species specific <code>.csv</code> file for the species of interest (<code>target_sp</code>) and writes it to the <code>/reports</code> subdirectory. This function simplifies the output of the final dataframe, pulling variables of particular interest for a user specified species of interest. In addition, this function standardizes an output dataframe to meet the specifications of submitting to the CaeNDR.<br></p>
-<p>It also returns a dataframe with flags for these select samples, and prints a description of these flags.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">flag1.4</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/makeSpSheet.html">makeSpSheet</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">final_data1</span>,
-                       target_sp <span class="op">=</span> <span class="st">"Caenorhabditis briggsae"</span>, dir <span class="op">=</span> <span class="va">dir1</span><span class="op">)</span>
+<p><code>makeSpSheet</code> generates a species specific <code>.csv</code> file for the species of interest (<code>target_sp</code>) and writes it to the <code>/reports</code> subdirectory. This function simplifies the output of the final dataframe, pulling variables of particular interest for a user specified species of interest. This function is written to standardize the output dataframe to meet the specifications for submitting wild nematode collections to the Caenorhabditis Natural Diversity Resource (CaeNDR). For this reason the <code>makeSpSheet</code> function is likely only applicable to nematode sampling projects.<br></p>
+<p><code>makeSpSheet</code> also returns a dataframe with flags for these select samples, and prints a description of these flags.</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">flag1.4</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/makeSpSheet.html">makeSpSheet</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">final_data</span>, target_sp <span class="op">=</span> <span class="st">"Caenorhabditis briggsae"</span>, dir <span class="op">=</span> <span class="va">dir</span><span class="op">)</span>
 <span class="co">#&gt; [1] "There are 8 strains with an email address for sampled_by:"</span>
 <span class="co">#&gt; [1] "ECA2499" "ECA2501" "ECA2503" "ECA2506" "ECA2507" "ECA2509" "ECA2511"</span>
 <span class="co">#&gt; [8] "ECA2513"</span>
@@ -523,10 +541,10 @@
 <div id="generatereport" class="section level4">
 <h4 class="hasAnchor">
 <a href="#generatereport" class="anchor"></a>generateReport:</h4>
-<p>We provide a function, <code>generateReport</code>, that interfaces between <code>final_data1</code> and <code>sampleReport.Rmd</code>, a markdown file that will generate a simple description of the project. <code>generateReport</code> saves <code>sampleReport.Rmd</code> into the <code>/scripts</code> sub-directory, and generates a <code>.html</code> file in the <code>/reports</code> sub-directory, that includes: a summary collection project metadata (such as who conducted the respective processes and on what dates they were completed), summary tables of collection and isolation data, visual maps of where the collections in the project were acquired, and finally basic box and whisker plots of substrate temperature, ambient temperature, humidity, and elevation for the project.</p>
+<p>We provide a function, <code>generateReport</code>, that interfaces between <code>final_data</code> and <code>sampleReport.Rmd</code>, a markdown file that will generate an interactive overview of the entire sampling project. <code>generateReport</code> saves <code>sampleReport.Rmd</code> into the <code>/scripts</code> sub-directory, and generates a <code>.html</code> file in the <code>/reports</code> sub-directory, that includes: a summary collection project metadata (such as who conducted the respective processes and on what dates they were completed), summary tables of collection and isolation data, interactive maps of where the collections in the project were acquired, and box plots showing the distributions of various environmental parameters at all collection sites. These parameters include substrate temperature, ambient temperature, humidity, and elevation.</p>
 <p>Please feel free to edit the <code>sampleReport.Rmd</code> as you require once it is moved into the <code>/scripts</code> sub-directory.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/generateReport.html">generateReport</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">final_data1</span>, dir <span class="op">=</span> <span class="va">dir1</span><span class="op">)</span>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/generateReport.html">generateReport</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">final_data</span>, dir <span class="op">=</span> <span class="va">dir</span><span class="op">)</span>
 <span class="co">#&gt; Warning: Unknown levels in `f`: C. elegans, C. tropicalis, C. briggsae, unknown</span>
 <span class="co">#&gt; nematode, no nematode</span>
 <span class="co">#&gt; Warning: Unknown levels in `f`: Caenorhabditis elegans, Caenorhabditis</span>
@@ -534,7 +552,7 @@
 
 <span class="co">#&gt; Warning: Unknown levels in `f`: Caenorhabditis elegans, Caenorhabditis</span>
 <span class="co">#&gt; tropicalis</span>
-<span class="co">#&gt; /Applications/RStudio.app/Contents/MacOS/pandoc/pandoc +RTS -K512m -RTS sampleReport.utf8.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output /Users/matteodibernardo/Desktop/2020JanuaryHawaii/reports/sampleReport.html --lua-filter /Library/Frameworks/R.framework/Versions/4.0/Resources/library/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /Library/Frameworks/R.framework/Versions/4.0/Resources/library/rmarkdown/rmarkdown/lua/latex-div.lua --self-contained --variable bs3=TRUE --standalone --section-divs --table-of-contents --toc-depth 4 --variable toc_float=1 --variable toc_selectors=h1,h2,h3,h4 --variable toc_collapsed=1 --variable toc_smooth_scroll=1 --variable toc_print=1 --template /Library/Frameworks/R.framework/Versions/4.0/Resources/library/rmarkdown/rmd/h/default.html --no-highlight --variable highlightjs=1 --variable theme=bootstrap --include-in-header /var/folders/y8/61hdswn12r52s0310b9ht1780000gn/T//Rtmpi87j0s/rmarkdown-str9fe328b6ddd0.html --mathjax --variable 'mathjax-url:https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'</span></code></pre></div>
+<span class="co">#&gt; /Applications/RStudio.app/Contents/MacOS/pandoc/pandoc +RTS -K512m -RTS sampleReport.utf8.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output /Users/matteodibernardo/Desktop/2020JanuaryHawaii/reports/sampleReport.html --lua-filter /Library/Frameworks/R.framework/Versions/4.0/Resources/library/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /Library/Frameworks/R.framework/Versions/4.0/Resources/library/rmarkdown/rmarkdown/lua/latex-div.lua --self-contained --variable bs3=TRUE --standalone --section-divs --table-of-contents --toc-depth 4 --variable toc_float=1 --variable toc_selectors=h1,h2,h3,h4 --variable toc_collapsed=1 --variable toc_smooth_scroll=1 --variable toc_print=1 --template /Library/Frameworks/R.framework/Versions/4.0/Resources/library/rmarkdown/rmd/h/default.html --no-highlight --variable highlightjs=1 --variable theme=bootstrap --include-in-header /var/folders/y8/61hdswn12r52s0310b9ht1780000gn/T//RtmpSo4s3H/rmarkdown-str2045388d8093.html --mathjax --variable 'mathjax-url:https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'</span></code></pre></div>
 </div>
 </div>
   </div>

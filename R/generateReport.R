@@ -15,11 +15,11 @@ generateReport <- function(data, dir) {
   df <- data
   # copy sampleReport.Rmd to scripts
   file.copy(from = system.file("rmd", "sampleReport.Rmd", package = "easyfulcrum"),
-            to = paste(dir1,"scripts",sep = "/"),
+            to = paste(dir,"scripts",sep = "/"),
             overwrite = TRUE)
 
   # render sampleReport.Rmd
-  rmarkdown::render(paste(dir1,"scripts","sampleReport.Rmd",sep = "/"),
-                    output_dir = paste(dir1,"reports",sep = "/"),
+  rmarkdown::render(paste(dir,"scripts","sampleReport.Rmd",sep = "/"),
+                    output_dir = paste(dir,"reports",sep = "/"),
                     output_format	= "html_document")
 }

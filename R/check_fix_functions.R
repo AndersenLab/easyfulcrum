@@ -187,35 +187,35 @@ checkJoin <- function(data, return_flags = FALSE) {
   print(paste("There are", nrow(duplicated_c_label), "rows with duplicated c labels, these c labels are:", sep = " "))
   if(nrow(duplicated_c_label) > 0){
     print(duplicated_c_label$c_label)
-    print("Duplicated c labels are found in nematode_field_sampling.csv")}
+    print("Duplicated c labels are found in the ...field_sampling.csv")}
   # check for unusual sample photo numbers
   message(">>> Checking unusual sample photo number")
   unusual_sample_photo_num <- data %>% dplyr::filter(flag_unusual_sample_photo_num == TRUE)
   print(paste("There are", nrow(unusual_sample_photo_num), "rows with unusual sample photo numbers, their c labels are:", sep = " "))
   if(nrow(unusual_sample_photo_num) > 0){
     print(unusual_sample_photo_num$c_label)
-    print("Unusual sample photo number are found in nematode_field_sampling.csv")}
+    print("Unusual sample photo number are found in the ...field_sampling.csv")}
   # check for duplicated isolation for c labels
   message(">>> Checking duplicated isolation for c label")
   duplicated_isolation_for_c_label <- data %>% dplyr::filter(flag_duplicated_isolation_for_c_label == TRUE)
   print(paste("There are", nrow(duplicated_isolation_for_c_label), "rows with duplicated isolation for c label, their c labels are:", sep = " "))
   if(nrow(duplicated_isolation_for_c_label) > 0){
     print(duplicated_isolation_for_c_label$c_label)
-    print("Duplicated isolation for c label are found in nematode_isolation.csv")}
+    print("Duplicated isolation for c label are found in the ...isolation.csv")}
   # check for missing isolation records
   message(">>> Checking missing isolation records")
   missing_isolation_record <- data %>% dplyr::filter(flag_missing_isolation_record == TRUE)
   print(paste("There are", nrow(missing_isolation_record), "rows with missing isolation records, their c labels are:", sep = " "))
   if(nrow(missing_isolation_record) > 0){
     print(missing_isolation_record$c_label)
-    print("Missing isolation records are found in nematode_isolation.csv")}
+    print("Missing isolation records are found in the ...isolation.csv")}
   # check for extreme substrate temperature
   message(">>> Checking extreme substrate temperatures")
   extreme_substrate_temperature <- data %>% dplyr::filter(flag_substrate_temperature_extreme == TRUE)
   print(paste("There are", nrow(extreme_substrate_temperature), "rows with extreme substrate temperatures, their c labels are:", sep = " "))
   if(nrow(extreme_substrate_temperature) > 0){
     print(extreme_substrate_temperature$c_label)
-    print("Extreme substrate temperatures are found in nematode_field_sampling.csv")}
+    print("Extreme substrate temperatures are found in the ...field_sampling.csv")}
   # check for extreme ambient temperatures
   message(">>> Checking extreme ambient temperatures")
   extreme_ambient_temperature <- data %>% dplyr::filter(flag_ambient_temperature_extreme == TRUE)
