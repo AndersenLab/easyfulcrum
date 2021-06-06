@@ -4,7 +4,7 @@
 \alias{joinGenoFulc}
 \title{joinGenoFulc}
 \usage{
-joinGenoFulc(geno, fulc, dir = NULL, select_vars = T)
+joinGenoFulc(geno, fulc, dir = NULL, select_vars = F)
 }
 \arguments{
 \item{geno}{a genotyping data frame output from the \code{loadGenotypes}
@@ -19,7 +19,7 @@ save the genotyping data in data/processed/genotypes.}
 \item{select_vars}{Logical, TRUE  will return only the default variables,
 FALSE will return all variables. FALSE is recommended if using customized
 Fulcrum applications other than "Nematode field sampling" and "Nematode
-isolation". TRUE is default.}
+isolation". FALSE is default.}
 }
 \value{
 A single collection dataframe with variables described in the data

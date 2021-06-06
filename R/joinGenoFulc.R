@@ -13,14 +13,14 @@
 #' @param select_vars Logical, TRUE  will return only the default variables,
 #'   FALSE will return all variables. FALSE is recommended if using customized
 #'   Fulcrum applications other than "Nematode field sampling" and "Nematode
-#'   isolation". TRUE is default.
+#'   isolation". FALSE is default.
 #' @return A single collection dataframe with variables described in the data
 #'   dictionary.
 #' @import dplyr
 #' @export
 #'
 
-joinGenoFulc <- function(geno, fulc, dir = NULL, select_vars = T) {
+joinGenoFulc <- function(geno, fulc, dir = NULL, select_vars = F) {
   # Save the finalized genotyping sheet if given
   if(is.character(dir)){
     saveRDS(object = geno,

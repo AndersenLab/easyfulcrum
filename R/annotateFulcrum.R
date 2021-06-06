@@ -9,7 +9,7 @@
 #' @param select_vars Logical, TRUE  will return only the default variables,
 #'   FALSE will return all variables. FALSE is recommended if using customized
 #'   Fulcrum applications other than "Nematode field sampling" and "Nematode
-#'   isolation". TRUE is default.
+#'   isolation". FALSE is default.
 #' @return A single dataframe containing all Fulcrum data sources. This data
 #'   frame contains all necessary variables from Fulcrum. It also contains data
 #'   quality flags. The variable names match the data dictionary.
@@ -20,7 +20,7 @@
 #' @export
 #'
 
-annotateFulcrum <- function(data, dir = NULL, select_vars = T) {
+annotateFulcrum <- function(data, dir = NULL, select_vars = F) {
   # import island csv
   island <- easyfulcrum::hawaii_islands
   # import location csv

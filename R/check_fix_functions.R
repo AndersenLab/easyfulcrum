@@ -161,8 +161,6 @@ fixTemperatures <- function(data,
 #'
 #' @param data dataframe output of \code{joinFulcrum}.
 #' @param return_flags set to TRUE if flagged rows are to be returned as a dataframe.
-#' @param check_class set to TRUE if variable classes are to be check.
-#'  This should be set to FALSE unless \code{select_vars} is set to TRUE in previous data processing functions.
 #' @return \emph{c_labels} and \emph{s_label}s (as appropriate) for rows with each of the six flags,
 #' and the origin of the location of the raw data that triggered the flag
 #'  the rows corresponding to these labels can be saved as a list of six dataframes when return is set to TRUE

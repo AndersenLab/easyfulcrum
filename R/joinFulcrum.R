@@ -11,7 +11,7 @@
 #' @param select_vars Logical, TRUE  will return only the default variables,
 #'   FALSE will return all variables. FALSE is recommended if using customized
 #'   Fulcrum applications other than "Nematode field sampling" and "Nematode
-#'   isolation". TRUE is default.
+#'   isolation". FALSE is default.
 #' @return A single, joined dataframe from the processed dataframes supplied in
 #'   the \code{data} list.
 #' @importFrom glue glue
@@ -19,7 +19,7 @@
 #' @import dplyr
 #' @export
 
-joinFulcrum <- function(data, select_vars = T) {
+joinFulcrum <- function(data, select_vars = F) {
   # prevent scientific notation
   options(scipen = 999)
 
