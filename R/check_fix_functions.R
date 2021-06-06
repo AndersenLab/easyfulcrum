@@ -40,59 +40,72 @@ checkTemperatures <- function(data, return_flags = FALSE) {
   if(nrow(ambient_temperature) > 0){to_return <- ambient_temperature %>%
     dplyr::select(fulcrum_id ,raw_ambient_temperature, proc_ambient_temperature)
   print.data.frame(as.data.frame(to_return))}
-  # check ambient run temperature
-  message(">>> Checking ambient run temperature")
-  #arrange by collection_datetime
-  ambient_temperature_run <- data$field_sampling_proc %>%
-    dplyr::arrange(collection_datetime_UTC)
-  #replace NA values in the flag with FALSE, doesn't matter for this purpose
-  ambient_temperature_run$flag_ambient_temperature_run <-
-    tidyr::replace_na(ambient_temperature_run$flag_ambient_temperature_run, FALSE)
-  #add another logical for adjacent rows, will later delete
-  ambient_temperature_run$temp <- rep(FALSE, nrow(ambient_temperature_run))
-  # take care of first five cases
-  for(i in 1:5){
-    if(ambient_temperature_run$flag_ambient_temperature_run[i]==TRUE){
-      ambient_temperature_run$temp[1:i] <- TRUE
-      ambient_temperature_run$temp[i+1:5] <- TRUE
-    }
-  }
-  # values imbetween
-  for(i in 6:(nrow(ambient_temperature_run)-6)){
-    if(ambient_temperature_run$flag_ambient_temperature_run[i]==TRUE){
-      ambient_temperature_run$temp[i] <- TRUE
-      ambient_temperature_run$temp[i+1:5] <- TRUE
-      ambient_temperature_run$temp[i-1:5] <- TRUE
-    }
-  }
-  # take care of last five cases
-  for(i in (nrow(ambient_temperature_run)-5):nrow(ambient_temperature_run)){
-    if(ambient_temperature_run$flag_ambient_temperature_run[i]==TRUE){
-      ambient_temperature_run$temp[i:nrow(ambient_temperature_run)] <- TRUE
-      ambient_temperature_run$temp[i-1:5] <- TRUE
-    }
-  }
-  ambient_temperature_run <- ambient_temperature_run %>%
-    dplyr::filter(temp == TRUE) %>% dplyr::select(-temp)
-  print(paste("There are", sum(ambient_temperature_run$flag_ambient_temperature_run),
-              "rows with flagged ambient run temperature:", sep = " "))
 
-  if(sum(ambient_temperature_run$flag_ambient_temperature_run) > 0){
-    to_return <- ambient_temperature_run %>%
-    dplyr::select(fulcrum_id,
-                  c_label,
-                  raw_ambient_temperature,
-                  proc_ambient_temperature,
-                  ambient_humidity,
-                  flag_ambient_temperature_run,
-                  collection_local_time,
-                  collection_datetime_UTC)
-    print.data.frame(as.data.frame(to_return))}
+  if(nrow(data$field_sampling_proc) > 10){
+    # check ambient run temperature
+    message(">>> Checking ambient run temperature")
+    #arrange by collection_datetime
+    ambient_temperature_run <- data$field_sampling_proc %>%
+      dplyr::arrange(collection_datetime_UTC)
+    #replace NA values in the flag with FALSE, doesn't matter for this purpose
+    ambient_temperature_run$flag_ambient_temperature_run <-
+      tidyr::replace_na(ambient_temperature_run$flag_ambient_temperature_run, FALSE)
+    #add another logical for adjacent rows, will later delete
+    ambient_temperature_run$temp <- rep(FALSE, nrow(ambient_temperature_run))
+    # take care of first five cases
+    for(i in 1:5){
+      if(ambient_temperature_run$flag_ambient_temperature_run[i]==TRUE){
+        ambient_temperature_run$temp[1:i] <- TRUE
+        ambient_temperature_run$temp[i+1:5] <- TRUE
+      }
+    }
+    # values imbetween
+    for(i in 6:(nrow(ambient_temperature_run)-6)){
+      if(ambient_temperature_run$flag_ambient_temperature_run[i]==TRUE){
+        ambient_temperature_run$temp[i] <- TRUE
+        ambient_temperature_run$temp[i+1:5] <- TRUE
+        ambient_temperature_run$temp[i-1:5] <- TRUE
+      }
+    }
+    # take care of last five cases
+    for(i in (nrow(ambient_temperature_run)-5):nrow(ambient_temperature_run)){
+      if(ambient_temperature_run$flag_ambient_temperature_run[i]==TRUE){
+        ambient_temperature_run$temp[i:nrow(ambient_temperature_run)] <- TRUE
+        ambient_temperature_run$temp[i-1:5] <- TRUE
+      }
+    }
+    ambient_temperature_run <- ambient_temperature_run %>%
+      dplyr::filter(temp == TRUE) %>% dplyr::select(-temp)
+    print(paste("There are", sum(ambient_temperature_run$flag_ambient_temperature_run),
+                "rows with flagged ambient run temperature:", sep = " "))
 
-  if(return_flags){
-    return(list("substrate_temperature" = substrate_temperature,
-                "ambient_temperature" = ambient_temperature,
-                "ambient_temperature_run" = ambient_temperature_run))
+    if(sum(ambient_temperature_run$flag_ambient_temperature_run) > 0){
+      to_return <- ambient_temperature_run %>%
+        dplyr::select(fulcrum_id,
+                      c_label,
+                      raw_ambient_temperature,
+                      proc_ambient_temperature,
+                      ambient_humidity,
+                      flag_ambient_temperature_run,
+                      collection_local_time,
+                      collection_datetime_UTC)
+      print.data.frame(as.data.frame(to_return))}
+  }
+  else{# check ambient run temperature
+    message(">>> Less than 10 collections, NOT checking ambient run temperature")
+  }
+  if(nrow(data$field_sampling_proc) > 10){
+    if(return_flags){
+      return(list("substrate_temperature" = substrate_temperature,
+                  "ambient_temperature" = ambient_temperature,
+                  "ambient_temperature_run" = ambient_temperature_run))
+    }
+  }
+  else{
+    if(return_flags){
+      return(list("substrate_temperature" = substrate_temperature,
+                  "ambient_temperature" = ambient_temperature))
+    }
   }
 }
 
@@ -148,6 +161,8 @@ fixTemperatures <- function(data,
 #'
 #' @param data dataframe output of \code{joinFulcrum}.
 #' @param return_flags set to TRUE if flagged rows are to be returned as a dataframe.
+#' @param check_class set to TRUE if variable classes are to be check.
+#'  This should be set to FALSE unless \code{select_vars} is set to TRUE in previous data processing functions.
 #' @return \emph{c_labels} and \emph{s_label}s (as appropriate) for rows with each of the six flags,
 #' and the origin of the location of the raw data that triggered the flag
 #'  the rows corresponding to these labels can be saved as a list of six dataframes when return is set to TRUE
