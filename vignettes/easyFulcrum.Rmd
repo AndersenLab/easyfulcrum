@@ -16,20 +16,20 @@ knitr::opts_chunk$set(
 )
 ```
 
-The **easyfulcrum** package is a tool to process and analyze ecological field sampling data generated using the Fulcrum mobile application.
+The **easyfulcrum** package is a tool to process and analyze ecological field sampling data generated using the Fulcrum mobile application.<br>
+
+The **easyfulcrum** R package offers an organized workflow for processing ecological sampling data generated using the Fulcrum mobile application. **easyfulcrum** provides simple and efficient functions to clean, process, and visualize ecological field sampling and isolation data collected using custom Fulcrum applications. It also provides functions to join these data with genotype information if organisms isolated from the field are identified using molecular barcodes. Together, the Fulcrum mobile application and **easyfulcrum** R package allow researchers to easily implement mobile data-collection, cloud-based databases, and standardized data analysis tools to improve ecological sampling accuracy and efficiency.<br>
 
 ### What is Fulcrum?
-Fulcrum is a customizable, geographic data-collection platform compatible with Apple iOS and Google Android devices that allows users to collect rich, location-based data. To facilitate large-scale ecological surveys of nematodes that are difficult to identify in the field, we developed two Fulcrum applications, but these applications are easily extensible to other organisms as well. Fulcrum uses a powerful GUI to help users customize data-collection applications even when they have no coding or database administration knowledge, which makes Fulcrum’s robust, cloud-based database adaptable  to sampling nearly any species from nature. The “Nematode field sampling” application allows the user to organize various ecological data types associated with the substrate sampled in the field, such as environmental parameters and substrate characteristics, using their mobile device. The “Nematode isolation” application helps organize data associated with the specimens isolated from samples after they have been brought into the laboratory. Two key advantages of our approach are improvements in sampling efficiency and data organization, which translate into more sampling per researcher and greater accuracy when linking isolated specimens back to the ecological data at the sampling site.<br>
-
-The **easyfulcrum** R package offers an organized workflow for processing ecological sampling data generated using the Fulcrum mobile application. **easyfulcrum** provides simple and efficient functions to clean, process, and visualize ecological field sampling and isolation data collected using custom Fulcrum applications. It also provides functions to join these data with genotype information if organisms isolated from the field are identified using molecular barcodes. Together, the Fulcrum mobile application and **easyfulcrum** R package allow researchers to easily implement mobile data-collection, cloud-based databases, and standardized data analysis tools to improve ecological sampling accuracy and efficiency, while simultaneously enabling reproducible analysis and downstream integration with other R packages.<br>
+Fulcrum is a customizable, geographic data-collection platform compatible with Apple iOS and Google Android devices that allows users to collect rich, location-based data. To facilitate large-scale ecological surveys of nematodes that are difficult to identify in the field, we developed two Fulcrum applications. The Nematode field sampling application allows the user to organize various ecological data types associated with the substrate sampled in the field, such as environmental parameters and substrate characteristics. The “Nematode isolation” application helps organize data associated with the specimens isolated from samples after they have been brought into the laboratory.<br>
 
 ### Fulcrum installation and application customization
-The Fulcrum data collection application can be downloaded online (https://www.fulcrumapp.com). Users can customize our field collection and isolation applications following our Fulcrum templates.<br>
+The Fulcrum data collection application can be downloaded online (https://www.fulcrumapp.com). Fulcrum uses a powerful GUI to help users customize data-collection applications even when they have no coding or database administration knowledge, which makes Fulcrum’s robust, cloud-based database adaptable to sampling nearly any species from nature. If desired, users can customize our field collection and isolation applications following our Fulcrum templates.<br>
 
 * The template for the Nematode field sampling application is here: [https://www.fulcrumapp.com/apps/nematode-field-sampling]<br>
 * The Nematode isolation template is here: [https://www.fulcrumapp.com/apps/nematode-isolation]<br>
 
-In order for **easyfulcrum** to work with custom applications, users should save their field sampling application and isolation applications with a unique identifier  in the place of our nematode prefix, e.g. `yeast field sampling` and `yeast isolation`<br>
+Users can use the applications as is, but in order for **easyfulcrum** to work with custom applications, users should save their field sampling application and isolation applications with a unique identifier in the place of our nematode prefix, e.g. fungus field sampling and fungus isolation.<br>
 
 ### easyfulcrum installation:
 
@@ -66,8 +66,8 @@ The `reports` directory holds **easyfulcrum** function outputs. These outputs wi
 
 Following `makeDirStructure`, the user adds collection `.csv` and `.jpg` files into the appropriate subfolder locations.
 
-We include example files from a small collection to use with this vignette. To copy these files into the project directory yoy just made we
-include a helper function called `loadExampleFiles`. This function is not used in the normal **easyfulcrum** workflow. Note, the (`startdir`) and (`projectdirname`) should be identical to arugments above for the `makeDirStructure` function.
+We include example files from a small collection to use with this vignette. To copy these files into the project directory you just made we
+include a helper function called `loadExampleFiles`. This function is not used in the normal **easyfulcrum** workflow. Note, the (`startdir`) and (`projectdirname`) should be identical to arguments above for the `makeDirStructure` function.
 
 ```{r warning = F, message = F}
 loadExampleFiles(startdir = "~/Desktop",
@@ -81,7 +81,6 @@ The first group of functions cleans the results from the Fulcrum `.csv` files.<b
 #### readFulcrum:
 
 `readFulcrum` takes a `dir` argument that specifies the directory to read in Fulcrum `.csv` files. This will be useful throughout the package.
-
 
 ```{r message = F}
 dir1 <- "~/Desktop/2020JanuaryHawaii"
@@ -208,7 +207,7 @@ The final function processes and resizes images, adding details to a final dataf
 
 #### procPhotos:
 
-`procPhotos` copies raw sample photos, renames them with the C-label, makes a new directory _data/processed/fulcrum/photos_ and pstes the renamed files there. The function also makes thumbnails for use with interactive maps and places these in the _data/processed/fulcrum/photos/thumbnails_ direcotry. Setting the `CeNDR` option to `TRUE` will rename photos of samples meeting CeNDR criteria with the name of the nematode strains isolated from the sample and paste them in the _data/processed/fulcrum/photos/CeNDR_ directory.
+`procPhotos` copies raw sample photos, renames them with the C-label, makes a new directory _data/processed/fulcrum/photos_ and pastes the renamed files there. The function also makes thumbnails for use with interactive maps and places these in the _data/processed/fulcrum/photos/thumbnails_ direcotry. Setting the `CeNDR` option to `TRUE` will rename photos of samples meeting CeNDR criteria with the name of the nematode strains isolated from the sample and paste them in the _data/processed/fulcrum/photos/CeNDR_ directory.
 
 The function will also accept a public url (`pub_url`) for hosting the sample photos renamed by C-label. A compatible public url should follow the `commonStringProject/C-label.jpg` format. For example, if the full url for C-0001 is https://storage.googleapis.com/elegansvariation.org/photos/hawaii2017/C-0001.jpg,
 (`pub_url`) should be set to `https://storage.googleapis.com/elegansvariation.org/photos/`
@@ -227,7 +226,7 @@ We include two functions for generating sample output from `final_data1`. This f
 
 #### makeSpSheet:
 
-`makeSpSheet` generates a species specific `.csv` file for the species of interest (`target_sp`) and writes it to the `/reports` subdirectory. This function simplifies the output of the final dataframe, pulling variables of particular interest for a user specified species of interest. This function is wrritten to stanadradize the output dataframe to meet the specifications for submitting wild nematode collections to the Caenorhabditis Natural Diversity Resource (CaeNDR). For this reason the `makeSpSheet` function is likely only applicable to nematode sampling projects.<br>
+`makeSpSheet` generates a species specific `.csv` file for the species of interest (`target_sp`) and writes it to the `/reports` subdirectory. This function simplifies the output of the final dataframe, pulling variables of particular interest for a user specified species of interest. This function is written to standardize the output dataframe to meet the specifications for submitting wild nematode collections to the Caenorhabditis Natural Diversity Resource (CaeNDR). For this reason the `makeSpSheet` function is likely only applicable to nematode sampling projects.<br>
 
 `makeSpSheet` also returns a dataframe with flags for these select samples, and prints a description of these flags.
 
