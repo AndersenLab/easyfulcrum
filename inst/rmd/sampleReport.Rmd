@@ -76,14 +76,11 @@ map_target_species <- function(df, color_use) {
                                              <strong>Substrate:</strong> {substrate}<br />
                                              <strong>C. elegans:</strong> {`C. elegans count`}
                                              <strong>C. briggsae:</strong> {`C. briggsae count`}
-                                           <strong>C. tropicalis:</strong> {`C. tropicalis count`}<br />
-                                           <img style='width: 150px;' src='{pub_url}'></a>"),
+                                             <strong>C. tropicalis:</strong> {`C. tropicalis count`}<br />
+                                           <img style='width: 150px;' src='{sample_photo1_processed_url}'></a>"),
                         popupOptions(maxWidth = 500),
                         icon = icos[ df[[color_use]] ] )
   
-  #htmlwidgets::saveWidget(m, tempfile(), selfcontained = FALSE)
-  #webshot::webshot("temp.html", file = "map.png",
-  #        cliprect = "viewport", vwidth = 1000, vheight = 1000)
 }
 
 knitr::knit_hooks$set(
@@ -101,7 +98,7 @@ knitr::knit_hooks$set(
 ```
 
 ```{r, echo=F, warning = F, message=F}
-# df <- easyfulcrum::final_data1
+df <- final_data
 ```
 
 ## Project overview
@@ -238,9 +235,8 @@ target_df <- df %>%
   dplyr::mutate(color = case_when(worms_on_sample == "Yes" ~ "red",
                                   worms_on_sample == "No" ~ "blue",
                                   worms_on_sample == "Tracks" ~ "orange",
-                                  is.na(worms_on_sample) ~ "black")) %>% 
-  dplyr::mutate(pub_url = NA)
-  
+                                  is.na(worms_on_sample) ~ "black"))
+
 target_map <-  map_target_species(target_df,"color")
 
 target_map
@@ -391,8 +387,7 @@ target_df <- df %>%
   dplyr::ungroup() %>%
   dplyr::filter(species_id %in% c("Caenorhabditis elegans", "Caenorhabditis briggsae", "Caenorhabditis tropicalis")) %>%
   dplyr::distinct(c_label, .keep_all =T) %>%
-  dplyr::mutate(color = "black") %>% 
-  dplyr::mutate(pub_url = NA)
+  dplyr::mutate(color = "black") 
 
 target_map <-  map_target_species(target_df,"color")
 
@@ -526,8 +521,7 @@ target_df <- df %>%
   dplyr::distinct(c_label, .keep_all =T) %>%
   dplyr::mutate(color = case_when(species_id == "Caenorhabditis elegans" ~ "red",
                                   species_id == "Caenorhabditis briggsae" ~ "blue",
-                                  species_id == "Caenorhabditis tropicalis" ~ "orange")) %>% 
-  dplyr::mutate(pub_url = NA)
+                                  species_id == "Caenorhabditis tropicalis" ~ "orange")) 
   
 target_map <-  map_target_species(target_df,"color")
 
@@ -656,8 +650,7 @@ target_df <- df %>%
   dplyr::distinct(c_label, .keep_all =T) %>%
   dplyr::mutate(color = case_when(species_id == "Caenorhabditis elegans" ~ "red",
                                   species_id == "Caenorhabditis briggsae" ~ "blue",
-                                  species_id == "Caenorhabditis tropicalis" ~ "orange")) %>% 
-  dplyr::mutate(pub_url = NA)
+                                  species_id == "Caenorhabditis tropicalis" ~ "orange")) 
 
 target_map <-  map_target_species(target_df,"color")
 
@@ -786,8 +779,7 @@ target_df <- df %>%
   dplyr::distinct(c_label, .keep_all =T) %>%
   dplyr::mutate(color = case_when(species_id == "Caenorhabditis elegans" ~ "red",
                                   species_id == "Caenorhabditis briggsae" ~ "blue",
-                                  species_id == "Caenorhabditis tropicalis" ~ "orange")) %>% 
-  dplyr::mutate(pub_url = NA)
+                                  species_id == "Caenorhabditis tropicalis" ~ "orange")) 
   
 target_map <-  map_target_species(target_df,"color")
 
