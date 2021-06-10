@@ -17,6 +17,6 @@ devtools::install_github("AndersenLab/easyfulcrum")
 
 A general overview of the 14 main **easyfulcrum** functions is shown below.
 
-![Project workflow simple](.readmefiles/easyFulcrum_simple.jpg)
+![Project workflow simple](https://github.com/AndersenLab/easyfulcrum/blob/main/man/figures/easyfulcrum_overview.jpg)
 
-The **easyfulcrum** vignette describes these functions and the features of the package in detail. This vignette of the package workflow with example data in the raw csv and jpg format is available online (http://andersenlab.org/easyfulcrum/articles/easyFulcrum.html)
+The **easyfulcrum** vignette describes these functions and the features of the package in detail. This vignette of the package workflow with example data in the raw csv and jpg format is available online (http://andersenlab.org/easyfulcrum/articles/easyFulcrum.html).

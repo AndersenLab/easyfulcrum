@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">easyfulcrum</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
       </span>
     </div>
 
@@ -71,82 +71,29 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-<div id="easyfulcrum" class="section level1">
-<div class="page-header"><h1 class="hasAnchor">
-<a href="#easyfulcrum" class="anchor"></a>easyfulcrum</h1></div>
-<p>The <code>easyfulcrum</code> package is a tool to work with data from Fulcrum exports, genotyping Google sheets, blast results, and images from collection.</p>
-<div id="installation" class="section level2">
+
+<div id="overview-of-easyfulcrum" class="section level2">
 <h2 class="hasAnchor">
-<a href="#installation" class="anchor"></a>Installation</h2>
-<p>The package is made for specific use with Fulcrum generated collection data. <code>easyfulcrum</code> is specialized for use in the Andersen Lab and, therefore, is not available from CRAN. To install easyfulcrum you will need the <a href="https://github.com/hadley/devtools"><code>devtools</code></a> package. You can install <code>devtools</code> and <code>easyfulcrum</code> using the commands below:</p>
+<a href="#overview-of-easyfulcrum" class="anchor"></a>Overview of easyfulcrum:</h2>
+<p>The <strong>easyfulcrum</strong> package is a tool to process and analyze ecological field sampling data generated using the Fulcrum mobile application.<br></p>
+<p>The <strong>easyfulcrum</strong> R package offers an organized workflow for processing ecological sampling data generated using the Fulcrum mobile application. <strong>easyfulcrum</strong> provides simple and efficient functions to clean, process, and visualize ecological field sampling and isolation data collected using custom Fulcrum applications. It also provides functions to join these data with genotype information if organisms isolated from the field are identified using molecular barcodes. Together, the Fulcrum mobile application and <strong>easyfulcrum</strong> R package allow researchers to easily implement mobile data-collection, cloud-based databases, and standardized data analysis tools to improve ecological sampling accuracy and efficiency.<br></p>
+</div>
+<div id="installing-easyfulcrum" class="section level2">
+<h2 class="hasAnchor">
+<a href="#installing-easyfulcrum" class="anchor"></a>Installing easyfulcrum:</h2>
+<p>Package installation depends on devtools 2.4.1 or later, and R 3.5.0 or later. Many packages on which easyFulcrum depends require development prerequisites on MacOS systems, including command line tools: (<a href="http://www.rstudio.com/ide/docs/packages/prerequisites" class="uri">http://www.rstudio.com/ide/docs/packages/prerequisites</a>). To use easyFulcrum’s procPhotos() function the imager package is required. This package has its own dependencies outside of R, which can be installed easily following the instructions provided on the package website (<a href="https://dahtah.github.io/imager/" class="uri">https://dahtah.github.io/imager/</a>).</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span>
 <span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">"AndersenLab/easyfulcrum"</span><span class="op">)</span></code></pre></div>
-<p>The functionality of the package can be broken down into three main goals:</p>
-<ul>
-<li><p>Reading raw data from Fulcrum exports, genotyping Google sheets, blast results, and images from collection.</p></li>
-<li><p>Joining these data, flagging anomalies, and allowing the user to correct anomalies.</p></li>
-<li><p>Exporting corrected data and generating summary reports.</p></li>
-</ul>
 </div>
-<div id="directory-structure" class="section level2">
+<div id="using-easyfulcrum" class="section level2">
 <h2 class="hasAnchor">
-<a href="#directory-structure" class="anchor"></a>Directory structure</h2>
-<p>Every collection project should be contained in its own repository. The repository name should follow the <code>YearMonthPlace</code> format used for Fulcrum collection projects, e.g. <code>2020JanuaryHawaii</code>. Given the complexity of the directory creation, we have created a function <code>mkDirStructure</code> that takes two inputs to create an empty substructure for the user to populate, eg:<br></p>
-<pre class="{r}"><code><a href="reference/makeDirStructure.html">makeDirStructure(startdir = "~/Desktop/", projectdirname = "2020JanuaryHawaii")</a></code></pre>
-<p>The directory structure within the repository is critically important for <code>easyfulcrum</code> functions.<br></p>
-<p>The <code>data</code> directory contains the <code>raw</code> and <code>processed</code> subdirectories.<br> - <code>raw/fulcrum</code> holds the <code>.csv</code> files exported from Fulcrum and <code>raw/fulcrum/photos</code> contains <code>.jpg</code> files exported from Fulcrum.<br> - <code>raw/sanger</code> can hold <code>.ab1</code>, <code>.phd.1</code>, <code>.scf</code>, and <code>.seq</code> files exported from the sequencing facility. We have not implemented functionalities for merging sanger files but will work towards this for the next release.<br> - <code>raw/annotate</code> can hold spatial location files <code>island.csv</code>, <code>location.csv</code>, and <code>trail.csv</code> that the user generates for mapping the site of collection.<br> - <code>processed/fulcrum</code> and <code>processed/sanger</code> directories hold <code>easyfulcrum</code> function outputs.<br> The <code>reports</code> directory holds <code>easyfulcrum</code> function outputs. These outputs will be generated by the user processing script(s) saved in the <code>scripts</code> directory.<br></p>
-<pre><code>2020JanuaryHawaii/
-├── data
-│   ├── raw
-│       ├── fulcrum
-│           ├── nematode_field_sampling.csv
-│           ├── nematode_field_sampling_sample_photo.csv
-│           ├── nematode_isolation.csv
-│           ├── nematode_isolation_s_labeled_plates.csv
-│           ├── nematode_isolation_photos.csv
-│           ├── photos
-│               ├── 0a7a5879-8453-4f20-ab3b-8eabb725d492.jpg
-│               ├── 0b16d8c7-3cb3-44a8-8b61-e0789e4062c2.jpg
-│               └── ... all collection photos here
-│       ├── sanger
-│           ├── email@northwestern.edu_01_SEQ1677048A_122319D
-│               ├── S-10206_oECA306_A01.ab1
-│               ├── S-10206_oECA306_A01.phd.1
-│               ├── S-10206_oECA306_A01.scf
-│               ├── S-10206_oECA306_A01.seq
-│               └── ... more sequences here if present
-│           └── ... more sequence folders here if present
-│       ├── annotate
-│           ├── island.csv
-│           ├── location.csv
-│           └── trails.csv
-│   ├── processed
-│       ├── fulcrum
-│           ├── empty
-│       ├── genotypes
-│           ├── empty
-│       ├── sanger
-│           ├── empty
-├── reports
-│   ├── empty
-├── scripts
-│   ├── empty</code></pre>
-<p>This directory exhibits the minimal file content and naming for all the <code>easyfulcrum</code> functions to work. The file names in the <code>photos</code> directory should not be altered from the Fulcrum export, the names shown here are examples only. The <code>data/raw/sanger</code> and <code>data/processed/sanger</code> directories are optional. In order to use <code>easyfulcrum</code> blast analysis functions the <code>data/raw/sanger</code> directory must contain <code>.seq</code> and <code>.ab1</code> files exported from the sequencing facility, and the use must develop their own functionalities for integrating this. The file names must contain the S-label and primer used. The folders containing the raw sequence data are optional, they are included in this example because this is the way the data are often exported from the sequencing facility. The <code>data/processed/fulcrum</code>, <code>data/processed/sanger</code>, and <code>reports</code> directories are used to hold <code>easyfulcrum</code> function outputs. The <code>scripts</code> folder will hold some collection processing script(s).</p>
+<a href="#using-easyfulcrum" class="anchor"></a>Using easyfulcrum:</h2>
+<p>A general overview of the 14 main <strong>easyfulcrum</strong> functions is shown below.</p>
+<p><img src="https://github.com/AndersenLab/easyfulcrum/blob/main/man/figures/easyfulcrum_overview.jpg" alt="Project workflow simple"></p>
+<p>The <strong>easyfulcrum</strong> vignette describes these functions and the features of the package in detail. This vignette of the package workflow with example data in the raw csv and jpg format is available online (<a href="http://andersenlab.org/easyfulcrum/articles/easyFulcrum.html" class="uri">http://andersenlab.org/easyfulcrum/articles/easyFulcrum.html</a>).</p>
 </div>
-<div id="project-workflow" class="section level2">
-<h2 class="hasAnchor">
-<a href="#project-workflow" class="anchor"></a>Project workflow</h2>
-<p>Nematode collections are performed following a detailed protocol <a href="https://docs.google.com/document/d/1jssQVPFrFsXJiA6Jt7LyEjQRBGfcfGCitP4qPya7VwU/edit">found here.</a> The <code>easyfulcrum</code> package is written to process and analyze the data generated for a specific collection project.<br></p>
-<p>The basic workflow is to generate a final processed dataframe that can be used for downstream analysis. This occurs in three major processes, as outlined below:<br></p>
-<p><img src=".readmefiles/easyFulcrum_simple.jpg" alt="Project workflow simple"></p>
-<p>A detailed description of the 14 <code>easyfulcrum</code> functions is contained in an example walkthrough of the package functionalities, see the vignette for details:<br></p>
-<pre class="{r}"><code><a href="https://rdrr.io/r/base/library.html">library(easyfulcrum)
-browseVignettes(package = "easyfulcrum")</a></code></pre>
-<p>A more complete map of the 14 functions is also shown below:<br></p>
-<p><img src=".readmefiles/easyFulcrum.jpg" alt="Project workflow"></p>
-</div>
-</div>
+
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -162,6 +109,7 @@ browseVignettes(package = "easyfulcrum")</a></code></pre>
 <h2>Developers</h2>
 <ul class="list-unstyled">
 <li>Tim Crombie <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0002-5645-4154" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Matteo Di Bernardo <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0002-7574-1941" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
 <li>Daniel Cook <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0003-3347-562X" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
 </ul>
 </div>
@@ -171,7 +119,7 @@ browseVignettes(package = "easyfulcrum")</a></code></pre>
 
 
       <footer><div class="copyright">
-  <p>Developed by Tim Crombie, Daniel Cook.</p>
+  <p>Developed by Tim Crombie, Matteo Di Bernardo, Daniel Cook.</p>
 </div>
 
 <div class="pkgdown">
