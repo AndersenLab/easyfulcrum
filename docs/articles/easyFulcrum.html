@@ -39,7 +39,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
+    <span class="fas fa fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -69,13 +69,13 @@
 
       
 
-      </header><script src="easyFulcrum_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>easyFulcrum</h1>
                         <h4 class="author">Author: Matteo Di Bernardo</h4>
             
-            <h4 class="date">10 Jun 2021</h4>
+            <h4 class="date">27 Jul 2021</h4>
       
       
       <div class="hidden name"><code>easyFulcrum.Rmd</code></div>
@@ -112,13 +112,17 @@
 <span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">"AndersenLab/easyfulcrum"</span><span class="op">)</span></code></pre></div>
 <p>Load the package:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">easyfulcrum</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">easyfulcrum</span><span class="op">)</span>
+<span class="co">#&gt; Registered S3 methods overwritten by 'tibble':</span>
+<span class="co">#&gt;   method     from  </span>
+<span class="co">#&gt;   format.tbl pillar</span>
+<span class="co">#&gt;   print.tbl  pillar</span></code></pre></div>
 </div>
 <div id="directory-structure" class="section level3">
 <h3 class="hasAnchor">
 <a href="#directory-structure" class="anchor"></a>Directory structure:</h3>
 <p>The <code>makeDirStructure</code> function makes a standardized directory of folders for the <strong>easyfulcrum</strong> run, taking a base directory (<code>startdir</code>) and the project name (<code>projectdirname</code>) as inputs.<br></p>
-<p>Every collection project should be contained in its own directory. The directory name should follow the <code>YearMonthPlace</code> format used for Fulcrum collection projects, e.g. <code>2020JanuaryHawaii</code>.<br></p>
+<p>Every collection project should be contained in its own directory. The directory name should follow the <code>YearMonthPlace</code> format used for Fulcrum collection projects, e.g. <code>2020JanuaryHawaii</code>.<br></p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/makeDirStructure.html">makeDirStructure</a></span><span class="op">(</span>startdir <span class="op">=</span> <span class="st">"~/Desktop"</span>,
                  projectdirname <span class="op">=</span> <span class="st">"2020JanuaryHawaii"</span><span class="op">)</span></code></pre></div>
@@ -129,6 +133,13 @@
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/loadExampleFiles.html">loadExampleFiles</a></span><span class="op">(</span>startdir <span class="op">=</span> <span class="st">"~/Desktop"</span>,
                  projectdirname <span class="op">=</span> <span class="st">"2020JanuaryHawaii"</span><span class="op">)</span></code></pre></div>
+</div>
+<div id="exporting-data-from-fulcrum" class="section level3">
+<h3 class="hasAnchor">
+<a href="#exporting-data-from-fulcrum" class="anchor"></a>Exporting data from Fulcrum:</h3>
+<p>Before processing collection data using easyFulcrum, the raw Fulcrum data must be exported from the Fulcrum database using the Fulcrum website’s data export tool. We recommend exporting the data by selecting the following checkboxes:<br> - the desired project<br> - include photos<br> - include GPS data<br> - field sampling<br> - isolation<br></p>
+<p>Exporting with change sets are not currently supported.<br></p>
+<p>After the data is exported, the <code>.csv</code> files must be moved to <code>[your project directory]/data/raw/fulcrum</code>, and the field sampling photos in <code>.jpg</code> format are moved to <code>[your project directory]/data/raw/fulcrum/photos</code>.<br></p>
 </div>
 <div id="reading-processing-and-joining-fulcrum-results" class="section level3">
 <h3 class="hasAnchor">
@@ -326,19 +337,27 @@
 <span class="co">#&gt; To suppress this message, modify your code or options to clearly consent to the use of a cached token.</span>
 <span class="co">#&gt; See gargle's "Non-interactive auth" vignette for more details:</span>
 <span class="co">#&gt; https://gargle.r-lib.org/articles/non-interactive-auth.html</span>
-<span class="co">#&gt; The googlesheets4 package is using a cached token for matteo.dibernardo@gmail.com.</span>
+<span class="co">#&gt; The googlesheets4 package is using a cached token for tim.crombie@gmail.com.</span>
+<span class="co">#&gt; Auto-refreshing stale OAuth token.</span>
 <span class="co">#&gt; Reading from "2020JanuaryHawaii_wild_isolate_genotyping_easyFulcrum_vignette1"</span>
 <span class="co">#&gt; Range "'genotyping template'"</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">raw_geno</span><span class="op">)</span>
+<span class="co">#&gt; Warning: `...` is not empty.</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; We detected these problematic arguments:</span>
+<span class="co">#&gt; * `needs_dots`</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; These dots only exist to allow future extensions and should be empty.</span>
+<span class="co">#&gt; Did you misspecify an argument?</span>
 <span class="co">#&gt; # A tibble: 6 x 38</span>
-<span class="co">#&gt;   project_id   shipment_sent_d… shipment_receive… shipment_number shipment_color</span>
-<span class="co">#&gt;   &lt;chr&gt;        &lt;date&gt;           &lt;date&gt;                      &lt;dbl&gt; &lt;chr&gt;         </span>
-<span class="co">#&gt; 1 2020January… NA               NA                              1 &lt;NA&gt;          </span>
-<span class="co">#&gt; 2 2020January… NA               NA                              1 &lt;NA&gt;          </span>
-<span class="co">#&gt; 3 2020January… NA               NA                              1 &lt;NA&gt;          </span>
-<span class="co">#&gt; 4 2020January… NA               NA                              1 &lt;NA&gt;          </span>
-<span class="co">#&gt; 5 2020January… NA               NA                              1 &lt;NA&gt;          </span>
-<span class="co">#&gt; 6 2020January… NA               NA                              1 &lt;NA&gt;          </span>
+<span class="co">#&gt;   project_id shipment_sent_d… shipment_receiv… shipment_number shipment_color</span>
+<span class="co">#&gt;   &lt;chr&gt;      &lt;date&gt;           &lt;date&gt;                     &lt;dbl&gt; &lt;chr&gt;         </span>
+<span class="co">#&gt; 1 2020Janua… NA               NA                             1 &lt;NA&gt;          </span>
+<span class="co">#&gt; 2 2020Janua… NA               NA                             1 &lt;NA&gt;          </span>
+<span class="co">#&gt; 3 2020Janua… NA               NA                             1 &lt;NA&gt;          </span>
+<span class="co">#&gt; 4 2020Janua… NA               NA                             1 &lt;NA&gt;          </span>
+<span class="co">#&gt; 5 2020Janua… NA               NA                             1 &lt;NA&gt;          </span>
+<span class="co">#&gt; 6 2020Janua… NA               NA                             1 &lt;NA&gt;          </span>
 <span class="co">#&gt; # … with 33 more variables: isolation_box_number &lt;dbl&gt;, s_label &lt;chr&gt;,</span>
 <span class="co">#&gt; #   s_label_repeat_error &lt;dbl&gt;, proliferation_48 &lt;dbl&gt;,</span>
 <span class="co">#&gt; #   proliferation_168 &lt;dbl&gt;, proliferating &lt;dbl&gt;, strip_tube_number &lt;dbl&gt;,</span>
@@ -464,15 +483,22 @@
                          pub_url <span class="op">=</span> <span class="st">"https://storage.googleapis.com/collection_photos/"</span>,
                          CeNDR <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">final_data</span><span class="op">)</span>
+<span class="co">#&gt; Warning: `...` is not empty.</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; We detected these problematic arguments:</span>
+<span class="co">#&gt; * `needs_dots`</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; These dots only exist to allow future extensions and should be empty.</span>
+<span class="co">#&gt; Did you misspecify an argument?</span>
 <span class="co">#&gt; # A tibble: 6 x 90</span>
-<span class="co">#&gt;   project           c_label s_label species_id strain_name collection_by        </span>
-<span class="co">#&gt;   &lt;chr&gt;             &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;      &lt;chr&gt;       &lt;chr&gt;                </span>
-<span class="co">#&gt; 1 2020JanuaryHawaii C-5115  S-12695 &lt;NA&gt;       &lt;NA&gt;        dec@u.northwestern.e…</span>
-<span class="co">#&gt; 2 2020JanuaryHawaii C-5115  &lt;NA&gt;    &lt;NA&gt;       &lt;NA&gt;        dec@u.northwestern.e…</span>
-<span class="co">#&gt; 3 2020JanuaryHawaii C-5115  S-12706 &lt;NA&gt;       &lt;NA&gt;        dec@u.northwestern.e…</span>
-<span class="co">#&gt; 4 2020JanuaryHawaii C-5115  S-12697 &lt;NA&gt;       &lt;NA&gt;        dec@u.northwestern.e…</span>
-<span class="co">#&gt; 5 2020JanuaryHawaii C-5115  S-12776 &lt;NA&gt;       &lt;NA&gt;        dec@u.northwestern.e…</span>
-<span class="co">#&gt; 6 2020JanuaryHawaii C-5115  S-12776 &lt;NA&gt;       &lt;NA&gt;        dec@u.northwestern.e…</span>
+<span class="co">#&gt;   project c_label s_label species_id strain_name collection_by</span>
+<span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;      &lt;chr&gt;       &lt;chr&gt;        </span>
+<span class="co">#&gt; 1 2020Ja… C-5115  S-12695 &lt;NA&gt;       &lt;NA&gt;        dec@u.northw…</span>
+<span class="co">#&gt; 2 2020Ja… C-5115  &lt;NA&gt;    &lt;NA&gt;       &lt;NA&gt;        dec@u.northw…</span>
+<span class="co">#&gt; 3 2020Ja… C-5115  S-12706 &lt;NA&gt;       &lt;NA&gt;        dec@u.northw…</span>
+<span class="co">#&gt; 4 2020Ja… C-5115  S-12697 &lt;NA&gt;       &lt;NA&gt;        dec@u.northw…</span>
+<span class="co">#&gt; 5 2020Ja… C-5115  S-12776 &lt;NA&gt;       &lt;NA&gt;        dec@u.northw…</span>
+<span class="co">#&gt; 6 2020Ja… C-5115  S-12776 &lt;NA&gt;       &lt;NA&gt;        dec@u.northw…</span>
 <span class="co">#&gt; # … with 84 more variables: collection_datetime_UTC &lt;dttm&gt;,</span>
 <span class="co">#&gt; #   collection_date_UTC &lt;date&gt;, collection_local_time &lt;dbl&gt;,</span>
 <span class="co">#&gt; #   collection_fulcrum_latitude &lt;dbl&gt;, collection_fulcrum_longitude &lt;dbl&gt;,</span>
@@ -552,7 +578,7 @@
 
 <span class="co">#&gt; Warning: Unknown levels in `f`: Caenorhabditis elegans, Caenorhabditis</span>
 <span class="co">#&gt; tropicalis</span>
-<span class="co">#&gt; /Applications/RStudio.app/Contents/MacOS/pandoc/pandoc +RTS -K512m -RTS sampleReport.utf8.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output /Users/matteodibernardo/Desktop/2020JanuaryHawaii/reports/sampleReport.html --lua-filter /Library/Frameworks/R.framework/Versions/4.0/Resources/library/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /Library/Frameworks/R.framework/Versions/4.0/Resources/library/rmarkdown/rmarkdown/lua/latex-div.lua --self-contained --variable bs3=TRUE --standalone --section-divs --table-of-contents --toc-depth 4 --variable toc_float=1 --variable toc_selectors=h1,h2,h3,h4 --variable toc_collapsed=1 --variable toc_smooth_scroll=1 --variable toc_print=1 --template /Library/Frameworks/R.framework/Versions/4.0/Resources/library/rmarkdown/rmd/h/default.html --no-highlight --variable highlightjs=1 --variable theme=bootstrap --include-in-header /var/folders/y8/61hdswn12r52s0310b9ht1780000gn/T//RtmpsISmvv/rmarkdown-strab8a7d1bc7c8.html --mathjax --variable 'mathjax-url:https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'</span></code></pre></div>
+<span class="co">#&gt; /Applications/RStudio.app/Contents/MacOS/pandoc/pandoc +RTS -K512m -RTS sampleReport.utf8.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash+smart --output /Users/tim/Desktop/2020JanuaryHawaii/reports/sampleReport.html --email-obfuscation none --self-contained --standalone --section-divs --table-of-contents --toc-depth 4 --variable toc_float=1 --variable toc_selectors=h1,h2,h3,h4 --variable toc_collapsed=1 --variable toc_smooth_scroll=1 --variable toc_print=1 --template /Library/Frameworks/R.framework/Versions/3.6/Resources/library/rmarkdown/rmd/h/default.html --no-highlight --variable highlightjs=1 --variable 'theme:bootstrap' --include-in-header /var/folders/lm/tby5m_cd0cs789xpcnwjm54h0000gn/T//RtmpHloZYC/rmarkdown-stre2647c147fc0.html --mathjax --variable 'mathjax-url:https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' --lua-filter /Library/Frameworks/R.framework/Versions/3.6/Resources/library/rmarkdown/rmd/lua/pagebreak.lua --lua-filter /Library/Frameworks/R.framework/Versions/3.6/Resources/library/rmarkdown/rmd/lua/latex-div.lua</span></code></pre></div>
 </div>
 </div>
   </div>
