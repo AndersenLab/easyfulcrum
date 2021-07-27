@@ -74,6 +74,19 @@ loadExampleFiles(startdir = "~/Desktop",
                  projectdirname = "2020JanuaryHawaii")
 ```
 
+### Exporting data from Fulcrum:
+
+Before processing collection data using easyFulcrum, the raw Fulcrum data must be exported from the Fulcrum database using the Fulcrum website’s data export tool. We recommend exporting the data by selecting the following checkboxes:<br>
+    - the desired project<br>
+    - include photos<br>
+    - include GPS data<br>
+    - field sampling<br>
+    - isolation<br>
+
+Exporting with change sets are not currently supported.<br>
+
+After the data is exported, the `.csv` files must be moved to `[your project directory]/data/raw/fulcrum`, and the field sampling photos in `.jpg` format are moved to `[your project directory]/data/raw/fulcrum/photos`.<br>
+
 ### Reading, processing, and joining Fulcrum results:
 
 The first group of functions cleans the results from the Fulcrum `.csv` files.<br>
