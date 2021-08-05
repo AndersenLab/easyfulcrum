@@ -87,7 +87,6 @@ joinGenoFulc <- function(geno, fulc, dir = NULL, select_vars = F) {
                   isolation_latitude,
                   isolation_longitude,
                   worms_on_sample,
-                  approximate_number_of_worms,
                   shipment_sent_date,
                   shipment_received_date,
                   proliferation_48,

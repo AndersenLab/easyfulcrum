@@ -245,8 +245,7 @@ joinFulcrum <- function(data, select_vars = F) {
                       isolation_local_time,
                       isolation_latitude,
                       isolation_longitude,
-                      worms_on_sample,
-                      approximate_number_of_worms)
+                      worms_on_sample)
     }
   }
   else {
