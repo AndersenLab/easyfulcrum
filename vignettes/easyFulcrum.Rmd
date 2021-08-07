@@ -219,7 +219,7 @@ The final function processes and resizes images, adding details to a final dataf
 
 #### procPhotos:
 
-`procPhotos` copies raw sample photos, renames them with the C-label, makes a new directory _data/processed/fulcrum/photos_ and pastes the renamed files there. The function also makes thumbnails for use with interactive maps and places these in the _data/processed/fulcrum/photos/thumbnails_ direcotry. Setting the `CeNDR` option to `TRUE` will rename photos of samples meeting CeNDR criteria with the name of the nematode strains isolated from the sample and paste them in the _data/processed/fulcrum/photos/CeNDR_ directory.
+`procPhotos` copies raw sample photos, renames them with the C-label, makes a new directory _data/processed/fulcrum/photos_ and pastes the renamed files there. The function also makes thumbnails for use with interactive maps and places these in the _data/processed/fulcrum/photos/thumbnails_ directory. Setting the `CeNDR` option to `TRUE` will rename photos of samples meeting CeNDR criteria with the name of the nematode strains isolated from the sample and paste them in the _data/processed/fulcrum/photos/CeNDR_ directory.
 
 The function will also accept a public url (`pub_url`) for hosting the sample photos renamed by C-label. A compatible public url should follow the `pub_url/Project/C-label.jpg` format. For example, if the full url for C-0001 is https://storage.googleapis.com/elegansvariation.org/photos/2020JanuaryHawaii/C-0001.jpg,
 (`pub_url`) should be set to `https://storage.googleapis.com/elegansvariation.org/photos/`

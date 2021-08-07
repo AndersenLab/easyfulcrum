@@ -97,10 +97,6 @@ knitr::knit_hooks$set(
 )
 ```
 
-```{r, echo=F, warning = F, message=F}
-df <- final_data
-```
-
 ## Project overview
 
 ```{r, echo=F, warning = F, message=F}

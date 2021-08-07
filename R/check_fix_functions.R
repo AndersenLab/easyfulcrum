@@ -321,7 +321,7 @@ checkGenotypes <- function(geno_data, fulc_data, return_geno = TRUE, return_flag
   print(paste("There are", nrow(missing_s_label_genotyping), "rows with missing s labels, these s labels are:", sep = " "))
   if(nrow(missing_s_label_genotyping) > 0){print(missing_s_label_genotyping$s_label)}
 
-  # check for dupicated s_labels
+  # check for duplicated s_labels
   duplicated_s_label_genotyping <- geno_data_flagged %>% dplyr::filter(flag_duplicated_s_label_genotyping == TRUE)
   print(paste("There are", nrow(duplicated_s_label_genotyping), "rows with duplicated s labels, these s labels are:", sep = " "))
   if(nrow(duplicated_s_label_genotyping) > 0){print(duplicated_s_label_genotyping$s_label)}
@@ -340,12 +340,12 @@ checkGenotypes <- function(geno_data, fulc_data, return_geno = TRUE, return_flag
   s_label_in_fulcrum_not_in_genotyping <- fulc_data %>%
     dplyr::filter(!is.na(s_label)) %>%
     dplyr::filter(!(s_label %in% geno_data$s_label))
-  print(paste("There are", nrow(s_label_in_fulcrum_not_in_genotyping), "s labels in the genotyping data but not in the Fulcrum data, these s labels are:", sep = " "))
+  print(paste("There are", nrow(s_label_in_fulcrum_not_in_genotyping), "s labels in the Fulcrum data not in the genotyping data, these s labels are:", sep = " "))
   if(nrow(s_label_in_fulcrum_not_in_genotyping) > 0){print(s_label_in_fulcrum_not_in_genotyping$s_label)}
 
   message(">>> Checking genotyping process")
 
-  # check for show expected but missing proliferation data
+  # check for expected but missing proliferation data
   proliferation_missing <- geno_data_flagged %>% dplyr::filter(flag_proliferation_missing == TRUE)
   print(paste("There are", nrow(proliferation_missing), "rows missing expected proliferation data, these s labels are:", sep = " "))
   if(nrow(proliferation_missing) > 0){print(proliferation_missing$s_label)}
