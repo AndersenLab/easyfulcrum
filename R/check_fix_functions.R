@@ -336,7 +336,7 @@ checkGenotypes <- function(geno_data, fulc_data, return_geno = TRUE, return_flag
   print(paste("There are", nrow(s_label_not_in_fulcrum), "rows with s labels not found in the Fulcrum data, these s labels are:", sep = " "))
   if(nrow(s_label_not_in_fulcrum) > 0){print(s_label_not_in_fulcrum$s_label)}
 
-  # Make a dataframe for s_labels in Fulcrum but not in the genotyping sheet
+  # make a dataframe for s_labels in Fulcrum but not in the genotyping sheet
   s_label_in_fulcrum_not_in_genotyping <- fulc_data %>%
     dplyr::filter(!is.na(s_label)) %>%
     dplyr::filter(!(s_label %in% geno_data$s_label))

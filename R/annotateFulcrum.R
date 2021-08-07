@@ -5,7 +5,7 @@
 #'
 #' @param data A single dataframe generated with the joinFulcrum function.
 #' @param dir The path to the base fulcrum directory. Within this directory,
-#'  data/raw/fulcrum should contain: island.csv, location.csv, trails.csv
+#'  data/raw/annotate should contain: island.csv, location.csv, trails.csv
 #' @param select_vars Logical, TRUE  will return only the default variables,
 #'   FALSE will return all variables. FALSE is recommended if using customized
 #'   Fulcrum applications other than "Nematode field sampling" and "Nematode
