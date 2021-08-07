@@ -87,16 +87,9 @@ joinGenoFulc <- function(geno, fulc, dir = NULL, select_vars = F) {
                   isolation_latitude,
                   isolation_longitude,
                   worms_on_sample,
-                  shipment_sent_date,
-                  shipment_received_date,
-                  proliferation_48,
-                  proliferation_168,
                   proliferating,
-                  lysis_date,
                   pcr_product_its2,
                   pcr_product_ssu,
-                  general_notes,
-                  manual_blast_notes,
                   possible_new_caeno_sp,
                   make_strain_name,
                   reason_strain_not_named,
@@ -112,7 +105,15 @@ joinGenoFulc <- function(geno, fulc, dir = NULL, select_vars = F) {
                   flag_unusual_s_label_genotyping,
                   flag_missing_s_label_genotyping,
                   flag_duplicated_s_label_genotyping,
-                  flag_unusual_target_species_name)
+                  flag_unusual_target_species_name,
+                  #select these variables if they exist only, avoids error if not
+                  any_of(c("shipment_sent_date",
+                  "shipment_received_date",
+                  "proliferation_48",
+                  "proliferation_168",
+                  "lysis_date",
+                  "general_notes",
+                  "manual_blast_notes")))
   }
   # return data
   if(select_vars == TRUE){

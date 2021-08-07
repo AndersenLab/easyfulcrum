@@ -177,7 +177,7 @@ For more details on reading in genotyping sheets, look into the [googlesheets4](
 Running this function depends on a users connection to the appropriate Google Doc below, which is shared as view only.
 
 ```{r}
-raw_geno <- readGenotypes(gsKey = c("1iSGkGbhoyg-uq_l83UbiNdI_g4xqEkTxf3Ap0J7JGto"))
+raw_geno <- readGenotypes(gsKey = c("1d1ihjU-LqJUm04UFGkYJHAw-02VD7bvxdAOSjq4cu7Q"))
 head(raw_geno)
 ```
 
@@ -198,7 +198,7 @@ flag1.3 <- checkGenotypes(geno_data = raw_geno, fulc_data = anno_fulc,
 Based on these flags a new Google Document was made, eliminating rows with blank S-labels or S-labels in the genotyping data but not in the Fulcrum data. `raw_geno` and afterwards `proc_geno` is overwritten with this data.
 
 ```{r}
-raw_geno <- readGenotypes(gsKey = c("1WlnmujvHBc3s5jwCtRPcT3oHkRvpU-RXXIBmJOV8Qb0"))
+raw_geno <- readGenotypes(gsKey = c("1T_EBgoscHw1nks6T-6oKH0rQ1fuEwQm4n-KgFPYPp2w"))
 proc_geno <- checkGenotypes(geno_data = raw_geno, fulc_data = anno_fulc,
                             return_geno = TRUE, return_flags = FALSE)
 ```
@@ -210,7 +210,7 @@ proc_geno <- checkGenotypes(geno_data = raw_geno, fulc_data = anno_fulc,
 If the user is using **easyfulcrum** on customized Fulcrum applications other than "Nematode field sampling" and "Nematode isolation", it is recommended that `select_vars` is set to `FALSE`, such that `joinGenoFulc` does not only return the default variables.
 
 ```{r}
-join_genofulc <- joinGenoFulc(geno = proc_geno, fulc = anno_fulc, dir = NULL, select_vars = TRUE)
+join_genofulc <- joinGenoFulc(geno = proc_geno, fulc = anno_fulc, dir = dir, select_vars = TRUE)
 ```
 
 ### Reading, resizing, and joining collection images:

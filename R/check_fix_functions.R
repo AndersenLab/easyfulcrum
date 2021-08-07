@@ -270,6 +270,7 @@ checkJoin <- function(data, return_flags = FALSE) {
 #' @param target_sp vector of target species for species id checks. Default target species names are:
 #' Caenorhabditis briggsae, Caenorhabditis elegans, Caenorhabditis tropicalis.
 #' @return a list of flagged rows in genotyping and fulcrum dataframes for each flag.
+#' @importFrom rebus ALPHA one_or_more %R% DGT WRD optional
 #' @import dplyr
 #' @export
 #'

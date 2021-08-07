@@ -18,7 +18,7 @@
 #' @export
 #'
 
-readGenotypes <- function(gsKey, col_types = "cDDdcdcddddddDcDDdcdcdddddddcdcccddccc") {
+readGenotypes <- function(gsKey, col_types = "ccdddcddcc") {
   # read genotyping sheet(s)
   genotyping_sheet <- NULL
 
