@@ -58,12 +58,8 @@ map_general <- function(df, color_use) {
     dplyr::mutate(substrate=ifelse(is.na(substrate), "", substrate)) %>%
     dplyr::arrange(species_id)
   
-  attach(df)
-  leaflet::leaflet(data = df, width = "100%", options = list(zoomControl = T)) %>%
-    addProviderTiles("Stamen.Terrain") %>%
-    leaflet::addMarkers(~collection_longitude,
-                        ~collection_latitude,
-                        popup = glue::glue("<h2>{c_label}</h2><hr />
+  popup_select <- df %>%
+    dplyr::mutate(popup_use = case_when(length(target_sp) == 3 ~ glue::glue("<h2>{c_label}</h2><hr />
                                              <strong>Collected by:</strong> {collection_by}<br />
                                              <strong>Latitidue, Longitude:</strong> {format(round(collection_latitude, 6), nsmall = 6)}, 
                                              {format(round(collection_longitude, 6), nsmall = 6)}<br />
@@ -72,6 +68,39 @@ map_general <- function(df, color_use) {
                                              <strong>{target_sp[2]}</strong> {count_2}
                                              <strong>{target_sp[3]}</strong> {count_3}<br />
                                            <img style='width: 150px;' src='{sample_photo1_processed_url}'></a>"),
+                                    length(target_sp) == 2 ~ glue::glue("<h2>{c_label}</h2><hr />
+                                             <strong>Collected by:</strong> {collection_by}<br />
+                                             <strong>Latitidue, Longitude:</strong> {format(round(collection_latitude, 6), nsmall = 6)}, 
+                                             {format(round(collection_longitude, 6), nsmall = 6)}<br />
+                                             <strong>Substrate:</strong> {substrate}<br />
+                                             <strong>{target_sp[1]}</strong> {count_1}
+                                             <strong>{target_sp[2]}</strong> {count_2}<br />
+                                           <img style='width: 150px;' src='{sample_photo1_processed_url}'></a>"),
+                                    length(target_sp) == 1 ~ glue::glue("<h2>{c_label}</h2><hr />
+                                             <strong>Collected by:</strong> {collection_by}<br />
+                                             <strong>Latitidue, Longitude:</strong> {format(round(collection_latitude, 6), nsmall = 6)}, 
+                                             {format(round(collection_longitude, 6), nsmall = 6)}<br />
+                                             <strong>Substrate:</strong> {substrate}<br />
+                                             <strong>{target_sp[1]}</strong> {count_1}<br />
+                                           <img style='width: 150px;' src='{sample_photo1_processed_url}'></a>"),
+                                    TRUE ~ glue::glue("<h2>{c_label}</h2><hr />
+                                             <strong>Collected by:</strong> {collection_by}<br />
+                                             <strong>Latitidue, Longitude:</strong> {format(round(collection_latitude, 6), nsmall = 6)}, 
+                                             {format(round(collection_longitude, 6), nsmall = 6)}<br />
+                                             <strong>Substrate:</strong> {substrate}<br />
+                                             <strong>{target_sp[1]}</strong> {count_1}
+                                             <strong>{target_sp[2]}</strong> {count_2}
+                                             <strong>{target_sp[3]}</strong> {count_3}<br />
+                                           <img style='width: 150px;' src='{sample_photo1_processed_url}'></a>"))) %>%
+                                      dplyr::distinct(popup_use) %>%
+                                      dplyr::pull(popup_use)
+  
+  attach(df)
+  leaflet::leaflet(data = df, width = "100%", options = list(zoomControl = T)) %>%
+    addProviderTiles("Stamen.Terrain") %>%
+    leaflet::addMarkers(~collection_longitude,
+                        ~collection_latitude,
+                        popup = popup_select,
                         popupOptions(maxWidth = 500),
                         icon = icos[ df[[color_use]] ] )
   
@@ -455,7 +484,7 @@ eval_1 <- ifelse(df %>%
                       dplyr::pull(c_label) %>% length()==0,
                     FALSE,TRUE)
 
-if(eval_1 == FALSE) {
+if(eval_1 == FALSE & !is.na(target_sp[1])) {
   warning(paste("There were no", target_sp[1], "isolates for this collection project", sep = " "))
 }
 ```
@@ -550,7 +579,7 @@ cowplot::plot_grid(plot_atemp, plot_stemp, plot_ahum, plot_elev,
                    ncol = 2, nrow = 2, align = "hv", axis = "l")
 ```
 
-`r if(!is.na(target_sp[1])){target_sp[2]}`
+`r if(!is.na(target_sp[2])){target_sp[2]}`
 
 ```{r, echo=F, warning = T, message=F}
 eval_2 <- ifelse(df %>% 
@@ -558,7 +587,7 @@ eval_2 <- ifelse(df %>%
                    dplyr::pull(c_label) %>% length()==0,
                  FALSE,TRUE)
 
-if(eval_2 == FALSE) {
+if(eval_2 == FALSE & !is.na(target_sp[2])) {
    warning(paste("There were no", target_sp[2], "isolates for this collection project", sep = " "))
 }
 ```
@@ -655,7 +684,7 @@ cowplot::plot_grid(plot_atemp, plot_stemp, plot_ahum, plot_elev,
 ```
 
 
-`r if(!is.na(target_sp[1])){target_sp[3]}`
+`r if(!is.na(target_sp[3])){target_sp[3]}`
 
 ```{r, echo=F, warning = T, message=F}
 eval_3 <- ifelse(df %>% 
@@ -663,7 +692,7 @@ eval_3 <- ifelse(df %>%
                    dplyr::pull(c_label) %>% length()==0,
                  FALSE,TRUE)
 
-if(eval_3 == FALSE) {
+if(eval_3 == FALSE & !is.na(target_sp[3])) {
    warning(paste("There were no", target_sp[3], "isolates for this collection project", sep = " "))
 }
 ```
