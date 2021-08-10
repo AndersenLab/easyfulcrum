@@ -75,7 +75,7 @@
       <h1 data-toc-skip>easyFulcrum</h1>
                         <h4 class="author">Author: Matteo Di Bernardo</h4>
             
-            <h4 class="date">27 Jul 2021</h4>
+            <h4 class="date">10 Aug 2021</h4>
       
       
       <div class="hidden name"><code>easyFulcrum.Rmd</code></div>
@@ -171,7 +171,7 @@
 <p><code>checkTemperatures</code> identifies flags in three temperature variables. Setting the <code>return_flags</code> option to <code>TRUE</code> will return a list of three data frames that pulls only the rows where each of the three flag types appear. The function automatically prints the rows where the flags exist.<br></p>
 <p><code>procFulcrum</code> function assumes that, when <code>raw_substrate_temperature</code> or <code>raw_ambient_temperature</code> temperatures are above 40 degrees, the temperatures were mistakenly input as Fahrenheit rather than Celsius, and converts these values to Celsius. It will also notice when both <code>raw_ambient_temperature</code> and <code>raw_ambient_humidity</code> get stuck on the same value for 5 or more measurements in a row. These are the three flags returned above.<br></p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">flag1.1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/checkTemperatures.html">checkTemperatures</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">proc_fulc</span>, return_flags <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">flag_temp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/checkTemperatures.html">checkTemperatures</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">proc_fulc</span>, return_flags <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="co">#&gt; &gt;&gt;&gt; Checking substrate temperature</span>
 <span class="co">#&gt; [1] "There are 1 rows with flagged substrate temperature:"</span>
 <span class="co">#&gt;                             fulcrum_id raw_substrate_temperature</span>
@@ -268,11 +268,9 @@
 <a href="#checkjoin" class="anchor"></a>checkJoin:</h4>
 <p><code>checkJoin</code> conducts 10 different checks for flags in the joined Fulcrum data frame regarding extreme temperatures and altitude values, missing, improper, and/or duplicated C-labels, missing, and/or duplicated isolation records corresponding to these C-labels, and finally unusual sample photo numbers. The <code>return_flags</code> option is the same as in <code>checkTemperatures</code>, and the function automatically prints the rows where the flags exist. If desired, the user can manually edit values or correct mistakes in the underlying data based on these flags and re-run the pipeline again.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">flag1.2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/checkJoin.html">checkJoin</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">join_fulc</span>, return_flags <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">flag_join</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/checkJoin.html">checkJoin</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">join_fulc</span>, return_flags <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="co">#&gt; &gt;&gt;&gt; Checking data classes</span>
-<span class="co">#&gt; [1] "There are 1 improperly classified variables"</span>
-<span class="co">#&gt; [1] "isolation_date_UTC"</span>
-<span class="co">#&gt; [1] "Improperly classified variables may require manipulation after read-in"</span>
+<span class="co">#&gt; [1] "There are 0 improperly classified variables"</span>
 <span class="co">#&gt; &gt;&gt;&gt; Checking duplicated c labels</span>
 <span class="co">#&gt; [1] "There are 2 rows with duplicated c labels, these c labels are:"</span>
 <span class="co">#&gt; [1] "C-5134" "C-5134"</span>
@@ -323,25 +321,31 @@
 <div id="reading-processing-and-joining-genotyping-google-sheet" class="section level3">
 <h3 class="hasAnchor">
 <a href="#reading-processing-and-joining-genotyping-google-sheet" class="anchor"></a>Reading, processing, and joining genotyping google sheet:</h3>
-<p>This second group of functions operates to clean the results from the collection specific Google Sheet of genotyping results.<br></p>
-<p>Details on how to create genotyping Google Sheets can be found in the <a href="https://docs.google.com/document/d/1aPgPDYobpxzr0BQYgvUsjPWnAGXZmCSQKQ4sDGBXuYM/edit">Nematode Collection Protocol</a>, look for “wild_isolate_genotyping_template”. A template is <a href="https://docs.google.com/spreadsheets/d/1pvdpujuJDTYaMwjjDlivjAnO0MrQuDguU2kRLs9eemQ/edit#gid=0">linked</a><br></p>
+<p>This second group of functions operates to clean the results from a project specific Google Sheet that contains genotyping results.<br></p>
+<p>Since <strong>easyFulcrum</strong> was originally built for processing nematode samples we provide a <code>profile</code> parameter to toggle the functions between the neamatode specific <code>nematode</code> profile and the more flexible, non-nematode specific <code>general</code> profile.<br></p>
+<div id="making-a-project-specific-genotyping-sheet" class="section level4">
+<h4 class="hasAnchor">
+<a href="#making-a-project-specific-genotyping-sheet" class="anchor"></a>Making a project specific “genotyping sheet”:</h4>
+<p>Users that want to use the <code>general</code> profile can use our <a href="https://docs.google.com/spreadsheets/d/1Soo7R7srnmBu29Z_ZbYweTMg_IdO1N5sWr6cr0NpioY/edit#gid=1595072024">“general” genotyping sheet template</a><br></p>
+<p>Users that want to use the <code>nematode</code> profile can use our <a href="https://docs.google.com/spreadsheets/d/1pvdpujuJDTYaMwjjDlivjAnO0MrQuDguU2kRLs9eemQ/edit#gid=0">“nematode” genotyping sheet template</a><br></p>
+<p>Details on how to fill out a “nematode” genotyping sheet can be found in the <a href="https://docs.google.com/document/d/1aPgPDYobpxzr0BQYgvUsjPWnAGXZmCSQKQ4sDGBXuYM/edit">Nematode Collection Protocol</a>, look for “wild_isolate_genotyping_template”.</p>
+</div>
 <div id="readgenotypes" class="section level4">
 <h4 class="hasAnchor">
 <a href="#readgenotypes" class="anchor"></a>readGenotypes:</h4>
-<p><code>readGenotypes</code> reads in genotyping data from a Google Sheet with requisite <code>gsKey</code>. The <code>col_types</code> variable will specify of what column types the data should be.<br></p>
+<p><code>readGenotypes</code> reads in genotyping data from a Google Sheet with requisite <code>gsKey</code>. The <code>col_types</code> variable will specify the class of each data column. Note, additional columns can be added to either genotyping template if desired.</p>
 <p>For more details on reading in genotyping sheets, look into the <a href="https://googlesheets4.tidyverse.org/articles/articles/read-sheets.html">googlesheets4</a> package (which underlies this function), as well as further information on how to <a href="https://googlesheets4.tidyverse.org/reference/range_read.html#column-specification">specify</a> the <code>col_types</code> if needed.<br></p>
-<p>Running this function depends on a users connection to the appropriate Google Doc below, which is shared as view only.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">raw_geno</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/readGenotypes.html">readGenotypes</a></span><span class="op">(</span>gsKey <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"1iSGkGbhoyg-uq_l83UbiNdI_g4xqEkTxf3Ap0J7JGto"</span><span class="op">)</span><span class="op">)</span>
+<code class="sourceCode R"><span class="co"># read example data from the "general" genotyping template </span>
+<span class="va">raw_geno_general</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/readGenotypes.html">readGenotypes</a></span><span class="op">(</span>gsKey <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"1aXH-8UDvFVddl7JA-R2y8QOcNxESpmseZGjheM8hDro"</span><span class="op">)</span>, col_types <span class="op">=</span> <span class="st">"cccdcc"</span><span class="op">)</span>
 <span class="co">#&gt; Using an auto-discovered, cached token.</span>
 <span class="co">#&gt; To suppress this message, modify your code or options to clearly consent to the use of a cached token.</span>
 <span class="co">#&gt; See gargle's "Non-interactive auth" vignette for more details:</span>
 <span class="co">#&gt; https://gargle.r-lib.org/articles/non-interactive-auth.html</span>
 <span class="co">#&gt; The googlesheets4 package is using a cached token for tim.crombie@gmail.com.</span>
-<span class="co">#&gt; Auto-refreshing stale OAuth token.</span>
-<span class="co">#&gt; Reading from "2020JanuaryHawaii_wild_isolate_genotyping_easyFulcrum_vignette1"</span>
+<span class="co">#&gt; Reading from "2020JanuaryHawaii_easyFulcrum_general_genotyping_vignette"</span>
 <span class="co">#&gt; Range "'genotyping template'"</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">raw_geno</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">raw_geno_general</span><span class="op">)</span>
 <span class="co">#&gt; Warning: `...` is not empty.</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; We detected these problematic arguments:</span>
@@ -349,35 +353,44 @@
 <span class="co">#&gt; </span>
 <span class="co">#&gt; These dots only exist to allow future extensions and should be empty.</span>
 <span class="co">#&gt; Did you misspecify an argument?</span>
-<span class="co">#&gt; # A tibble: 6 x 38</span>
-<span class="co">#&gt;   project_id shipment_sent_d… shipment_receiv… shipment_number shipment_color</span>
-<span class="co">#&gt;   &lt;chr&gt;      &lt;date&gt;           &lt;date&gt;                     &lt;dbl&gt; &lt;chr&gt;         </span>
-<span class="co">#&gt; 1 2020Janua… NA               NA                             1 &lt;NA&gt;          </span>
-<span class="co">#&gt; 2 2020Janua… NA               NA                             1 &lt;NA&gt;          </span>
-<span class="co">#&gt; 3 2020Janua… NA               NA                             1 &lt;NA&gt;          </span>
-<span class="co">#&gt; 4 2020Janua… NA               NA                             1 &lt;NA&gt;          </span>
-<span class="co">#&gt; 5 2020Janua… NA               NA                             1 &lt;NA&gt;          </span>
-<span class="co">#&gt; 6 2020Janua… NA               NA                             1 &lt;NA&gt;          </span>
-<span class="co">#&gt; # … with 33 more variables: isolation_box_number &lt;dbl&gt;, s_label &lt;chr&gt;,</span>
-<span class="co">#&gt; #   s_label_repeat_error &lt;dbl&gt;, proliferation_48 &lt;dbl&gt;,</span>
-<span class="co">#&gt; #   proliferation_168 &lt;dbl&gt;, proliferating &lt;dbl&gt;, strip_tube_number &lt;dbl&gt;,</span>
-<span class="co">#&gt; #   strip_tube_position &lt;dbl&gt;, lysis_date &lt;date&gt;, lysis_notes &lt;chr&gt;,</span>
-<span class="co">#&gt; #   ssu_pcr_date &lt;date&gt;, its2_pcr_date &lt;date&gt;, pcr_plate_number &lt;dbl&gt;,</span>
-<span class="co">#&gt; #   pcr_well &lt;chr&gt;, gel_number &lt;dbl&gt;, gel_position &lt;chr&gt;,</span>
-<span class="co">#&gt; #   pcr_product_ssu &lt;dbl&gt;, positive_ctrl_ssu &lt;dbl&gt;, neg_ctrl_ssu &lt;dbl&gt;,</span>
-<span class="co">#&gt; #   ssu_fail_redo &lt;dbl&gt;, pcr_product_its2 &lt;dbl&gt;, positive_ctrl_its2 &lt;dbl&gt;,</span>
-<span class="co">#&gt; #   neg_ctrl_ist2 &lt;dbl&gt;, general_notes &lt;chr&gt;, mclab_sequencing_plate &lt;dbl&gt;,</span>
-<span class="co">#&gt; #   mclab_sequencing_well &lt;chr&gt;, manual_blast_notes &lt;chr&gt;, species_id &lt;chr&gt;,</span>
-<span class="co">#&gt; #   possible_new_caeno_sp &lt;dbl&gt;, make_strain_name &lt;dbl&gt;,</span>
-<span class="co">#&gt; #   reason_strain_not_named &lt;chr&gt;, strain_name &lt;chr&gt;, pair_name &lt;chr&gt;</span></code></pre></div>
+<span class="co">#&gt; # A tibble: 6 x 6</span>
+<span class="co">#&gt;   project_id       s_label species_id          possible_new_sp strain_name notes</span>
+<span class="co">#&gt;   &lt;chr&gt;            &lt;chr&gt;   &lt;chr&gt;                         &lt;dbl&gt; &lt;chr&gt;       &lt;chr&gt;</span>
+<span class="co">#&gt; 1 2020JanuaryHawa… S-12607 Caenorhabditis bri…              NA ECA2499     &lt;NA&gt; </span>
+<span class="co">#&gt; 2 2020JanuaryHawa… S-12608 Caenorhabditis bri…              NA ECA2501     &lt;NA&gt; </span>
+<span class="co">#&gt; 3 2020JanuaryHawa… S-12634 &lt;NA&gt;                             NA &lt;NA&gt;        &lt;NA&gt; </span>
+<span class="co">#&gt; 4 2020JanuaryHawa… &lt;NA&gt;    &lt;NA&gt;                             NA &lt;NA&gt;        &lt;NA&gt; </span>
+<span class="co">#&gt; 5 2020JanuaryHawa… S-12652 &lt;NA&gt;                             NA &lt;NA&gt;        &lt;NA&gt; </span>
+<span class="co">#&gt; 6 2020JanuaryHawa… S-12664 &lt;NA&gt;                             NA &lt;NA&gt;        &lt;NA&gt;</span>
+
+<span class="co"># read example data from the "nematode" genotyping template </span>
+<span class="va">raw_geno_nema</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/readGenotypes.html">readGenotypes</a></span><span class="op">(</span>gsKey <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"1eviRoe0NyIEkIexM6c_oTVTX6U4ndPx-hkXJvkjhqWM"</span><span class="op">)</span>, col_types <span class="op">=</span> <span class="st">"cDDdcdcddddddDcDDdcdcdddddddcdcccddccc"</span><span class="op">)</span>
+<span class="co">#&gt; Reading from "2020JanuaryHawaii_easyFulcrum_nematode_genotyping_vignette"</span>
+<span class="co">#&gt; Range "'genotyping template'"</span></code></pre></div>
 </div>
 <div id="checkgenotypes" class="section level4">
 <h4 class="hasAnchor">
 <a href="#checkgenotypes" class="anchor"></a>checkGenotypes:</h4>
-<p><code>checkGenotypes</code> both processes the genotyping data (adds flags) and returns info on those flags if desired, regarding isolations missing, improper, and/or duplicated S-labels, and other checks such as if species ID, strain name, proliferation label and ITS2 genotype are missing and expected based on data in the genotyping sheet. Setting the <code>return_geno</code> option to <code>TRUE</code> and the <code>return_flags</code> option to <code>FALSE</code> will return the processed genotyping data and print information on the flags. Setting the <code>return_geno</code> option to <code>FALSE</code> and the <code>return_flags</code> option to <code>TRUE</code> will return a list of data frames that detail the rows where the flags appear. Both of these cannot be <code>TRUE</code> at the same time.</p>
+<p><code>checkGenotypes</code> both processes the genotyping data (adds flags) and returns info on those flags if desired. Setting the <code>profile</code> parameter to <code>general</code> will check for unexpected or improper use of S-labels, including missing isolations, improper S-label names, and/or duplicated S-labels. Setting the <code>profile</code> parameter to <code>nematode</code> will result in additional nematode specific checks, including unusual species IDs, strain names, proliferation values and whether ITS2 genotypes are missing when expected. Setting the <code>return_geno</code> option to <code>TRUE</code> and the <code>return_flags</code> option to <code>FALSE</code> will return the processed genotyping data and print information on the flags. Setting the <code>return_geno</code> option to <code>FALSE</code> and the <code>return_flags</code> option to <code>TRUE</code> will return a list of data frames that detail the rows where the flags appear. Both of these cannot be <code>TRUE</code> at the same time.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">proc_geno</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/checkGenotypes.html">checkGenotypes</a></span><span class="op">(</span>geno_data <span class="op">=</span> <span class="va">raw_geno</span>, fulc_data <span class="op">=</span> <span class="va">anno_fulc</span>, 
-                                  return_geno <span class="op">=</span> <span class="cn">TRUE</span>, return_flags <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">proc_geno_general</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/checkGenotypes.html">checkGenotypes</a></span><span class="op">(</span>geno_data <span class="op">=</span> <span class="va">raw_geno_general</span>, fulc_data <span class="op">=</span> <span class="va">anno_fulc</span>, 
+                                  return_geno <span class="op">=</span> <span class="cn">TRUE</span>, return_flags <span class="op">=</span> <span class="cn">FALSE</span>, profile <span class="op">=</span> <span class="st">"general"</span><span class="op">)</span>
+<span class="co">#&gt; Using "general" profile, target_sp parameter will not be used:</span>
+<span class="co">#&gt; &gt;&gt;&gt; Checking s labels</span>
+<span class="co">#&gt; [1] "There are 1 rows with missing s labels, these s labels are:"</span>
+<span class="co">#&gt; [1] NA</span>
+<span class="co">#&gt; [1] "There are 2 rows with duplicated s labels, these s labels are:"</span>
+<span class="co">#&gt; [1] "S-12664" "S-12664"</span>
+<span class="co">#&gt; [1] "There are 1 rows with unusual s labels, these s labels are:"</span>
+<span class="co">#&gt; [1] "R-12666"</span>
+<span class="co">#&gt; [1] "There are 3 rows with s labels not found in the Fulcrum data, these s labels are:"</span>
+<span class="co">#&gt; [1] "S-12652" "R-12666" "S-12688"</span>
+<span class="co">#&gt; [1] "There are 3 s labels in the Fulcrum data not in the genotyping data, these s labels are:"</span>
+<span class="co">#&gt; [1] "S-12666" "S-12662" "S-12663"</span>
+
+<span class="va">proc_geno_nema</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/checkGenotypes.html">checkGenotypes</a></span><span class="op">(</span>geno_data <span class="op">=</span> <span class="va">raw_geno_nema</span>, fulc_data <span class="op">=</span> <span class="va">anno_fulc</span>, 
+                                  return_geno <span class="op">=</span> <span class="cn">TRUE</span>, return_flags <span class="op">=</span> <span class="cn">FALSE</span>, profile <span class="op">=</span> <span class="st">"nematode"</span><span class="op">)</span>
+<span class="co">#&gt; Using "nematode" profile:</span>
 <span class="co">#&gt; &gt;&gt;&gt; Checking data classes</span>
 <span class="co">#&gt; [1] "There are 0 improperly classified variables"</span>
 <span class="co">#&gt; &gt;&gt;&gt; Checking s labels</span>
@@ -389,11 +402,10 @@
 <span class="co">#&gt; [1] "R-12666"</span>
 <span class="co">#&gt; [1] "There are 3 rows with s labels not found in the Fulcrum data, these s labels are:"</span>
 <span class="co">#&gt; [1] "S-12652" "R-12666" "S-12688"</span>
-<span class="co">#&gt; [1] "There are 3 s labels in the genotyping data but not in the Fulcrum data, these s labels are:"</span>
+<span class="co">#&gt; [1] "There are 3 s labels in the Fulcrum data not in the genotyping data, these s labels are:"</span>
 <span class="co">#&gt; [1] "S-12666" "S-12662" "S-12663"</span>
 <span class="co">#&gt; &gt;&gt;&gt; Checking genotyping process</span>
-<span class="co">#&gt; [1] "There are 1 rows missing expected proliferation data, these s labels are:"</span>
-<span class="co">#&gt; [1] "S-12668"</span>
+<span class="co">#&gt; [1] "There are 0 rows missing expected proliferation data, these s labels are:"</span>
 <span class="co">#&gt; [1] "There are 1 rows missing expected its2 genotype, these s labels are:"</span>
 <span class="co">#&gt; [1] "S-12652"</span>
 <span class="co">#&gt; [1] "There are 1 rows missing expected species_id, these s labels are:"</span>
@@ -403,10 +415,9 @@
 <span class="co">#&gt; [1] "There are 1 rows missing expected strain_name, these s labels are:"</span>
 <span class="co">#&gt; [1] "S-12775"</span></code></pre></div>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">flag1.3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/checkGenotypes.html">checkGenotypes</a></span><span class="op">(</span>geno_data <span class="op">=</span> <span class="va">raw_geno</span>, fulc_data <span class="op">=</span> <span class="va">anno_fulc</span>, 
-                          return_geno <span class="op">=</span> <span class="cn">FALSE</span>, return_flags <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="co">#&gt; &gt;&gt;&gt; Checking data classes</span>
-<span class="co">#&gt; [1] "There are 0 improperly classified variables"</span>
+<code class="sourceCode R"><span class="va">flag_geno_general</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/checkGenotypes.html">checkGenotypes</a></span><span class="op">(</span>geno_data <span class="op">=</span> <span class="va">raw_geno_general</span>, fulc_data <span class="op">=</span> <span class="va">anno_fulc</span>, 
+                          return_geno <span class="op">=</span> <span class="cn">FALSE</span>, return_flags <span class="op">=</span> <span class="cn">TRUE</span>, profile <span class="op">=</span> <span class="st">"general"</span><span class="op">)</span>
+<span class="co">#&gt; Using "general" profile, target_sp parameter will not be used:</span>
 <span class="co">#&gt; &gt;&gt;&gt; Checking s labels</span>
 <span class="co">#&gt; [1] "There are 1 rows with missing s labels, these s labels are:"</span>
 <span class="co">#&gt; [1] NA</span>
@@ -416,46 +427,47 @@
 <span class="co">#&gt; [1] "R-12666"</span>
 <span class="co">#&gt; [1] "There are 3 rows with s labels not found in the Fulcrum data, these s labels are:"</span>
 <span class="co">#&gt; [1] "S-12652" "R-12666" "S-12688"</span>
-<span class="co">#&gt; [1] "There are 3 s labels in the genotyping data but not in the Fulcrum data, these s labels are:"</span>
-<span class="co">#&gt; [1] "S-12666" "S-12662" "S-12663"</span>
-<span class="co">#&gt; &gt;&gt;&gt; Checking genotyping process</span>
-<span class="co">#&gt; [1] "There are 1 rows missing expected proliferation data, these s labels are:"</span>
-<span class="co">#&gt; [1] "S-12668"</span>
-<span class="co">#&gt; [1] "There are 1 rows missing expected its2 genotype, these s labels are:"</span>
-<span class="co">#&gt; [1] "S-12652"</span>
-<span class="co">#&gt; [1] "There are 1 rows missing expected species_id, these s labels are:"</span>
-<span class="co">#&gt; [1] "S-12668"</span>
-<span class="co">#&gt; [1] "There are 1 rows with unusual target species names, these names are:"</span>
-<span class="co">#&gt; [1] "O. myriophilus"</span>
-<span class="co">#&gt; [1] "There are 1 rows missing expected strain_name, these s labels are:"</span>
-<span class="co">#&gt; [1] "S-12775"</span></code></pre></div>
-<p>Based on these flags a new Google Document was made, eliminating rows with blank S-labels or S-labels in the genotyping data but not in the Fulcrum data. <code>raw_geno</code> and afterwards <code>proc_geno</code> is overwritten with this data.</p>
+<span class="co">#&gt; [1] "There are 3 s labels in the Fulcrum data not in the genotyping data, these s labels are:"</span>
+<span class="co">#&gt; [1] "S-12666" "S-12662" "S-12663"</span></code></pre></div>
+<p>Based on these flags “fixed” genotyping sheets were made, eliminating rows with blank S-labels, duplicated S-labels, etc. The “fixed” data are read in below and <code>checkGenotypes</code> is re-run on the “fixed” data.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">raw_geno</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/readGenotypes.html">readGenotypes</a></span><span class="op">(</span>gsKey <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"1WlnmujvHBc3s5jwCtRPcT3oHkRvpU-RXXIBmJOV8Qb0"</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; Reading from "2020JanuaryHawaii_wild_isolate_genotyping_easyFulcrum_vignette2"</span>
+<code class="sourceCode R"><span class="co"># general example</span>
+<span class="va">raw_geno_general_fixed</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/readGenotypes.html">readGenotypes</a></span><span class="op">(</span>gsKey <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"1AcovAEfQIF46PigrrM_D2QPOpdTQM-YndlFo4MmsQoc"</span><span class="op">)</span>, col_types <span class="op">=</span> <span class="st">"cccdcc"</span><span class="op">)</span>
+<span class="co">#&gt; Reading from "2020JanuaryHawaii_easyFulcrum_general_genotyping_vignette_fixed"</span>
 <span class="co">#&gt; Range "'genotyping template'"</span>
-<span class="va">proc_geno</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/checkGenotypes.html">checkGenotypes</a></span><span class="op">(</span>geno_data <span class="op">=</span> <span class="va">raw_geno</span>, fulc_data <span class="op">=</span> <span class="va">anno_fulc</span>,
-                            return_geno <span class="op">=</span> <span class="cn">TRUE</span>, return_flags <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+
+<span class="va">proc_geno_general_fixed</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/checkGenotypes.html">checkGenotypes</a></span><span class="op">(</span>geno_data <span class="op">=</span> <span class="va">raw_geno_general_fixed</span>, fulc_data <span class="op">=</span> <span class="va">anno_fulc</span>,
+                            return_geno <span class="op">=</span> <span class="cn">TRUE</span>, return_flags <span class="op">=</span> <span class="cn">FALSE</span>, profile <span class="op">=</span> <span class="st">"general"</span><span class="op">)</span>
+<span class="co">#&gt; Using "general" profile, target_sp parameter will not be used:</span>
+<span class="co">#&gt; &gt;&gt;&gt; Checking s labels</span>
+<span class="co">#&gt; [1] "There are 0 rows with missing s labels, these s labels are:"</span>
+<span class="co">#&gt; [1] "There are 0 rows with duplicated s labels, these s labels are:"</span>
+<span class="co">#&gt; [1] "There are 0 rows with unusual s labels, these s labels are:"</span>
+<span class="co">#&gt; [1] "There are 0 rows with s labels not found in the Fulcrum data, these s labels are:"</span>
+<span class="co">#&gt; [1] "There are 0 s labels in the Fulcrum data not in the genotyping data, these s labels are:"</span>
+
+<span class="co"># nematode example</span>
+<span class="va">raw_geno_nema_fixed</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/readGenotypes.html">readGenotypes</a></span><span class="op">(</span>gsKey <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"1WaOsAU0Pmf_rOp9BoGmDeYMmyENw0gBppdllfedLG9s"</span><span class="op">)</span>, col_types <span class="op">=</span> <span class="st">"cDDdcdcddddddDcDDdcdcdddddddcdcccddccc"</span><span class="op">)</span>
+<span class="co">#&gt; Reading from "2020JanuaryHawaii_easyFulcrum_nematode_genotyping_vignette_fixed"</span>
+<span class="co">#&gt; Range "'genotyping template'"</span>
+
+<span class="va">proc_geno_nema_fixed</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/checkGenotypes.html">checkGenotypes</a></span><span class="op">(</span>geno_data <span class="op">=</span> <span class="va">raw_geno_nema_fixed</span>, fulc_data <span class="op">=</span> <span class="va">anno_fulc</span>, 
+                                 return_geno <span class="op">=</span> <span class="cn">TRUE</span>, return_flags <span class="op">=</span> <span class="cn">FALSE</span>, profile <span class="op">=</span> <span class="st">"nematode"</span><span class="op">)</span>
+<span class="co">#&gt; Using "nematode" profile:</span>
 <span class="co">#&gt; &gt;&gt;&gt; Checking data classes</span>
 <span class="co">#&gt; [1] "There are 0 improperly classified variables"</span>
 <span class="co">#&gt; &gt;&gt;&gt; Checking s labels</span>
 <span class="co">#&gt; [1] "There are 0 rows with missing s labels, these s labels are:"</span>
-<span class="co">#&gt; [1] "There are 2 rows with duplicated s labels, these s labels are:"</span>
-<span class="co">#&gt; [1] "S-12664" "S-12664"</span>
+<span class="co">#&gt; [1] "There are 0 rows with duplicated s labels, these s labels are:"</span>
 <span class="co">#&gt; [1] "There are 0 rows with unusual s labels, these s labels are:"</span>
 <span class="co">#&gt; [1] "There are 0 rows with s labels not found in the Fulcrum data, these s labels are:"</span>
-<span class="co">#&gt; [1] "There are 3 s labels in the genotyping data but not in the Fulcrum data, these s labels are:"</span>
-<span class="co">#&gt; [1] "S-12666" "S-12662" "S-12663"</span>
+<span class="co">#&gt; [1] "There are 0 s labels in the Fulcrum data not in the genotyping data, these s labels are:"</span>
 <span class="co">#&gt; &gt;&gt;&gt; Checking genotyping process</span>
-<span class="co">#&gt; [1] "There are 1 rows missing expected proliferation data, these s labels are:"</span>
-<span class="co">#&gt; [1] "S-12668"</span>
+<span class="co">#&gt; [1] "There are 0 rows missing expected proliferation data, these s labels are:"</span>
 <span class="co">#&gt; [1] "There are 0 rows missing expected its2 genotype, these s labels are:"</span>
-<span class="co">#&gt; [1] "There are 1 rows missing expected species_id, these s labels are:"</span>
-<span class="co">#&gt; [1] "S-12668"</span>
-<span class="co">#&gt; [1] "There are 1 rows with unusual target species names, these names are:"</span>
-<span class="co">#&gt; [1] "O. myriophilus"</span>
-<span class="co">#&gt; [1] "There are 1 rows missing expected strain_name, these s labels are:"</span>
-<span class="co">#&gt; [1] "S-12775"</span></code></pre></div>
+<span class="co">#&gt; [1] "There are 0 rows missing expected species_id, these s labels are:"</span>
+<span class="co">#&gt; [1] "There are 0 rows with unusual target species names, these names are:"</span>
+<span class="co">#&gt; [1] "There are 0 rows missing expected strain_name, these s labels are:"</span></code></pre></div>
 </div>
 <div id="joingenofulc" class="section level4">
 <h4 class="hasAnchor">
@@ -463,7 +475,13 @@
 <p><code>joinGenoFulc</code> will join the joined Fulcrum data frame with the genotyping information. This function will also save the processed genotyping information in <em>data/processed/genotypes</em> if <code>dir</code> is set to the base folder of the project.</p>
 <p>If the user is using <strong>easyfulcrum</strong> on customized Fulcrum applications other than “Nematode field sampling” and “Nematode isolation”, it is recommended that <code>select_vars</code> is set to <code>FALSE</code>, such that <code>joinGenoFulc</code> does not only return the default variables.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">join_genofulc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/joinGenoFulc.html">joinGenoFulc</a></span><span class="op">(</span>geno <span class="op">=</span> <span class="va">proc_geno</span>, fulc <span class="op">=</span> <span class="va">anno_fulc</span>, dir <span class="op">=</span> <span class="cn">NULL</span>, select_vars <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<code class="sourceCode R"><span class="co"># general example</span>
+<span class="va">join_genofulc_general</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/joinGenoFulc.html">joinGenoFulc</a></span><span class="op">(</span>geno <span class="op">=</span> <span class="va">proc_geno_general_fixed</span>, fulc <span class="op">=</span> <span class="va">anno_fulc</span>, dir <span class="op">=</span> <span class="va">dir</span>, select_vars <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="co">#&gt; Joining, by = "s_label"</span>
+<span class="co">#&gt; returning selected data, set select_vars to FALSE if variables are missing</span>
+
+<span class="co"># nematode example</span>
+<span class="va">join_genofulc_nema</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/joinGenoFulc.html">joinGenoFulc</a></span><span class="op">(</span>geno <span class="op">=</span> <span class="va">proc_geno_nema_fixed</span>, fulc <span class="op">=</span> <span class="va">anno_fulc</span>, dir <span class="op">=</span> <span class="cn">NULL</span>, select_vars <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="co">#&gt; Joining, by = "s_label"</span>
 <span class="co">#&gt; returning selected data, set select_vars to FALSE if variables are missing</span></code></pre></div>
 </div>
@@ -475,14 +493,16 @@
 <div id="procphotos" class="section level4">
 <h4 class="hasAnchor">
 <a href="#procphotos" class="anchor"></a>procPhotos:</h4>
-<p><code>procPhotos</code> copies raw sample photos, renames them with the C-label, makes a new directory <em>data/processed/fulcrum/photos</em> and pastes the renamed files there. The function also makes thumbnails for use with interactive maps and places these in the <em>data/processed/fulcrum/photos/thumbnails</em> direcotry. Setting the <code>CeNDR</code> option to <code>TRUE</code> will rename photos of samples meeting CeNDR criteria with the name of the nematode strains isolated from the sample and paste them in the <em>data/processed/fulcrum/photos/CeNDR</em> directory.</p>
-<p>The function will also accept a public url (<code>pub_url</code>) for hosting the sample photos renamed by C-label. A compatible public url should follow the <code>pub_url/Project/C-label.jpg</code> format. For example, if the full url for C-0001 is <a href="https://storage.googleapis.com/elegansvariation.org/photos/2020JanuaryHawaii/C-0001.jpg" class="uri">https://storage.googleapis.com/elegansvariation.org/photos/2020JanuaryHawaii/C-0001.jpg</a>, (<code>pub_url</code>) should be set to <code>https://storage.googleapis.com/elegansvariation.org/photos/</code></p>
+<p><code>procPhotos</code> copies raw sample photos, renames them with the C-label, makes a new directory <em>data/processed/fulcrum/photos</em> and pastes the renamed files there. The function also makes thumbnails for use with interactive maps and places these in the <em>data/processed/fulcrum/photos/thumbnails</em> directory. Setting the <code>CeNDR</code> option to <code>TRUE</code> will rename photos of samples meeting CeNDR criteria with the name of the nematode strains isolated from the sample and paste them in the <em>data/processed/fulcrum/photos/CeNDR</em> directory.</p>
+<p>The function will also accept a public url (<code>pub_url</code>) for hosting the sample photos renamed by C-label. A compatible public url should follow the <code>pub_url/Project/C-label.jpg</code> format. For example, if the full url for C-0001 is <a href="https://storage.googleapis.com/elegansvariation.org/photos/2020JanuaryHawaii/C-0001.jpg" class="uri">https://storage.googleapis.com/elegansvariation.org/photos/2020JanuaryHawaii/C-0001.jpg</a>, (<code>pub_url</code>) should be set to <code>https://storage.googleapis.com/elegansvariation.org/photos/</code><br></p>
+<p>We’ve included example code for each profile, but note that if you rerun the <code>procPhotos</code> function with the <code>overwite</code> parameter set to <code>TRUE</code> the output files will be overwritten.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">final_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/procPhotos.html">procPhotos</a></span><span class="op">(</span>dir <span class="op">=</span> <span class="va">dir</span>, data <span class="op">=</span> <span class="va">join_genofulc</span>,
+<code class="sourceCode R">
+<span class="va">final_data_general</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/procPhotos.html">procPhotos</a></span><span class="op">(</span>dir <span class="op">=</span> <span class="va">dir</span>, data <span class="op">=</span> <span class="va">join_genofulc_general</span>,
                          max_dim <span class="op">=</span> <span class="fl">500</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span>,
                          pub_url <span class="op">=</span> <span class="st">"https://storage.googleapis.com/collection_photos/"</span>,
                          CeNDR <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">final_data</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">final_data_general</span><span class="op">)</span>
 <span class="co">#&gt; Warning: `...` is not empty.</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; We detected these problematic arguments:</span>
@@ -490,7 +510,7 @@
 <span class="co">#&gt; </span>
 <span class="co">#&gt; These dots only exist to allow future extensions and should be empty.</span>
 <span class="co">#&gt; Did you misspecify an argument?</span>
-<span class="co">#&gt; # A tibble: 6 x 90</span>
+<span class="co">#&gt; # A tibble: 6 x 75</span>
 <span class="co">#&gt;   project c_label s_label species_id strain_name collection_by</span>
 <span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;      &lt;chr&gt;       &lt;chr&gt;        </span>
 <span class="co">#&gt; 1 2020Ja… C-5115  S-12695 &lt;NA&gt;       &lt;NA&gt;        dec@u.northw…</span>
@@ -499,7 +519,7 @@
 <span class="co">#&gt; 4 2020Ja… C-5115  S-12697 &lt;NA&gt;       &lt;NA&gt;        dec@u.northw…</span>
 <span class="co">#&gt; 5 2020Ja… C-5115  S-12776 &lt;NA&gt;       &lt;NA&gt;        dec@u.northw…</span>
 <span class="co">#&gt; 6 2020Ja… C-5115  S-12776 &lt;NA&gt;       &lt;NA&gt;        dec@u.northw…</span>
-<span class="co">#&gt; # … with 84 more variables: collection_datetime_UTC &lt;dttm&gt;,</span>
+<span class="co">#&gt; # … with 69 more variables: collection_datetime_UTC &lt;dttm&gt;,</span>
 <span class="co">#&gt; #   collection_date_UTC &lt;date&gt;, collection_local_time &lt;dbl&gt;,</span>
 <span class="co">#&gt; #   collection_fulcrum_latitude &lt;dbl&gt;, collection_fulcrum_longitude &lt;dbl&gt;,</span>
 <span class="co">#&gt; #   exif_gps_latitude &lt;dbl&gt;, exif_gps_longitude &lt;dbl&gt;,</span>
@@ -521,15 +541,9 @@
 <span class="co">#&gt; #   sample_photo3_processed_url &lt;glue&gt;, orig_file_name3 &lt;glue&gt;,</span>
 <span class="co">#&gt; #   new_file_name3 &lt;glue&gt;, thumb_file_name3 &lt;glue&gt;, best_photo &lt;chr&gt;,</span>
 <span class="co">#&gt; #   best_photo_gps_dop &lt;dbl&gt;, best_photo_caption &lt;lgl&gt;, isolation_by &lt;chr&gt;,</span>
-<span class="co">#&gt; #   isolation_datetime_UTC &lt;chr&gt;, isolation_date_UTC &lt;chr&gt;,</span>
-<span class="co">#&gt; #   isolation_local_time &lt;dbl&gt;, isolation_latitude &lt;dbl&gt;,</span>
+<span class="co">#&gt; #   isolation_datetime_UTC &lt;dttm&gt;, isolation_date_UTC &lt;date&gt;,</span>
+<span class="co">#&gt; #   isolation_local_time &lt;time&gt;, isolation_latitude &lt;dbl&gt;,</span>
 <span class="co">#&gt; #   isolation_longitude &lt;dbl&gt;, worms_on_sample &lt;chr&gt;,</span>
-<span class="co">#&gt; #   approximate_number_of_worms &lt;chr&gt;, shipment_sent_date &lt;date&gt;,</span>
-<span class="co">#&gt; #   shipment_received_date &lt;date&gt;, proliferation_48 &lt;dbl&gt;,</span>
-<span class="co">#&gt; #   proliferation_168 &lt;dbl&gt;, proliferating &lt;dbl&gt;, lysis_date &lt;date&gt;,</span>
-<span class="co">#&gt; #   pcr_product_its2 &lt;dbl&gt;, pcr_product_ssu &lt;dbl&gt;, general_notes &lt;chr&gt;,</span>
-<span class="co">#&gt; #   manual_blast_notes &lt;chr&gt;, possible_new_caeno_sp &lt;dbl&gt;,</span>
-<span class="co">#&gt; #   make_strain_name &lt;dbl&gt;, reason_strain_not_named &lt;chr&gt;,</span>
 <span class="co">#&gt; #   flag_ambient_temperature &lt;lgl&gt;, flag_ambient_temperature_run &lt;lgl&gt;,</span>
 <span class="co">#&gt; #   flag_substrate_temperature &lt;lgl&gt;, flag_unusual_sample_photo_num &lt;lgl&gt;,</span>
 <span class="co">#&gt; #   flag_duplicated_c_label_field_sampling &lt;lgl&gt;,</span>
@@ -538,39 +552,119 @@
 <span class="co">#&gt; #   flag_missing_s_label_isolation_s_labeled_plates &lt;lgl&gt;,</span>
 <span class="co">#&gt; #   flag_missing_isolation_record &lt;lgl&gt;, flag_unusual_s_label_genotyping &lt;lgl&gt;,</span>
 <span class="co">#&gt; #   flag_missing_s_label_genotyping &lt;lgl&gt;,</span>
-<span class="co">#&gt; #   flag_duplicated_s_label_genotyping &lt;lgl&gt;,</span>
-<span class="co">#&gt; #   flag_unusual_target_species_name &lt;lgl&gt;</span></code></pre></div>
+<span class="co">#&gt; #   flag_duplicated_s_label_genotyping &lt;lgl&gt;</span>
+
+<span class="va">final_data_nema</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/procPhotos.html">procPhotos</a></span><span class="op">(</span>dir <span class="op">=</span> <span class="va">dir</span>, data <span class="op">=</span> <span class="va">join_genofulc_nema</span>,
+                         max_dim <span class="op">=</span> <span class="fl">500</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span>,
+                         pub_url <span class="op">=</span> <span class="st">"https://storage.googleapis.com/collection_photos/"</span>,
+                         CeNDR <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">final_data_nema</span><span class="op">)</span>
+<span class="co">#&gt; Warning: `...` is not empty.</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; We detected these problematic arguments:</span>
+<span class="co">#&gt; * `needs_dots`</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; These dots only exist to allow future extensions and should be empty.</span>
+<span class="co">#&gt; Did you misspecify an argument?</span>
+<span class="co">#&gt; # A tibble: 6 x 89</span>
+<span class="co">#&gt;   project c_label s_label species_id strain_name collection_by</span>
+<span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;      &lt;chr&gt;       &lt;chr&gt;        </span>
+<span class="co">#&gt; 1 2020Ja… C-5115  S-12695 &lt;NA&gt;       &lt;NA&gt;        dec@u.northw…</span>
+<span class="co">#&gt; 2 2020Ja… C-5115  &lt;NA&gt;    &lt;NA&gt;       &lt;NA&gt;        dec@u.northw…</span>
+<span class="co">#&gt; 3 2020Ja… C-5115  S-12706 &lt;NA&gt;       &lt;NA&gt;        dec@u.northw…</span>
+<span class="co">#&gt; 4 2020Ja… C-5115  S-12697 &lt;NA&gt;       &lt;NA&gt;        dec@u.northw…</span>
+<span class="co">#&gt; 5 2020Ja… C-5115  S-12776 &lt;NA&gt;       &lt;NA&gt;        dec@u.northw…</span>
+<span class="co">#&gt; 6 2020Ja… C-5115  S-12776 &lt;NA&gt;       &lt;NA&gt;        dec@u.northw…</span>
+<span class="co">#&gt; # … with 83 more variables: collection_datetime_UTC &lt;dttm&gt;,</span>
+<span class="co">#&gt; #   collection_date_UTC &lt;date&gt;, collection_local_time &lt;dbl&gt;,</span>
+<span class="co">#&gt; #   collection_fulcrum_latitude &lt;dbl&gt;, collection_fulcrum_longitude &lt;dbl&gt;,</span>
+<span class="co">#&gt; #   exif_gps_latitude &lt;dbl&gt;, exif_gps_longitude &lt;dbl&gt;,</span>
+<span class="co">#&gt; #   collection_latitude &lt;dbl&gt;, collection_longitude &lt;dbl&gt;,</span>
+<span class="co">#&gt; #   collection_lat_long_method &lt;chr&gt;, collection_lat_long_method_diff &lt;dbl&gt;,</span>
+<span class="co">#&gt; #   fulcrum_altitude &lt;dbl&gt;, exif_gps_altitude &lt;dbl&gt;, collection_altitude &lt;dbl&gt;,</span>
+<span class="co">#&gt; #   collection_altitude_method &lt;chr&gt;, collection_location &lt;chr&gt;,</span>
+<span class="co">#&gt; #   collection_island &lt;chr&gt;, collection_trail &lt;chr&gt;, landscape &lt;chr&gt;,</span>
+<span class="co">#&gt; #   sky_view &lt;chr&gt;, ambient_humidity &lt;dbl&gt;, substrate &lt;chr&gt;,</span>
+<span class="co">#&gt; #   substrate_notes &lt;chr&gt;, substrate_other &lt;lgl&gt;,</span>
+<span class="co">#&gt; #   raw_ambient_temperature &lt;dbl&gt;, proc_ambient_temperature &lt;dbl&gt;,</span>
+<span class="co">#&gt; #   raw_substrate_temperature &lt;dbl&gt;, proc_substrate_temperature &lt;dbl&gt;,</span>
+<span class="co">#&gt; #   gridsect &lt;chr&gt;, gridsect_index &lt;lgl&gt;, gridsect_radius &lt;lgl&gt;,</span>
+<span class="co">#&gt; #   grid_sect_direction &lt;lgl&gt;, sample_photo1 &lt;chr&gt;,</span>
+<span class="co">#&gt; #   sample_photo1_processed_url &lt;glue&gt;, orig_file_name &lt;glue&gt;,</span>
+<span class="co">#&gt; #   new_file_name &lt;glue&gt;, thumb_file_name &lt;glue&gt;, sample_photo2 &lt;chr&gt;,</span>
+<span class="co">#&gt; #   sample_photo2_processed_url &lt;glue&gt;, orig_file_name2 &lt;glue&gt;,</span>
+<span class="co">#&gt; #   new_file_name2 &lt;glue&gt;, thumb_file_name2 &lt;glue&gt;, sample_photo3 &lt;chr&gt;,</span>
+<span class="co">#&gt; #   sample_photo3_processed_url &lt;glue&gt;, orig_file_name3 &lt;glue&gt;,</span>
+<span class="co">#&gt; #   new_file_name3 &lt;glue&gt;, thumb_file_name3 &lt;glue&gt;, best_photo &lt;chr&gt;,</span>
+<span class="co">#&gt; #   best_photo_gps_dop &lt;dbl&gt;, best_photo_caption &lt;lgl&gt;, isolation_by &lt;chr&gt;,</span>
+<span class="co">#&gt; #   isolation_datetime_UTC &lt;dttm&gt;, isolation_date_UTC &lt;date&gt;,</span>
+<span class="co">#&gt; #   isolation_local_time &lt;time&gt;, isolation_latitude &lt;dbl&gt;,</span>
+<span class="co">#&gt; #   isolation_longitude &lt;dbl&gt;, worms_on_sample &lt;chr&gt;,</span>
+<span class="co">#&gt; #   shipment_sent_date &lt;date&gt;, shipment_received_date &lt;date&gt;,</span>
+<span class="co">#&gt; #   proliferation_48 &lt;dbl&gt;, proliferation_168 &lt;dbl&gt;, lysis_date &lt;date&gt;,</span>
+<span class="co">#&gt; #   general_notes &lt;chr&gt;, manual_blast_notes &lt;chr&gt;, proliferating &lt;dbl&gt;,</span>
+<span class="co">#&gt; #   pcr_product_its2 &lt;dbl&gt;, pcr_product_ssu &lt;dbl&gt;, possible_new_caeno_sp &lt;dbl&gt;,</span>
+<span class="co">#&gt; #   make_strain_name &lt;dbl&gt;, reason_strain_not_named &lt;chr&gt;,</span>
+<span class="co">#&gt; #   flag_unusual_target_species_name &lt;lgl&gt;, flag_ambient_temperature &lt;lgl&gt;,</span>
+<span class="co">#&gt; #   flag_ambient_temperature_run &lt;lgl&gt;, flag_substrate_temperature &lt;lgl&gt;,</span>
+<span class="co">#&gt; #   flag_unusual_sample_photo_num &lt;lgl&gt;,</span>
+<span class="co">#&gt; #   flag_duplicated_c_label_field_sampling &lt;lgl&gt;,</span>
+<span class="co">#&gt; #   flag_duplicated_isolation_for_c_label &lt;lgl&gt;,</span>
+<span class="co">#&gt; #   flag_duplicated_s_label_isolation_s_labeled_plates &lt;lgl&gt;,</span>
+<span class="co">#&gt; #   flag_missing_s_label_isolation_s_labeled_plates &lt;lgl&gt;,</span>
+<span class="co">#&gt; #   flag_missing_isolation_record &lt;lgl&gt;, flag_unusual_s_label_genotyping &lt;lgl&gt;,</span>
+<span class="co">#&gt; #   flag_missing_s_label_genotyping &lt;lgl&gt;,</span>
+<span class="co">#&gt; #   flag_duplicated_s_label_genotyping &lt;lgl&gt;</span></code></pre></div>
 </div>
 </div>
 <div id="generating-summary-and-output-files" class="section level3">
 <h3 class="hasAnchor">
 <a href="#generating-summary-and-output-files" class="anchor"></a>Generating summary and output files:</h3>
-<p>We include two functions for generating sample output from <code>final_data</code>. This final dataframe can otherwise be used as needed by the user. As these depend on a users personal subfolder structure, they are commented out.</p>
+<p>We include two functions for generating summaries of a finalized colleciton project. The final dataframes can otherwise be used as needed by the user.</p>
 <div id="makespsheet" class="section level4">
 <h4 class="hasAnchor">
 <a href="#makespsheet" class="anchor"></a>makeSpSheet:</h4>
 <p><code>makeSpSheet</code> generates a species specific <code>.csv</code> file for the species of interest (<code>target_sp</code>) and writes it to the <code>/reports</code> subdirectory. This function simplifies the output of the final dataframe, pulling variables of particular interest for a user specified species of interest. This function is written to standardize the output dataframe to meet the specifications for submitting wild nematode collections to the Caenorhabditis Natural Diversity Resource (CaeNDR). For this reason the <code>makeSpSheet</code> function is likely only applicable to nematode sampling projects.<br></p>
 <p><code>makeSpSheet</code> also returns a dataframe with flags for these select samples, and prints a description of these flags.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">flag1.4</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/makeSpSheet.html">makeSpSheet</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">final_data</span>, target_sp <span class="op">=</span> <span class="st">"Caenorhabditis briggsae"</span>, dir <span class="op">=</span> <span class="va">dir</span><span class="op">)</span>
-<span class="co">#&gt; [1] "There are 8 strains with an email address for sampled_by:"</span>
-<span class="co">#&gt; [1] "ECA2499" "ECA2501" "ECA2503" "ECA2506" "ECA2507" "ECA2509" "ECA2511"</span>
-<span class="co">#&gt; [8] "ECA2513"</span>
-<span class="co">#&gt; [1] "There are 8 strains with an email address for isolated_by:"</span>
-<span class="co">#&gt; [1] "ECA2499" "ECA2501" "ECA2503" "ECA2506" "ECA2507" "ECA2509" "ECA2511"</span>
-<span class="co">#&gt; [8] "ECA2513"</span>
-<span class="co">#&gt; [1] "There are 1 strains with a species name not in the target species list:"</span>
-<span class="co">#&gt; [1] "ECA2506"</span>
+<code class="sourceCode R"><span class="co"># general example</span>
+<span class="va">sp_sheet_general</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/makeSpSheet.html">makeSpSheet</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">final_data_general</span>, target_sp <span class="op">=</span> <span class="st">"Caenorhabditis briggsae"</span>, dir <span class="op">=</span> <span class="va">dir</span><span class="op">)</span>
+<span class="co">#&gt; [1] "There are 9 strains with an email address for sampled_by:"</span>
+<span class="co">#&gt; [1] "ECA2499" "ECA2501" "ECA2503" "ECA2505" "ECA2507" "ECA2509" "ECA2511"</span>
+<span class="co">#&gt; [8] "ECA2513" "ECA2515"</span>
+<span class="co">#&gt; [1] "There are 9 strains with an email address for isolated_by:"</span>
+<span class="co">#&gt; [1] "ECA2499" "ECA2501" "ECA2503" "ECA2505" "ECA2507" "ECA2509" "ECA2511"</span>
+<span class="co">#&gt; [8] "ECA2513" "ECA2515"</span>
+<span class="co">#&gt; [1] "There are 0 strains with a species name not in the target species list:"</span>
+<span class="co">#&gt; [1] "There are 0 strains with an unusual substrate class:"</span>
+<span class="co">#&gt; [1] "There are 0 strains with an unusual landscape class:"</span>
+
+<span class="co"># nematode example</span>
+<span class="va">sp_sheet_nema</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/makeSpSheet.html">makeSpSheet</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">final_data_nema</span>, target_sp <span class="op">=</span> <span class="st">"Caenorhabditis briggsae"</span>, dir <span class="op">=</span> <span class="va">dir</span><span class="op">)</span>
+<span class="co">#&gt; [1] "There are 9 strains with an email address for sampled_by:"</span>
+<span class="co">#&gt; [1] "ECA2499" "ECA2501" "ECA2503" "ECA2505" "ECA2507" "ECA2509" "ECA2511"</span>
+<span class="co">#&gt; [8] "ECA2513" "ECA2515"</span>
+<span class="co">#&gt; [1] "There are 9 strains with an email address for isolated_by:"</span>
+<span class="co">#&gt; [1] "ECA2499" "ECA2501" "ECA2503" "ECA2505" "ECA2507" "ECA2509" "ECA2511"</span>
+<span class="co">#&gt; [8] "ECA2513" "ECA2515"</span>
+<span class="co">#&gt; [1] "There are 0 strains with a species name not in the target species list:"</span>
 <span class="co">#&gt; [1] "There are 0 strains with an unusual substrate class:"</span>
 <span class="co">#&gt; [1] "There are 0 strains with an unusual landscape class:"</span></code></pre></div>
 </div>
 <div id="generatereport" class="section level4">
 <h4 class="hasAnchor">
 <a href="#generatereport" class="anchor"></a>generateReport:</h4>
-<p>We provide a function, <code>generateReport</code>, that interfaces between <code>final_data</code> and <code>sampleReport.Rmd</code>, a markdown file that will generate an interactive overview of the entire sampling project. <code>generateReport</code> saves <code>sampleReport.Rmd</code> into the <code>/scripts</code> sub-directory, and generates a <code>.html</code> file in the <code>/reports</code> sub-directory, that includes: a summary collection project metadata (such as who conducted the respective processes and on what dates they were completed), summary tables of collection and isolation data, interactive maps of where the collections in the project were acquired, and box plots showing the distributions of various environmental parameters at all collection sites. These parameters include substrate temperature, ambient temperature, humidity, and elevation.</p>
+<p>We provide a function, <code>generateReport</code>, that will generate an interactive overview of the entire sampling project. <code>generateReport</code> saves a file named <code>sampleReport.Rmd</code> into the <code>/scripts</code> sub-directory, and saves a <code>sampleReport.html</code> file in the <code>/reports</code> sub-directory. The <code>sampleReport.html</code> can be viewed in any web browser and includes: an overview of the collection project (such as who conducted the respective processes and on what dates they were completed), summary tables of collection and isolation data, interactive maps of where the collections in the project were acquired, and box plots showing the distributions of various environmental parameters at all collection sites. These parameters include substrate temperature, ambient temperature, humidity, and elevation.</p>
 <p>Please feel free to edit the <code>sampleReport.Rmd</code> as you require once it is moved into the <code>/scripts</code> sub-directory.</p>
+<p>The <code>profile</code> parameter will switch between nematode specific reports and non-nematode specific reports.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/generateReport.html">generateReport</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">final_data</span>, dir <span class="op">=</span> <span class="va">dir</span><span class="op">)</span>
+<code class="sourceCode R"><span class="co"># general example</span>
+<span class="fu"><a href="../reference/generateReport.html">generateReport</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">final_data_general</span>, dir <span class="op">=</span> <span class="va">dir</span>, target_sp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"O. myriophilus"</span>, <span class="st">"Caenorhabditis briggsae"</span><span class="op">)</span>,
+               profile <span class="op">=</span> <span class="st">"general"</span><span class="op">)</span>
+<span class="co">#&gt; /Applications/RStudio.app/Contents/MacOS/pandoc/pandoc +RTS -K512m -RTS sampleReport_general.utf8.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash+smart --output /Users/tim/Desktop/2020JanuaryHawaii/reports/sampleReport_general.html --email-obfuscation none --self-contained --standalone --section-divs --table-of-contents --toc-depth 4 --variable toc_float=1 --variable toc_selectors=h1,h2,h3,h4 --variable toc_collapsed=1 --variable toc_smooth_scroll=1 --variable toc_print=1 --template /Library/Frameworks/R.framework/Versions/3.6/Resources/library/rmarkdown/rmd/h/default.html --no-highlight --variable highlightjs=1 --variable 'theme:bootstrap' --include-in-header /var/folders/lm/tby5m_cd0cs789xpcnwjm54h0000gn/T//RtmpYNcjbB/rmarkdown-str30c53010e7b2.html --mathjax --variable 'mathjax-url:https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' --lua-filter /Library/Frameworks/R.framework/Versions/3.6/Resources/library/rmarkdown/rmd/lua/pagebreak.lua --lua-filter /Library/Frameworks/R.framework/Versions/3.6/Resources/library/rmarkdown/rmd/lua/latex-div.lua</span>
+
+<span class="co"># nematode example</span>
+<span class="fu"><a href="../reference/generateReport.html">generateReport</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">final_data_nema</span>, dir <span class="op">=</span> <span class="va">dir</span>, profile <span class="op">=</span> <span class="st">"nematode"</span><span class="op">)</span>
 <span class="co">#&gt; Warning: Unknown levels in `f`: C. elegans, C. tropicalis, C. briggsae, unknown</span>
 <span class="co">#&gt; nematode, no nematode</span>
 <span class="co">#&gt; Warning: Unknown levels in `f`: Caenorhabditis elegans, Caenorhabditis</span>
@@ -578,7 +672,7 @@
 
 <span class="co">#&gt; Warning: Unknown levels in `f`: Caenorhabditis elegans, Caenorhabditis</span>
 <span class="co">#&gt; tropicalis</span>
-<span class="co">#&gt; /Applications/RStudio.app/Contents/MacOS/pandoc/pandoc +RTS -K512m -RTS sampleReport.utf8.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash+smart --output /Users/tim/Desktop/2020JanuaryHawaii/reports/sampleReport.html --email-obfuscation none --self-contained --standalone --section-divs --table-of-contents --toc-depth 4 --variable toc_float=1 --variable toc_selectors=h1,h2,h3,h4 --variable toc_collapsed=1 --variable toc_smooth_scroll=1 --variable toc_print=1 --template /Library/Frameworks/R.framework/Versions/3.6/Resources/library/rmarkdown/rmd/h/default.html --no-highlight --variable highlightjs=1 --variable 'theme:bootstrap' --include-in-header /var/folders/lm/tby5m_cd0cs789xpcnwjm54h0000gn/T//RtmpHloZYC/rmarkdown-stre2647c147fc0.html --mathjax --variable 'mathjax-url:https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' --lua-filter /Library/Frameworks/R.framework/Versions/3.6/Resources/library/rmarkdown/rmd/lua/pagebreak.lua --lua-filter /Library/Frameworks/R.framework/Versions/3.6/Resources/library/rmarkdown/rmd/lua/latex-div.lua</span></code></pre></div>
+<span class="co">#&gt; /Applications/RStudio.app/Contents/MacOS/pandoc/pandoc +RTS -K512m -RTS sampleReport.utf8.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash+smart --output /Users/tim/Desktop/2020JanuaryHawaii/reports/sampleReport.html --email-obfuscation none --self-contained --standalone --section-divs --table-of-contents --toc-depth 4 --variable toc_float=1 --variable toc_selectors=h1,h2,h3,h4 --variable toc_collapsed=1 --variable toc_smooth_scroll=1 --variable toc_print=1 --template /Library/Frameworks/R.framework/Versions/3.6/Resources/library/rmarkdown/rmd/h/default.html --no-highlight --variable highlightjs=1 --variable 'theme:bootstrap' --include-in-header /var/folders/lm/tby5m_cd0cs789xpcnwjm54h0000gn/T//RtmpYNcjbB/rmarkdown-str30c5418b1b41.html --mathjax --variable 'mathjax-url:https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' --lua-filter /Library/Frameworks/R.framework/Versions/3.6/Resources/library/rmarkdown/rmd/lua/pagebreak.lua --lua-filter /Library/Frameworks/R.framework/Versions/3.6/Resources/library/rmarkdown/rmd/lua/latex-div.lua</span></code></pre></div>
 </div>
 </div>
   </div>

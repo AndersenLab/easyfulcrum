@@ -4,23 +4,32 @@
 \alias{readGenotypes}
 \title{readGenotypes}
 \usage{
-readGenotypes(gsKey, col_types = "cDDdcdcddddddDcDDdcdcdddddddcdcccddccc")
+readGenotypes(gsKey, col_types = "?")
 }
 \arguments{
-\item{gsKey}{a vector containing the google sheet keys for the genotype data to load.
-Your Google Sheet keys are found in your Google sheets URL. Select the string
-found between the slashes after spreadsheets/d in your Google Sheet URL.}
+\item{gsKey}{a vector containing the google sheet keys for the genotype data
+to load. Your Google Sheet keys are found in your Google sheets URL. Select
+the string found between the slashes after spreadsheets/d in your Google
+Sheet URL.}
 
-\item{col_types}{a single string of readr-style short codes. To let the column types be guessed
-specify \code{col_types} to \code{"?"}. See details here:
-https://googlesheets4.tidyverse.org/reference/read_sheet.html}
+\item{col_types}{a single string of readr-style short codes. Default is to
+let the column classes be guessed \code{col_types = "?"}.
+See details here:
+https://googlesheets4.tidyverse.org/reference/read_sheet.html
+If using the nematode genotyping template, the correct \code{col_types} are
+"cDDdcdcddddddDcDDdcdcdddddddcdcccddccc". If using the general genotyping
+template, the correct  \code{col_types} are "cccdcc". If using a customized
+genotyping sheet the user can specify the correct column classes or allow
+the fucnction to guess.}
 }
 \value{
-A dataframe generated from the Google sheets \code{gsKey} argument. If multiple Google sheets
-are provided the data are appended using rbind. Note, the genotyping sheet must contain variable names
-specified by the \code{wild_isolate_genotyping_template} and the data must be found on the sheet named
-\code{genotyping template}.
+A dataframe generated from the Google sheets \code{gsKey} argument.
+  If multiple Google sheets are provided the data are appended using rbind.
+  Note, the genotyping sheet must contain variable names specified by the
+  \code{wild_isolate_genotyping_template} and the data must be found on the
+  sheet named \code{genotyping template}.
 }
 \description{
-\code{readGenotypes} reads genotyping data from project specific genotyping Google sheets.
+\code{readGenotypes} reads genotyping data from project specific genotyping
+Google sheets.
 }

@@ -26,7 +26,7 @@ knitr::opts_knit$set(root.dir = '..')
 ```
 
 ```{r, include=F, echo=F, warning = F, message=F}
-map_target_species <- function(df, color_use) {
+map_general <- function(df, color_use) {
   
   icos <- iconList(
     red = makeIcon(
@@ -58,9 +58,6 @@ map_target_species <- function(df, color_use) {
     dplyr::mutate(substrate=ifelse(is.na(substrate), "", substrate)) %>%
     dplyr::arrange(species_id)
   
-  #print(df)
-  # "https://stamen-tiles-{s}.a.ssl.fastly.net/terrain/{z}/{x}/{y}.png"
-  #"https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}"
   attach(df)
   leaflet::leaflet(data = df, width = "100%", options = list(zoomControl = T)) %>%
     addProviderTiles("Stamen.Terrain") %>%
@@ -70,13 +67,10 @@ map_target_species <- function(df, color_use) {
                                              <strong>Collected by:</strong> {collection_by}<br />
                                              <strong>Latitidue, Longitude:</strong> {format(round(collection_latitude, 6), nsmall = 6)}, 
                                              {format(round(collection_longitude, 6), nsmall = 6)}<br />
-                                             <strong>Collection location:</strong> {collection_location}<br />
-                                             <strong>Collection island:</strong> {collection_island}<br />
-                                             <strong>Collection trail:</strong> {collection_trail}<br />
                                              <strong>Substrate:</strong> {substrate}<br />
-                                             <strong>C. elegans:</strong> {`C. elegans count`}
-                                             <strong>C. briggsae:</strong> {`C. briggsae count`}
-                                             <strong>C. tropicalis:</strong> {`C. tropicalis count`}<br />
+                                             <strong>{target_sp[1]}</strong> {count_1}
+                                             <strong>{target_sp[2]}</strong> {count_2}
+                                             <strong>{target_sp[3]}</strong> {count_3}<br />
                                            <img style='width: 150px;' src='{sample_photo1_processed_url}'></a>"),
                         popupOptions(maxWidth = 500),
                         icon = icos[ df[[color_use]] ] )
@@ -137,59 +131,40 @@ DT::datatable(personnel_isolation_dates, colnames = "Dates of isolation:",
 
 ## Collections
 
-The first of these tables describes the presence of nematodes on a collection plate, where "yes" signifies that worms are present, "no" signifies that no worms are present, and "tracks" denotes that only tracks are observed, but no worms were found. 
+This table describes whether isolations were made from a collection plate or not and tallies the number of collections in each class. 
 
 ```{r, echo=F, warning = F, message=T}
 # temporary table to collect enumerations on certain quantities of interest
 collection_counts_1 <- df %>%
   dplyr::filter(!is.na(c_label)) %>%
-  dplyr::mutate(class = 
-                  ifelse(grepl("^Caeno",species_id),species_id,
-                         ifelse(!is.na(species_id),"other-Caenorhabditis",
-                                ifelse((pcr_product_ssu == 1 & pcr_product_its2 == 0),"non-Caenorhabditis",
-                                ifelse((pcr_product_ssu == 0 & pcr_product_its2 == 0),"Unknown nematode",
-                                ifelse((pcr_product_its2 = 1 & is.na(species_id)),"its2 genotype missing",NA)))))) %>%
-  dplyr::mutate(collection_class = forcats::as_factor(class),
-                collection_class = forcats::fct_relevel(collection_class,
-                                       "C. elegans",
-                                       "C. tropicalis",
-                                       "C. briggsae",
-                                       "other-Caenorhabditis",
-                                       "non-Caenorhabditis",
-                                       "unknown nematode", 
-                                       "no nematode")) %>%
+  dplyr::group_by(c_label) %>%
+  dplyr::mutate(collection_class = case_when(length(unique(s_label)) >= 2 ~ "with isolates",
+                                  length(unique(s_label)) < 2 ~ "without isolates"),
+                collection_class = factor(collection_class, levels = c("with isolates", "without isolates"))) %>%
+  dplyr::ungroup() %>%
   dplyr::arrange(collection_class) %>%
   dplyr::distinct(c_label, .keep_all = TRUE) %>%
   dplyr::mutate(`total number of distinct collections` = n()) %>%
-  dplyr::add_count(worms_on_sample) %>%
-  dplyr::rename(worms_on_sample_counts = n) %>%
   dplyr::add_count(collection_class) %>%
   dplyr::rename(collection_class_counts = n) %>%
-  dplyr::select(c_label,worms_on_sample, collection_class,
+  dplyr::select(c_label,collection_class,
                 `total number of distinct collections`,
-                worms_on_sample_counts,
                 collection_class_counts) 
 
 collection_distinct <- pull(collection_counts_1%>%dplyr::distinct(`total number of distinct collections`)%>%dplyr::filter(!is.na(`total number of distinct collections`)))
 
-collection_worms_on_sample <- collection_counts_1%>%
-  dplyr::distinct(worms_on_sample,worms_on_sample_counts)
-
-collection_species_id <- collection_counts_1%>%
+collection_class <- collection_counts_1%>%
   dplyr::distinct(collection_class,collection_class_counts)
 
-collection_worms_on_sample <- data.frame(collection_worms_on_sample) 
-collection_worms_on_sample$worms_on_sample[is.na(collection_worms_on_sample$worms_on_sample)] <- "unknown/NA"
-collection_species_id <- data.frame(collection_species_id) 
-collection_species_id$collection_class <- fct_explicit_na(collection_species_id$collection_class, "unknown/NA")
+
+collection_class <- data.frame(collection_class) 
+collection_class$collection_class <- fct_explicit_na(collection_class$collection_class, "unknown/NA")
 
 message(paste("Total number of distinct collections:", 
             collection_distinct, sep = " "))
 
-DT::datatable(collection_worms_on_sample, colnames = c("worms on sample","number of collections"),
-              rownames = FALSE, filter = "none", options = list(dom = 't'))
 
-DT::datatable(collection_species_id, colnames = c("collection class","number of collections"),
+DT::datatable(collection_class, colnames = c("collection class","number of collections"),
               rownames = FALSE, filter = "none", options = list(dom = 't')) 
 ```
 
@@ -213,35 +188,37 @@ DT::datatable(collections_df, rownames = FALSE, colnames = c("C-label", "S-label
 ### All collections map
 
 ```{r, fig.height=5, fig.width=10, echo=F, warning = F, message=F}
-target_df <- df %>%
+all_map_df <- df %>%
+  dplyr::filter(!is.na(c_label)) %>%
+  dplyr::group_by(c_label) %>%
+  dplyr::mutate(collection_class = case_when(length(unique(s_label)) >= 2 ~ "with isolates",
+                                  length(unique(s_label)) < 2 ~ "without isolates"),
+                collection_class = factor(collection_class, levels = c("with isolates", "without isolates"))) %>%
+  dplyr::ungroup() %>%
   dplyr::group_by(c_label, species_id) %>%
   dplyr::mutate(species_count = n()) %>%
-  dplyr::mutate(`C. elegans count` = ifelse(species_id == "Caenorhabditis elegans" & !is.na(species_id), species_count, 0),
-                `C. briggsae count` = ifelse(species_id == "Caenorhabditis briggsae" & !is.na(species_id), species_count, 0),
-                `C. tropicalis count` = ifelse(species_id == "Caenorhabditis tropicalis" & !is.na(species_id), species_count, 0)) %>%
+  dplyr::mutate(`count_1` = ifelse(species_id == target_sp[1] & !is.na(species_id), species_count, 0),
+                `count_2` = ifelse(species_id == target_sp[2] & !is.na(species_id), species_count, 0),
+                `count_3` = ifelse(species_id == target_sp[3] & !is.na(species_id), species_count, 0)) %>%
   dplyr::ungroup() %>%
   dplyr::distinct(c_label, species_id, .keep_all =T) %>%
   dplyr::arrange(c_label, desc(species_count)) %>%
   dplyr::group_by(c_label) %>%
-  dplyr::mutate(`C. elegans count` = sum(`C. elegans count`),
-                `C. briggsae count` = sum(`C. briggsae count`),
-                `C. tropicalis count` = sum(`C. tropicalis count`)) %>%
+  dplyr::mutate(`count_1` = sum(`count_1`),
+                `count_2` = sum(`count_2`),
+                `count_3` = sum(`count_3`)) %>%
   dplyr::ungroup() %>%
   dplyr::distinct(c_label, .keep_all =T) %>%
-  dplyr::mutate(color = case_when(worms_on_sample == "Yes" ~ "red",
-                                  worms_on_sample == "No" ~ "blue",
-                                  worms_on_sample == "Tracks" ~ "orange",
-                                  is.na(worms_on_sample) ~ "black"))
+  dplyr::mutate(color = case_when(collection_class == "with isolates" ~ "red",
+                                  collection_class == "without isolates" ~ "black"))
 
-target_map <-  map_target_species(target_df,"color")
+general_map <-  map_general(all_map_df,"color")
 
-target_map
+general_map
 ```
 
-<font color="darkred">*red points*</font> are collections with worms on sample. 
-<br> <font color="darkblue">*blue points*</font>  are collections without worms on sample. 
-<br> <font color="orange">*orange points*</font>  are collections with tracks on sample. 
-<br> <font color="black">*black points*</font>  are collections that were NA. 
+<font color="darkred">*red points*</font> are collections with isolations. 
+<br> <font color="black">*black points*</font>  are collections without isolations. 
 
 ### All collections plots
 
@@ -315,11 +292,8 @@ cowplot::plot_grid(plot_atemp, plot_stemp, plot_ahum, plot_elev,
 ```{r, echo=F, warning = F, message=T}
 # temporary table to collect enumerations on certain quantities of interest
 isolation_counts_1 <- df %>%
-  dplyr::mutate(class = 
-                  ifelse(!is.na(species_id),species_id,
-                         ifelse((pcr_product_ssu == 1 & pcr_product_its2 == 0),"non-Caenorhabditis",
-                                ifelse((pcr_product_ssu == 0 & pcr_product_its2 == 0),"Unknown nematode",
-                                ifelse((pcr_product_its2 = 1 & is.na(species_id)),"its2 genotype missing",NA))))) %>%
+  dplyr::mutate(class = case_when(!is.na(species_id) ~ species_id,
+                            TRUE ~ NA_character_)) %>%
   dplyr::distinct(s_label, .keep_all = TRUE) %>%
   dplyr::filter(!is.na(s_label)) %>%
   dplyr::mutate(`total number of distinct isolations` = n()) %>%
@@ -343,19 +317,17 @@ DT::datatable(isolation_species_id, colnames = c("isolation class","number of is
               rownames = FALSE, filter = "none", options = list(dom = 't'))
 ```
 
-## Selfing *Caenorhabditis* species
+## Target species
 
-### Selfing *Caenorhabditis* table
+### Target species table
 
 ```{r, echo=F, warning = F, message=F}
-selfing_df <- df %>% dplyr::filter(species_id %in% c("Caenorhabditis elegans", 
-                                                    "Caenorhabditis tropicalis", 
-                                                    "Caenorhabditis briggsae")) %>%
+target_df <- df %>% dplyr::filter(species_id %in% target_sp) %>%
   dplyr::select(c_label,s_label,species_id,proc_ambient_temperature,ambient_humidity,
                 proc_substrate_temperature,collection_altitude, substrate,
                 landscape, collection_by)
 
-DT::datatable(selfing_df, rownames = FALSE, colnames = c("C-label", "S-label",
+DT::datatable(target_df, rownames = FALSE, colnames = c("C-label", "S-label",
                                                         "SpeciesID", "AmbientTemp",
                                                         "AmbientHumidity",
                                                         "SubstrateTemp", "Altitude", 
@@ -364,52 +336,57 @@ DT::datatable(selfing_df, rownames = FALSE, colnames = c("C-label", "S-label",
               filter = "none", options = list(dom = 'ftrp', scrollX = '200px'))
 ```
 
-### Selfing *Caenorhabditis* map
+### Target species map
 
 ```{r, fig.height=5, fig.width=10, echo=F, warning = F, message=F}
-target_df <- df %>%
+target_map_df <- df %>%
+  dplyr::filter(!is.na(c_label)) %>%
+  dplyr::group_by(c_label) %>%
+  dplyr::mutate(collection_class = case_when(length(unique(s_label)) >= 2 ~ "with isolates",
+                                  length(unique(s_label)) < 2 ~ "without isolates"),
+                collection_class = factor(collection_class, levels = c("with isolates", "without isolates"))) %>%
+  dplyr::ungroup() %>%
   dplyr::group_by(c_label, species_id) %>%
   dplyr::mutate(species_count = n()) %>%
-  dplyr::mutate(`C. elegans count` = ifelse(species_id == "Caenorhabditis elegans" & !is.na(species_id), species_count, 0),
-                `C. briggsae count` = ifelse(species_id == "Caenorhabditis briggsae" & !is.na(species_id), species_count, 0),
-                `C. tropicalis count` = ifelse(species_id == "Caenorhabditis tropicalis" & !is.na(species_id), species_count, 0)) %>%
+  dplyr::mutate(`count_1` = ifelse(species_id == target_sp[1] & !is.na(species_id), species_count, 0),
+                `count_2` = ifelse(species_id == target_sp[2] & !is.na(species_id), species_count, 0),
+                `count_3` = ifelse(species_id == target_sp[3] & !is.na(species_id), species_count, 0)) %>%
   dplyr::ungroup() %>%
   dplyr::distinct(c_label, species_id, .keep_all =T) %>%
   dplyr::arrange(c_label, desc(species_count)) %>%
   dplyr::group_by(c_label) %>%
-  dplyr::mutate(`C. elegans count` = sum(`C. elegans count`),
-                `C. briggsae count` = sum(`C. briggsae count`),
-                `C. tropicalis count` = sum(`C. tropicalis count`)) %>%
+  dplyr::mutate(`count_1` = sum(`count_1`),
+                `count_2` = sum(`count_2`),
+                `count_3` = sum(`count_3`)) %>%
   dplyr::ungroup() %>%
-  dplyr::filter(species_id %in% c("Caenorhabditis elegans", "Caenorhabditis briggsae", "Caenorhabditis tropicalis")) %>%
+  dplyr::filter(species_id %in% target_sp) %>%
   dplyr::distinct(c_label, .keep_all =T) %>%
   dplyr::mutate(color = "black") 
 
-target_map <-  map_target_species(target_df,"color")
+target_map <-  map_general(target_map_df,"color")
 
 target_map
 ```
 
-### Selfing *Caenorhabditis* plots
+### Target species plots
 
 ```{r, fig.height=8, fig.width=8, echo=F, warning = F, message=F}
-stat_df <- df%>%
-  dplyr::filter(species_id %in% c("Caenorhabditis elegans", "Caenorhabditis tropicalis", 
-                                  "Caenorhabditis briggsae")) %>%
+stat_df <- df %>%
+  dplyr::filter(species_id %in% target_sp) %>%
   dplyr::distinct(project, c_label, species_id, .keep_all = T) %>%
   dplyr::select(project, c_label, s_label, species_id, proc_ambient_temperature,
                 ambient_humidity, proc_substrate_temperature, collection_altitude) %>%
-  dplyr::mutate(species_id = forcats::as_factor(species_id),
-                species_id = forcats::fct_relevel(species_id,
-                                                      "Caenorhabditis elegans",
-                                                      "Caenorhabditis tropicalis",
-                                                      "Caenorhabditis briggsae")) %>%
+  dplyr::mutate(species_id = factor(species_id, levels = target_sp)) %>%
   tidyr::gather(env_par, value, proc_ambient_temperature,ambient_humidity,
                 proc_substrate_temperature, collection_altitude)
 
+# make a palette for up to 5 target species
+target_palette <- c("red","blue","orange", "green", "pruple")
+names(target_palette) <- target_sp
+
 plot_atemp <- ggplot(data = stat_df %>% dplyr::filter(env_par == "proc_ambient_temperature")) +
   geom_boxplot(aes(x = species_id, y = value, fill = species_id), outlier.color = NA) +
-  scale_fill_manual(values=c("red","blue","orange")) +
+  scale_fill_manual(values= target_palette) +
   geom_jitter(aes(x = species_id, y = value, shape = project), size = 1.5, width = .25) +
   theme_bw() +
   theme(axis.title = element_text(size = 8, color = "black"),
@@ -423,7 +400,7 @@ plot_atemp <- ggplot(data = stat_df %>% dplyr::filter(env_par == "proc_ambient_t
         legend.position = "none")
 plot_stemp <- ggplot(data = stat_df %>% dplyr::filter(env_par == "proc_substrate_temperature")) +
   geom_boxplot(aes(x = species_id, y = value, fill = species_id), outlier.color = NA) +
-  scale_fill_manual(values=c("red","blue","orange")) +
+  scale_fill_manual(values= target_palette) +
   geom_jitter(aes(x = species_id, y = value, shape = project), size = 1.5, width = .25) +
   theme_bw() +
   theme(axis.title = element_text(size = 8, color = "black"),
@@ -437,7 +414,7 @@ plot_stemp <- ggplot(data = stat_df %>% dplyr::filter(env_par == "proc_substrate
         legend.position = "none")
 plot_ahum <- ggplot(data = stat_df %>% dplyr::filter(env_par == "ambient_humidity")) +
   geom_boxplot(aes(x = species_id, y = value, fill = species_id), outlier.color = NA) +
-  scale_fill_manual(values=c("red","blue","orange")) +
+  scale_fill_manual(values= target_palette) +
   geom_jitter(aes(x = species_id, y = value, shape = project), size = 1.5, width = .25) +
   theme_bw() +
   theme(axis.title = element_text(size = 8, color = "black"),
@@ -451,7 +428,7 @@ plot_ahum <- ggplot(data = stat_df %>% dplyr::filter(env_par == "ambient_humidit
         legend.position = "none")
 plot_elev <- ggplot(data = stat_df %>% dplyr::filter(env_par == "collection_altitude")) +
   geom_boxplot(aes(x = species_id, y = value, fill = species_id), outlier.color = NA) +
-  scale_fill_manual(values=c("red","blue","orange")) +
+  scale_fill_manual(values= target_palette) +
   geom_jitter(aes(x = species_id, y = value, shape = project), size = 1.5, width = .25) +
   theme_bw() +
   theme(axis.title = element_text(size = 8, color = "black"),
@@ -468,28 +445,28 @@ cowplot::plot_grid(plot_atemp, plot_stemp, plot_ahum, plot_elev,
                    ncol = 2, nrow = 2, align = "hv", axis = "l")
 ```
 
-### Selfing *Caenorhabditis* species
+### Target species
 
-#### C. elegans
+`r if(!is.na(target_sp[1])){target_sp[1]}`
 
-```{r, elegans, echo=F, warning = T, message=F}
-elegans_eval <- ifelse(df %>% 
-                      dplyr::filter(species_id == "Caenorhabditis elegans") %>%
+```{r, echo=F, warning = T, message=F}
+eval_1 <- ifelse(df %>% 
+                      dplyr::filter(species_id == target_sp[1]) %>%
                       dplyr::pull(c_label) %>% length()==0,
                     FALSE,TRUE)
 
-if(elegans_eval == FALSE) {
-  warning("No collections in this project isolated C. elegans samples")
+if(eval_1 == FALSE) {
+  warning(paste("There were no", target_sp[1], "isolates for this collection project", sep = " "))
 }
 ```
 
-```{r, echo=F, warning = F, message=F, eval=elegans_eval}
-elegans_df <- df %>% dplyr::filter(species_id == "Caenorhabditis elegans") %>%
+```{r, echo=F, warning = F, message=F, eval=eval_1}
+df_1 <- df %>% dplyr::filter(species_id == target_sp[1]) %>%
   dplyr::select(c_label,s_label,species_id,proc_ambient_temperature,ambient_humidity,
                 proc_substrate_temperature,collection_altitude, substrate,
                 landscape, collection_by)
 
-DT::datatable(elegans_df, rownames = FALSE, colnames = c("C-label", "S-label",
+DT::datatable(df_1, rownames = FALSE, colnames = c("C-label", "S-label",
                                                         "SpeciesID", "AmbientTemp",
                                                         "AmbientHumidity",
                                                         "SubstrateTemp", "Altitude", 
@@ -498,47 +475,21 @@ DT::datatable(elegans_df, rownames = FALSE, colnames = c("C-label", "S-label",
               filter = "none", options = list(dom = 'ftrp', scrollX = '200px'))
 ```
 
-```{r, fig.height=5, fig.width=10, echo=F, warning = F, message=F, eval=elegans_eval}
-target_df <- df %>%
-  dplyr::group_by(c_label, species_id) %>%
-  dplyr::mutate(species_count = n()) %>%
-  dplyr::mutate(`C. elegans count` = ifelse(species_id == "Caenorhabditis elegans" & !is.na(species_id), species_count, 0),
-                `C. briggsae count` = ifelse(species_id == "Caenorhabditis briggsae" & !is.na(species_id), species_count, 0),
-                `C. tropicalis count` = ifelse(species_id == "Caenorhabditis tropicalis" & !is.na(species_id), species_count, 0)) %>%
-  dplyr::ungroup() %>%
-  dplyr::distinct(c_label, species_id, .keep_all =T) %>%
-  dplyr::arrange(c_label, desc(species_count)) %>%
-  dplyr::group_by(c_label) %>%
-  dplyr::mutate(`C. elegans count` = sum(`C. elegans count`),
-                `C. briggsae count` = sum(`C. briggsae count`),
-                `C. tropicalis count` = sum(`C. tropicalis count`)) %>%
-  dplyr::ungroup() %>%
-  dplyr::filter(species_id == "Caenorhabditis elegans") %>%
-  dplyr::distinct(c_label, .keep_all =T) %>%
-  dplyr::mutate(color = case_when(species_id == "Caenorhabditis elegans" ~ "red",
-                                  species_id == "Caenorhabditis briggsae" ~ "blue",
-                                  species_id == "Caenorhabditis tropicalis" ~ "orange")) 
-  
-target_map <-  map_target_species(target_df,"color")
+```{r, fig.height=5, fig.width=10, echo=F, warning = F, message=F, eval=eval_1}
+target_df_1 <- target_map_df %>%
+  dplyr::filter(species_id == target_sp[1]) %>%
+  dplyr::mutate(color =  target_palette[[1]])
 
-target_map
+target_map_1 <-  map_general(target_df_1,"color")
+
+target_map_1
 ```
 
-```{r, fig.height=8, fig.width=8, echo=F, warning = F, message=F, eval=elegans_eval}
-stat_df <- df%>%
-  dplyr::filter(species_id == "Caenorhabditis elegans") %>%
-  dplyr::distinct(project, c_label, species_id, .keep_all = T) %>%
-  dplyr::select(project, c_label, s_label, species_id, proc_ambient_temperature,
-                ambient_humidity, proc_substrate_temperature, collection_altitude) %>%
-  dplyr::mutate(species_id = forcats::as_factor(species_id),
-                species_id = forcats::fct_relevel(species_id,
-                                                      "Caenorhabditis elegans",
-                                                      "Caenorhabditis tropicalis",
-                                                      "Caenorhabditis briggsae")) %>%
-  tidyr::gather(env_par, value, proc_ambient_temperature,ambient_humidity,
-                proc_substrate_temperature, collection_altitude)
+```{r, fig.height=8, fig.width=8, echo=F, warning = F, message=F, eval=eval_1}
+stat_df_1 <- stat_df %>%
+  dplyr::filter(species_id == target_sp[1])
 
-plot_atemp <- ggplot(data = stat_df %>% dplyr::filter(env_par == "proc_ambient_temperature")) +
+plot_atemp <- ggplot(data = stat_df_1 %>% dplyr::filter(env_par == "proc_ambient_temperature")) +
   geom_boxplot(aes(x = species_id, y = value, fill = species_id), outlier.color = NA) +
   scale_fill_manual(values=c("red","blue","orange")) +
   geom_jitter(aes(x = species_id, y = value, shape = project), size = 1.5, width = .25) +
@@ -552,7 +503,7 @@ plot_atemp <- ggplot(data = stat_df %>% dplyr::filter(env_par == "proc_ambient_t
         axis.title.y = element_text(size = 9, face = "bold", color = "black"),
         plot.margin = unit(c(0,1,1,1), "lines"),
         legend.position = "none")
-plot_stemp <- ggplot(data = stat_df %>% dplyr::filter(env_par == "proc_substrate_temperature")) +
+plot_stemp <- ggplot(data = stat_df_1 %>% dplyr::filter(env_par == "proc_substrate_temperature")) +
   geom_boxplot(aes(x = species_id, y = value, fill = species_id), outlier.color = NA) +
   scale_fill_manual(values=c("red","blue","orange")) +
   geom_jitter(aes(x = species_id, y = value, shape = project), size = 1.5, width = .25) +
@@ -566,7 +517,7 @@ plot_stemp <- ggplot(data = stat_df %>% dplyr::filter(env_par == "proc_substrate
         axis.title.y = element_text(size = 9, face = "bold", color = "black"),
         plot.margin = unit(c(0,1,1,1), "lines"),
         legend.position = "none")
-plot_ahum <- ggplot(data = stat_df %>% dplyr::filter(env_par == "ambient_humidity")) +
+plot_ahum <- ggplot(data = stat_df_1 %>% dplyr::filter(env_par == "ambient_humidity")) +
   geom_boxplot(aes(x = species_id, y = value, fill = species_id), outlier.color = NA) +
   scale_fill_manual(values=c("red","blue","orange")) +
   geom_jitter(aes(x = species_id, y = value, shape = project), size = 1.5, width = .25) +
@@ -580,7 +531,7 @@ plot_ahum <- ggplot(data = stat_df %>% dplyr::filter(env_par == "ambient_humidit
         axis.title.y = element_text(size = 9, face = "bold", color = "black"),
         plot.margin = unit(c(0,1,1,1), "lines"),
         legend.position = "none")
-plot_elev <- ggplot(data = stat_df %>% dplyr::filter(env_par == "collection_altitude")) +
+plot_elev <- ggplot(data = stat_df_1 %>% dplyr::filter(env_par == "collection_altitude")) +
   geom_boxplot(aes(x = species_id, y = value, fill = species_id), outlier.color = NA) +
   scale_fill_manual(values=c("red","blue","orange")) +
   geom_jitter(aes(x = species_id, y = value, shape = project), size = 1.5, width = .25) +
@@ -599,77 +550,52 @@ cowplot::plot_grid(plot_atemp, plot_stemp, plot_ahum, plot_elev,
                    ncol = 2, nrow = 2, align = "hv", axis = "l")
 ```
 
-#### C. briggsae
+`r if(!is.na(target_sp[1])){target_sp[2]}`
 
-```{r, brigg, echo=F, warning = T, message=F}
-briggsae_eval <- ifelse(df %>% 
-                      dplyr::filter(species_id == "Caenorhabditis briggsae") %>%
-                      dplyr::pull(c_label) %>% length()==0,
-                    FALSE,TRUE)
+```{r, echo=F, warning = T, message=F}
+eval_2 <- ifelse(df %>% 
+                   dplyr::filter(species_id == target_sp[2]) %>%
+                   dplyr::pull(c_label) %>% length()==0,
+                 FALSE,TRUE)
 
-if(briggsae_eval == FALSE) {
-  warning("No collections in this project isolated C. briggsae samples")
+if(eval_2 == FALSE) {
+   warning(paste("There were no", target_sp[2], "isolates for this collection project", sep = " "))
 }
 ```
 
-```{r, echo=F, warning = F, message=F, eval=briggsae_eval}
-briggsae_df <- df %>% dplyr::filter(species_id == "Caenorhabditis briggsae") %>%
+```{r, echo=F, warning = F, message=F, eval=eval_2}
+df_2 <- df %>% dplyr::filter(species_id == target_sp[2]) %>%
   dplyr::select(c_label,s_label,species_id,proc_ambient_temperature,ambient_humidity,
                 proc_substrate_temperature,collection_altitude, substrate,
                 landscape, collection_by)
 
-DT::datatable(briggsae_df, rownames = FALSE, colnames = c("C-label", "S-label",
-                                                        "SpeciesID", "AmbientTemp",
-                                                        "AmbientHumidity",
-                                                        "SubstrateTemp", "Altitude", 
-                                                        "Substrate", "Landscape",
-                                                        "CollectedBy"),
+DT::datatable(df_2, rownames = FALSE, colnames = c("C-label", "S-label",
+                                                   "SpeciesID", "AmbientTemp",
+                                                   "AmbientHumidity",
+                                                   "SubstrateTemp", "Altitude", 
+                                                   "Substrate", "Landscape",
+                                                   "CollectedBy"),
               filter = "none", options = list(dom = 'ftrp', scrollX = '200px'))
 ```
 
-```{r, fig.height=5, fig.width=10, echo=F, warning = F, message=F, eval=briggsae_eval}
-target_df <- df %>%
-  dplyr::group_by(c_label, species_id) %>%
-  dplyr::mutate(species_count = n()) %>%
-  dplyr::mutate(`C. elegans count` = ifelse(species_id == "Caenorhabditis elegans" & !is.na(species_id), species_count, 0),
-                `C. briggsae count` = ifelse(species_id == "Caenorhabditis briggsae" & !is.na(species_id), species_count, 0),
-                `C. tropicalis count` = ifelse(species_id == "Caenorhabditis tropicalis" & !is.na(species_id), species_count, 0)) %>%
-  dplyr::ungroup() %>%
-  dplyr::distinct(c_label, species_id, .keep_all =T) %>%
-  dplyr::arrange(c_label, desc(species_count)) %>%
-  dplyr::group_by(c_label) %>%
-  dplyr::mutate(`C. elegans count` = sum(`C. elegans count`),
-                `C. briggsae count` = sum(`C. briggsae count`),
-                `C. tropicalis count` = sum(`C. tropicalis count`)) %>%
-  dplyr::ungroup() %>%
-  dplyr::filter(species_id == "Caenorhabditis briggsae") %>%
-  dplyr::distinct(c_label, .keep_all =T) %>%
-  dplyr::mutate(color = case_when(species_id == "Caenorhabditis elegans" ~ "red",
-                                  species_id == "Caenorhabditis briggsae" ~ "blue",
-                                  species_id == "Caenorhabditis tropicalis" ~ "orange")) 
+```{r, fig.height=5, fig.width=10, echo=F, warning = F, message=F, eval=eval_2}
+target_df_2 <- target_map_df %>%
+  dplyr::filter(species_id == target_sp[2]) %>%
+  dplyr::mutate(color = target_palette[[2]])
 
-target_map <-  map_target_species(target_df,"color")
 
-target_map
+target_map_2 <-  map_general(target_df_2,"color")
+
+target_map_2
 ```
 
-```{r, fig.height=8, fig.width=8, echo=F, warning = F, message=F, eval=briggsae_eval}
-stat_df <- df%>%
-  dplyr::filter(species_id == "Caenorhabditis briggsae") %>%
-  dplyr::distinct(project, c_label, species_id, .keep_all = T) %>%
-  dplyr::select(project, c_label, s_label, species_id, proc_ambient_temperature,
-                ambient_humidity, proc_substrate_temperature, collection_altitude) %>%
-  dplyr::mutate(species_id = forcats::as_factor(species_id),
-                species_id = forcats::fct_relevel(species_id,
-                                                      "Caenorhabditis elegans",
-                                                      "Caenorhabditis tropicalis",
-                                                      "Caenorhabditis briggsae")) %>%
-  tidyr::gather(env_par, value, proc_ambient_temperature,ambient_humidity,
-                proc_substrate_temperature, collection_altitude)
+```{r, fig.height=8, fig.width=8, echo=F, warning = F, message=F, eval=eval_2}
+stat_df_2 <- stat_df %>%
+  dplyr::filter(species_id == target_sp[2])
 
-plot_atemp <- ggplot(data = stat_df %>% dplyr::filter(env_par == "proc_ambient_temperature")) +
+plot_atemp <- ggplot(data = stat_df_2 %>% dplyr::filter(env_par == "proc_ambient_temperature")) +
   geom_boxplot(aes(x = species_id, y = value, fill = species_id), outlier.color = NA) +
-  scale_fill_manual(values=c("red","blue","orange")) +
+  scale_fill_manual(values = target_palette) +
   geom_jitter(aes(x = species_id, y = value, shape = project), size = 1.5, width = .25) +
   theme_bw() +
   theme(axis.title = element_text(size = 8, color = "black"),
@@ -681,9 +607,9 @@ plot_atemp <- ggplot(data = stat_df %>% dplyr::filter(env_par == "proc_ambient_t
         axis.title.y = element_text(size = 9, face = "bold", color = "black"),
         plot.margin = unit(c(0,1,1,1), "lines"),
         legend.position = "none")
-plot_stemp <- ggplot(data = stat_df %>% dplyr::filter(env_par == "proc_substrate_temperature")) +
+plot_stemp <- ggplot(data = stat_df_2 %>% dplyr::filter(env_par == "proc_substrate_temperature")) +
   geom_boxplot(aes(x = species_id, y = value, fill = species_id), outlier.color = NA) +
-  scale_fill_manual(values=c("red","blue","orange")) +
+  scale_fill_manual(values = target_palette) +
   geom_jitter(aes(x = species_id, y = value, shape = project), size = 1.5, width = .25) +
   theme_bw() +
   theme(axis.title = element_text(size = 8, color = "black"),
@@ -695,9 +621,9 @@ plot_stemp <- ggplot(data = stat_df %>% dplyr::filter(env_par == "proc_substrate
         axis.title.y = element_text(size = 9, face = "bold", color = "black"),
         plot.margin = unit(c(0,1,1,1), "lines"),
         legend.position = "none")
-plot_ahum <- ggplot(data = stat_df %>% dplyr::filter(env_par == "ambient_humidity")) +
+plot_ahum <- ggplot(data = stat_df_2 %>% dplyr::filter(env_par == "ambient_humidity")) +
   geom_boxplot(aes(x = species_id, y = value, fill = species_id), outlier.color = NA) +
-  scale_fill_manual(values=c("red","blue","orange")) +
+  scale_fill_manual(values = target_palette) +
   geom_jitter(aes(x = species_id, y = value, shape = project), size = 1.5, width = .25) +
   theme_bw() +
   theme(axis.title = element_text(size = 8, color = "black"),
@@ -709,9 +635,9 @@ plot_ahum <- ggplot(data = stat_df %>% dplyr::filter(env_par == "ambient_humidit
         axis.title.y = element_text(size = 9, face = "bold", color = "black"),
         plot.margin = unit(c(0,1,1,1), "lines"),
         legend.position = "none")
-plot_elev <- ggplot(data = stat_df %>% dplyr::filter(env_par == "collection_altitude")) +
+plot_elev <- ggplot(data = stat_df_2 %>% dplyr::filter(env_par == "collection_altitude")) +
   geom_boxplot(aes(x = species_id, y = value, fill = species_id), outlier.color = NA) +
-  scale_fill_manual(values=c("red","blue","orange")) +
+  scale_fill_manual(values = target_palette) +
   geom_jitter(aes(x = species_id, y = value, shape = project), size = 1.5, width = .25) +
   theme_bw() +
   theme(axis.title = element_text(size = 8, color = "black"),
@@ -728,77 +654,52 @@ cowplot::plot_grid(plot_atemp, plot_stemp, plot_ahum, plot_elev,
                    ncol = 2, nrow = 2, align = "hv", axis = "l")
 ```
 
-#### C. tropicalis
 
-```{r, trop, echo=F, warning = T, message=F}
-tropicalis_eval <- ifelse(df %>% 
-                            dplyr::filter(species_id == "Caenorhabditis tropicalis") %>%
-                            dplyr::pull(c_label) %>% length()==0,
-                          FALSE,TRUE)
+`r if(!is.na(target_sp[1])){target_sp[3]}`
 
-if(tropicalis_eval == FALSE) {
-  warning("No collections in this project isolated C. tropicalis samples")
+```{r, echo=F, warning = T, message=F}
+eval_3 <- ifelse(df %>% 
+                   dplyr::filter(species_id == target_sp[3]) %>%
+                   dplyr::pull(c_label) %>% length()==0,
+                 FALSE,TRUE)
+
+if(eval_3 == FALSE) {
+   warning(paste("There were no", target_sp[3], "isolates for this collection project", sep = " "))
 }
 ```
 
-```{r, echo=F, warning = F, message=F, eval=tropicalis_eval}
-tropicalis_df <- df %>% dplyr::filter(species_id == "Caenorhabditis tropicalis") %>%
+```{r, echo=F, warning = F, message=F, eval=eval_3}
+df_3 <- df %>% dplyr::filter(species_id == target_sp[3]) %>%
   dplyr::select(c_label,s_label,species_id,proc_ambient_temperature,ambient_humidity,
                 proc_substrate_temperature,collection_altitude, substrate,
                 landscape, collection_by)
 
-DT::datatable(tropicalis_df, rownames = FALSE, colnames = c("C-label", "S-label",
-                                                            "SpeciesID", "AmbientTemp",
-                                                            "AmbientHumidity",
-                                                            "SubstrateTemp", "Altitude", 
-                                                            "Substrate", "Landscape",
-                                                            "CollectedBy"),
+DT::datatable(df_3, rownames = FALSE, colnames = c("C-label", "S-label",
+                                                   "SpeciesID", "AmbientTemp",
+                                                   "AmbientHumidity",
+                                                   "SubstrateTemp", "Altitude", 
+                                                   "Substrate", "Landscape",
+                                                   "CollectedBy"),
               filter = "none", options = list(dom = 'ftrp', scrollX = '200px'))
 ```
 
-```{r, fig.height=5, fig.width=10, echo=F, warning = F, message=F, eval=tropicalis_eval}
-target_df <- df %>%
-  dplyr::group_by(c_label, species_id) %>%
-  dplyr::mutate(species_count = n()) %>%
-  dplyr::mutate(`C. elegans count` = ifelse(species_id == "Caenorhabditis elegans" & !is.na(species_id), species_count, 0),
-                `C. briggsae count` = ifelse(species_id == "Caenorhabditis briggsae" & !is.na(species_id), species_count, 0),
-                `C. tropicalis count` = ifelse(species_id == "Caenorhabditis tropicalis" & !is.na(species_id), species_count, 0)) %>%
-  dplyr::ungroup() %>%
-  dplyr::distinct(c_label, species_id, .keep_all =T) %>%
-  dplyr::arrange(c_label, desc(species_count)) %>%
-  dplyr::group_by(c_label) %>%
-  dplyr::mutate(`C. elegans count` = sum(`C. elegans count`),
-                `C. briggsae count` = sum(`C. briggsae count`),
-                `C. tropicalis count` = sum(`C. tropicalis count`)) %>%
-  dplyr::ungroup() %>%
-  dplyr::filter(species_id == "Caenorhabditis tropicalis") %>%
-  dplyr::distinct(c_label, .keep_all =T) %>%
-  dplyr::mutate(color = case_when(species_id == "Caenorhabditis elegans" ~ "red",
-                                  species_id == "Caenorhabditis briggsae" ~ "blue",
-                                  species_id == "Caenorhabditis tropicalis" ~ "orange")) 
+```{r, fig.height=5, fig.width=10, echo=F, warning = F, message=F, eval=eval_3}
+target_df_3 <- target_map_df %>%
+  dplyr::filter(species_id == target_sp[3]) %>%
+  dplyr::mutate(color =  target_palette[[3]])
 
-target_map <-  map_target_species(target_df,"color")
+target_map_3 <-  map_general(target_df_3,"color")
 
-target_map
+target_map_3
 ```
 
-```{r, fig.height=8, fig.width=8, echo=F, warning = F, message=F, eval=tropicalis_eval}
-stat_df <- df%>%
-  dplyr::filter(species_id == "Caenorhabditis tropicalis") %>%
-  dplyr::distinct(project, c_label, species_id, .keep_all = T) %>%
-  dplyr::select(project, c_label, s_label, species_id, proc_ambient_temperature,
-                ambient_humidity, proc_substrate_temperature, collection_altitude) %>%
-  dplyr::mutate(species_id = forcats::as_factor(species_id),
-                species_id = forcats::fct_relevel(species_id,
-                                                  "Caenorhabditis elegans",
-                                                  "Caenorhabditis tropicalis",
-                                                  "Caenorhabditis briggsae")) %>%
-  tidyr::gather(env_par, value, proc_ambient_temperature,ambient_humidity,
-                proc_substrate_temperature, collection_altitude)
+```{r, fig.height=8, fig.width=8, echo=F, warning = F, message=F, eval=eval_3}
+stat_df_3 <- stat_df %>%
+  dplyr::filter(species_id == target_sp[3])
 
-plot_atemp <- ggplot(data = stat_df %>% dplyr::filter(env_par == "proc_ambient_temperature")) +
+plot_atemp <- ggplot(data = stat_df_3 %>% dplyr::filter(env_par == "proc_ambient_temperature")) +
   geom_boxplot(aes(x = species_id, y = value, fill = species_id), outlier.color = NA) +
-  scale_fill_manual(values=c("red","blue","orange")) +
+  scale_fill_manual(values = target_palette) +
   geom_jitter(aes(x = species_id, y = value, shape = project), size = 1.5, width = .25) +
   theme_bw() +
   theme(axis.title = element_text(size = 8, color = "black"),
@@ -810,9 +711,9 @@ plot_atemp <- ggplot(data = stat_df %>% dplyr::filter(env_par == "proc_ambient_t
         axis.title.y = element_text(size = 9, face = "bold", color = "black"),
         plot.margin = unit(c(0,1,1,1), "lines"),
         legend.position = "none")
-plot_stemp <- ggplot(data = stat_df %>% dplyr::filter(env_par == "proc_substrate_temperature")) +
+plot_stemp <- ggplot(data = stat_df_3 %>% dplyr::filter(env_par == "proc_substrate_temperature")) +
   geom_boxplot(aes(x = species_id, y = value, fill = species_id), outlier.color = NA) +
-  scale_fill_manual(values=c("red","blue","orange")) +
+  scale_fill_manual(values = target_palette) +
   geom_jitter(aes(x = species_id, y = value, shape = project), size = 1.5, width = .25) +
   theme_bw() +
   theme(axis.title = element_text(size = 8, color = "black"),
@@ -824,9 +725,9 @@ plot_stemp <- ggplot(data = stat_df %>% dplyr::filter(env_par == "proc_substrate
         axis.title.y = element_text(size = 9, face = "bold", color = "black"),
         plot.margin = unit(c(0,1,1,1), "lines"),
         legend.position = "none")
-plot_ahum <- ggplot(data = stat_df %>% dplyr::filter(env_par == "ambient_humidity")) +
+plot_ahum <- ggplot(data = stat_df_3 %>% dplyr::filter(env_par == "ambient_humidity")) +
   geom_boxplot(aes(x = species_id, y = value, fill = species_id), outlier.color = NA) +
-  scale_fill_manual(values=c("red","blue","orange")) +
+  scale_fill_manual(values = target_palette) +
   geom_jitter(aes(x = species_id, y = value, shape = project), size = 1.5, width = .25) +
   theme_bw() +
   theme(axis.title = element_text(size = 8, color = "black"),
@@ -838,9 +739,9 @@ plot_ahum <- ggplot(data = stat_df %>% dplyr::filter(env_par == "ambient_humidit
         axis.title.y = element_text(size = 9, face = "bold", color = "black"),
         plot.margin = unit(c(0,1,1,1), "lines"),
         legend.position = "none")
-plot_elev <- ggplot(data = stat_df %>% dplyr::filter(env_par == "collection_altitude")) +
+plot_elev <- ggplot(data = stat_df_3 %>% dplyr::filter(env_par == "collection_altitude")) +
   geom_boxplot(aes(x = species_id, y = value, fill = species_id), outlier.color = NA) +
-  scale_fill_manual(values=c("red","blue","orange")) +
+  scale_fill_manual(values = target_palette) +
   geom_jitter(aes(x = species_id, y = value, shape = project), size = 1.5, width = .25) +
   theme_bw() +
   theme(axis.title = element_text(size = 8, color = "black"),

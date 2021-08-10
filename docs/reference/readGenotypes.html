@@ -40,7 +40,8 @@
 
 
 <meta property="og:title" content="readGenotypes — readGenotypes" />
-<meta property="og:description" content="readGenotypes reads genotyping data from project specific genotyping Google sheets." />
+<meta property="og:description" content="readGenotypes reads genotyping data from project specific genotyping
+Google sheets." />
 
 
 
@@ -121,34 +122,43 @@
     </div>
 
     <div class="ref-description">
-    <p><code>readGenotypes</code> reads genotyping data from project specific genotyping Google sheets.</p>
+    <p><code>readGenotypes</code> reads genotyping data from project specific genotyping
+Google sheets.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>readGenotypes</span><span class='op'>(</span><span class='va'>gsKey</span>, col_types <span class='op'>=</span> <span class='st'>"cDDdcdcddddddDcDDdcdcdddddddcdcccddccc"</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>readGenotypes</span><span class='op'>(</span><span class='va'>gsKey</span>, col_types <span class='op'>=</span> <span class='st'>"?"</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>gsKey</th>
-      <td><p>a vector containing the google sheet keys for the genotype data to load.
-Your Google Sheet keys are found in your Google sheets URL. Select the string
-found between the slashes after spreadsheets/d in your Google Sheet URL.</p></td>
+      <td><p>a vector containing the google sheet keys for the genotype data
+to load. Your Google Sheet keys are found in your Google sheets URL. Select
+the string found between the slashes after spreadsheets/d in your Google
+Sheet URL.</p></td>
     </tr>
     <tr>
       <th>col_types</th>
-      <td><p>a single string of readr-style short codes. To let the column types be guessed
-specify <code>col_types</code> to <code>"?"</code>. See details here:
-https://googlesheets4.tidyverse.org/reference/read_sheet.html</p></td>
+      <td><p>a single string of readr-style short codes. Default is to
+let the column classes be guessed <code>col_types = "?"</code>.
+See details here:
+https://googlesheets4.tidyverse.org/reference/read_sheet.html
+If using the nematode genotyping template, the correct <code>col_types</code> are
+"cDDdcdcddddddDcDDdcdcdddddddcdcccddccc". If using the general genotyping
+template, the correct  <code>col_types</code> are "cccdcc". If using a customized
+genotyping sheet the user can specify the correct column classes or allow
+the fucnction to guess.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A dataframe generated from the Google sheets <code>gsKey</code> argument. If multiple Google sheets
-are provided the data are appended using rbind. Note, the genotyping sheet must contain variable names
-specified by the <code>wild_isolate_genotyping_template</code> and the data must be found on the sheet named
-<code>genotyping template</code>.</p>
+    <p>A dataframe generated from the Google sheets <code>gsKey</code> argument.
+  If multiple Google sheets are provided the data are appended using rbind.
+  Note, the genotyping sheet must contain variable names specified by the
+  <code>wild_isolate_genotyping_template</code> and the data must be found on the
+  sheet named <code>genotyping template</code>.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

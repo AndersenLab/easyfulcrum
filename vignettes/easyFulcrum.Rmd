@@ -14,6 +14,8 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+
+options(knitr.duplicate.label = "allow") # needed to run generateReport() with both profiles!
 ```
 
 The **easyfulcrum** package is a tool to process and analyze ecological field sampling data generated using the Fulcrum mobile application.<br>
@@ -115,7 +117,7 @@ proc_fulc <- procFulcrum(data = raw_fulc)
 `procFulcrum` function assumes that, when `raw_substrate_temperature` or `raw_ambient_temperature` temperatures are above 40 degrees, the temperatures were mistakenly input as Fahrenheit rather than Celsius, and converts these values to Celsius. It will also notice when both `raw_ambient_temperature` and `raw_ambient_humidity` get stuck on the same value for 5 or more measurements in a row. These are the three flags returned above.<br>
 
 ```{r}
-flag1.1 <- checkTemperatures(data = proc_fulc, return_flags = TRUE)
+flag_temp <- checkTemperatures(data = proc_fulc, return_flags = TRUE)
 ```
 
 #### fixTemperatures: 
@@ -147,7 +149,7 @@ join_fulc <- joinFulcrum(data = proc_fulc, select_vars = TRUE)
 `checkJoin` conducts 10 different checks for flags in the joined Fulcrum data frame regarding extreme temperatures and altitude values, missing, improper, and/or duplicated C-labels, missing, and/or duplicated isolation records corresponding to these C-labels, and finally unusual sample photo numbers. The `return_flags` option is the same as in `checkTemperatures`, and the function automatically prints the rows where the flags exist. If desired, the user can manually edit values or correct mistakes in the underlying data based on these flags and re-run the pipeline again.
 
 ```{r}
-flag1.2 <- checkJoin(data = join_fulc, return_flags = TRUE)
+flag_join <- checkJoin(data = join_fulc, return_flags = TRUE)
 ```
 
 #### annotateFulcrum:
@@ -164,43 +166,64 @@ anno_fulc <- annotateFulcrum(data = join_fulc, dir = NULL, select_vars = TRUE)
 
 ### Reading, processing, and joining genotyping google sheet:
 
-This second group of functions operates to clean the results from the collection specific Google Sheet of genotyping results.<br>
+This second group of functions operates to clean the results from a project specific Google Sheet that contains genotyping results.<br>
 
-Details on how to create genotyping Google Sheets can be found in the [Nematode Collection Protocol](https://docs.google.com/document/d/1aPgPDYobpxzr0BQYgvUsjPWnAGXZmCSQKQ4sDGBXuYM/edit), look for "wild_isolate_genotyping_template". A template is [linked](https://docs.google.com/spreadsheets/d/1pvdpujuJDTYaMwjjDlivjAnO0MrQuDguU2kRLs9eemQ/edit#gid=0)<br>
+Since **easyFulcrum** was originally built for processing nematode samples we provide a `profile` parameter to toggle the functions between the neamatode specific `nematode` profile and the more flexible, non-nematode specific `general` profile.<br>
+
+#### Making a project specific "genotyping sheet":
+
+Users that want to use the `general` profile can use our ["general" genotyping sheet template](https://docs.google.com/spreadsheets/d/1Soo7R7srnmBu29Z_ZbYweTMg_IdO1N5sWr6cr0NpioY/edit#gid=1595072024)<br>
+
+Users that want to use the `nematode` profile can use our ["nematode" genotyping sheet template](https://docs.google.com/spreadsheets/d/1pvdpujuJDTYaMwjjDlivjAnO0MrQuDguU2kRLs9eemQ/edit#gid=0)<br> 
+
+Details on how to fill out a "nematode" genotyping sheet can be found in the [Nematode Collection Protocol](https://docs.google.com/document/d/1aPgPDYobpxzr0BQYgvUsjPWnAGXZmCSQKQ4sDGBXuYM/edit), look for "wild_isolate_genotyping_template".
 
 #### readGenotypes:
 
-`readGenotypes` reads in genotyping data from a Google Sheet with requisite `gsKey`. The `col_types` variable will specify of what column types the data should be.<br>
+`readGenotypes` reads in genotyping data from a Google Sheet with requisite `gsKey`. The `col_types` variable will specify the class of each data column. Note, additional columns can be added to either genotyping template if desired.
 
 For more details on reading in genotyping sheets, look into the [googlesheets4](https://googlesheets4.tidyverse.org/articles/articles/read-sheets.html) package (which underlies this function), as well as further information on how to [specify](https://googlesheets4.tidyverse.org/reference/range_read.html#column-specification) the `col_types` if needed.<br>
 
-Running this function depends on a users connection to the appropriate Google Doc below, which is shared as view only.
-
 ```{r}
-raw_geno <- readGenotypes(gsKey = c("1d1ihjU-LqJUm04UFGkYJHAw-02VD7bvxdAOSjq4cu7Q"))
-head(raw_geno)
+# read example data from the "general" genotyping template 
+raw_geno_general <- readGenotypes(gsKey = c("1aXH-8UDvFVddl7JA-R2y8QOcNxESpmseZGjheM8hDro"), col_types = "cccdcc")
+head(raw_geno_general)
+
+# read example data from the "nematode" genotyping template 
+raw_geno_nema <- readGenotypes(gsKey = c("1eviRoe0NyIEkIexM6c_oTVTX6U4ndPx-hkXJvkjhqWM"), col_types = "cDDdcdcddddddDcDDdcdcdddddddcdcccddccc")
 ```
 
 #### checkGenotypes:
 
-`checkGenotypes` both processes the genotyping data (adds flags) and returns info on those flags if desired, regarding isolations missing, improper, and/or duplicated S-labels, and other checks such as if species ID, strain name, proliferation label and ITS2 genotype are missing and expected based on data in the genotyping sheet. Setting the `return_geno` option to `TRUE` and the `return_flags` option to `FALSE` will return the processed genotyping data and print information on the flags. Setting the `return_geno` option to `FALSE` and the `return_flags` option to `TRUE` will return a list of data frames that detail the rows where the flags appear. Both of these cannot be `TRUE` at the same time.
+`checkGenotypes` both processes the genotyping data (adds flags) and returns info on those flags if desired. Setting the `profile` parameter to `general` will check for unexpected or improper use of S-labels, including missing isolations, improper S-label names, and/or duplicated S-labels. Setting the `profile` parameter to `nematode` will result in additional nematode specific checks, including unusual species IDs, strain names, proliferation values and whether ITS2 genotypes are missing when expected. Setting the `return_geno` option to `TRUE` and the `return_flags` option to `FALSE` will return the processed genotyping data and print information on the flags. Setting the `return_geno` option to `FALSE` and the `return_flags` option to `TRUE` will return a list of data frames that detail the rows where the flags appear. Both of these cannot be `TRUE` at the same time.
 
 ```{r}
-proc_geno <- checkGenotypes(geno_data = raw_geno, fulc_data = anno_fulc, 
-                                  return_geno = TRUE, return_flags = FALSE)
+proc_geno_general <- checkGenotypes(geno_data = raw_geno_general, fulc_data = anno_fulc, 
+                                  return_geno = TRUE, return_flags = FALSE, profile = "general")
+
+proc_geno_nema <- checkGenotypes(geno_data = raw_geno_nema, fulc_data = anno_fulc, 
+                                  return_geno = TRUE, return_flags = FALSE, profile = "nematode")
 ```
 
 ```{r}
-flag1.3 <- checkGenotypes(geno_data = raw_geno, fulc_data = anno_fulc, 
-                          return_geno = FALSE, return_flags = TRUE)
+flag_geno_general <- checkGenotypes(geno_data = raw_geno_general, fulc_data = anno_fulc, 
+                          return_geno = FALSE, return_flags = TRUE, profile = "general")
 ```
 
-Based on these flags a new Google Document was made, eliminating rows with blank S-labels or S-labels in the genotyping data but not in the Fulcrum data. `raw_geno` and afterwards `proc_geno` is overwritten with this data.
+Based on these flags "fixed" genotyping sheets were made, eliminating rows with blank S-labels, duplicated S-labels, etc. The "fixed" data are read in below and `checkGenotypes` is re-run on the "fixed" data.
 
 ```{r}
-raw_geno <- readGenotypes(gsKey = c("1T_EBgoscHw1nks6T-6oKH0rQ1fuEwQm4n-KgFPYPp2w"))
-proc_geno <- checkGenotypes(geno_data = raw_geno, fulc_data = anno_fulc,
-                            return_geno = TRUE, return_flags = FALSE)
+# general example
+raw_geno_general_fixed <- readGenotypes(gsKey = c("1AcovAEfQIF46PigrrM_D2QPOpdTQM-YndlFo4MmsQoc"), col_types = "cccdcc")
+
+proc_geno_general_fixed <- checkGenotypes(geno_data = raw_geno_general_fixed, fulc_data = anno_fulc,
+                            return_geno = TRUE, return_flags = FALSE, profile = "general")
+
+# nematode example
+raw_geno_nema_fixed <- readGenotypes(gsKey = c("1WaOsAU0Pmf_rOp9BoGmDeYMmyENw0gBppdllfedLG9s"), col_types = "cDDdcdcddddddDcDDdcdcdddddddcdcccddccc")
+
+proc_geno_nema_fixed <- checkGenotypes(geno_data = raw_geno_nema_fixed, fulc_data = anno_fulc, 
+                                 return_geno = TRUE, return_flags = FALSE, profile = "nematode")
 ```
 
 #### joinGenoFulc:
@@ -210,7 +233,11 @@ proc_geno <- checkGenotypes(geno_data = raw_geno, fulc_data = anno_fulc,
 If the user is using **easyfulcrum** on customized Fulcrum applications other than "Nematode field sampling" and "Nematode isolation", it is recommended that `select_vars` is set to `FALSE`, such that `joinGenoFulc` does not only return the default variables.
 
 ```{r}
-join_genofulc <- joinGenoFulc(geno = proc_geno, fulc = anno_fulc, dir = dir, select_vars = TRUE)
+# general example
+join_genofulc_general <- joinGenoFulc(geno = proc_geno_general_fixed, fulc = anno_fulc, dir = dir, select_vars = TRUE)
+
+# nematode example
+join_genofulc_nema <- joinGenoFulc(geno = proc_geno_nema_fixed, fulc = anno_fulc, dir = NULL, select_vars = TRUE)
 ```
 
 ### Reading, resizing, and joining collection images:
@@ -222,19 +249,28 @@ The final function processes and resizes images, adding details to a final dataf
 `procPhotos` copies raw sample photos, renames them with the C-label, makes a new directory _data/processed/fulcrum/photos_ and pastes the renamed files there. The function also makes thumbnails for use with interactive maps and places these in the _data/processed/fulcrum/photos/thumbnails_ directory. Setting the `CeNDR` option to `TRUE` will rename photos of samples meeting CeNDR criteria with the name of the nematode strains isolated from the sample and paste them in the _data/processed/fulcrum/photos/CeNDR_ directory.
 
 The function will also accept a public url (`pub_url`) for hosting the sample photos renamed by C-label. A compatible public url should follow the `pub_url/Project/C-label.jpg` format. For example, if the full url for C-0001 is https://storage.googleapis.com/elegansvariation.org/photos/2020JanuaryHawaii/C-0001.jpg,
-(`pub_url`) should be set to `https://storage.googleapis.com/elegansvariation.org/photos/`
+(`pub_url`) should be set to `https://storage.googleapis.com/elegansvariation.org/photos/`<br>
+
+We've included example code for each profile, but note that if you rerun the `procPhotos` function with the `overwite` parameter set to `TRUE` the output files will be overwritten.
 
 ```{r message = FALSE}
-final_data <- procPhotos(dir = dir, data = join_genofulc,
+
+final_data_general <- procPhotos(dir = dir, data = join_genofulc_general,
                          max_dim = 500, overwrite = TRUE,
                          pub_url = "https://storage.googleapis.com/collection_photos/",
                          CeNDR = TRUE)
-head(final_data)
+head(final_data_general)
+
+final_data_nema <- procPhotos(dir = dir, data = join_genofulc_nema,
+                         max_dim = 500, overwrite = TRUE,
+                         pub_url = "https://storage.googleapis.com/collection_photos/",
+                         CeNDR = TRUE)
+head(final_data_nema)
 ```
 
 ### Generating summary and output files:
 
-We include two functions for generating sample output from `final_data`. This final dataframe can otherwise be used as needed by the user. As these depend on a users personal subfolder structure, they are commented out. 
+We include two functions for generating summaries of a finalized colleciton project. The final dataframes can otherwise be used as needed by the user.
 
 #### makeSpSheet:
 
@@ -243,15 +279,26 @@ We include two functions for generating sample output from `final_data`. This fi
 `makeSpSheet` also returns a dataframe with flags for these select samples, and prints a description of these flags.
 
 ```{r}
-flag1.4 <- makeSpSheet(data = final_data, target_sp = "Caenorhabditis briggsae", dir = dir)
+# general example
+sp_sheet_general <- makeSpSheet(data = final_data_general, target_sp = "Caenorhabditis briggsae", dir = dir)
+
+# nematode example
+sp_sheet_nema <- makeSpSheet(data = final_data_nema, target_sp = "Caenorhabditis briggsae", dir = dir)
 ```
 
 #### generateReport:
 
-We provide a function, `generateReport`, that interfaces between `final_data` and `sampleReport.Rmd`, a markdown file that will generate an interactive overview of the entire sampling project. `generateReport` saves `sampleReport.Rmd` into the `/scripts` sub-directory, and generates a `.html` file in the `/reports` sub-directory, that includes: a summary collection project metadata (such as who conducted the respective processes and on what dates they were completed), summary tables of collection and isolation data, interactive maps of where the collections in the project were acquired, and box plots showing the distributions of various environmental parameters at all collection sites. These parameters include substrate temperature, ambient temperature, humidity, and elevation.
+We provide a function, `generateReport`, that will generate an interactive overview of the entire sampling project. `generateReport` saves a file named `sampleReport.Rmd` into the `/scripts` sub-directory, and saves a `sampleReport.html` file in the `/reports` sub-directory. The `sampleReport.html` can be viewed in any web browser and includes: an overview of the collection project (such as who conducted the respective processes and on what dates they were completed), summary tables of collection and isolation data, interactive maps of where the collections in the project were acquired, and box plots showing the distributions of various environmental parameters at all collection sites. These parameters include substrate temperature, ambient temperature, humidity, and elevation.
 
 Please feel free to edit the `sampleReport.Rmd` as you require once it is moved into the `/scripts` sub-directory.
 
-```{r message = F}
-generateReport(data = final_data, dir = dir)
+The `profile` parameter will switch between nematode specific reports and non-nematode specific reports.
+
+```{r, general, message = F}
+# general example
+generateReport(data = final_data_general, dir = dir, target_sp = c("O. myriophilus", "Caenorhabditis briggsae"),
+               profile = "general")
+
+# nematode example
+generateReport(data = final_data_nema, dir = dir, profile = "nematode")
 ```

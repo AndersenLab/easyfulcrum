@@ -10,24 +10,35 @@ checkGenotypes(
   return_geno = TRUE,
   return_flags = FALSE,
   target_sp = c("Caenorhabditis briggsae", "Caenorhabditis elegans",
-    "Caenorhabditis tropicalis")
+    "Caenorhabditis tropicalis"),
+  profile = "general"
 )
 }
 \arguments{
-\item{geno_data}{a genotyping dataframe generated from the \code{readGenotypes} function.}
+\item{geno_data}{a genotyping dataframe generated from the
+\code{readGenotypes} function.}
 
 \item{fulc_data}{a single, joined fulcrum dataframe with all collection data.}
 
 \item{return_geno}{logical, if \code{TRUE} the genotyping data is returned.}
 
-\item{return_flags}{logical, if \code{TRUE} the rows of data for specific flags are returned.}
+\item{return_flags}{logical, if \code{TRUE} the rows of data for specific
+flags are returned.}
 
-\item{target_sp}{vector of target species for species id checks. Default target species names are:
-Caenorhabditis briggsae, Caenorhabditis elegans, Caenorhabditis tropicalis.}
+\item{target_sp}{vector of target species for species id checks. Default
+target species names are: Caenorhabditis briggsae, Caenorhabditis elegans,
+Caenorhabditis tropicalis. \code{target_sp} parameter is only required when
+the \code{profile} parameter is set to \code{"nematode"}.}
+
+\item{profile}{set to \code{"general"} to use a basic genotyping sheet with
+basic functionality. Set to \code{"nematode"} to use the nematode specific
+genotyping sheet and the standard Andersen Lab functionality.}
 }
 \value{
-a list of flagged rows in genotyping and fulcrum dataframes for each flag.
+a list of flagged rows in genotyping and fulcrum dataframes for each
+  flag.
 }
 \description{
-\code{checkGenotypes} checks genotyping data for common errors in \code{readGenotypes} output.
+\code{checkGenotypes} checks genotyping data for common errors in
+\code{readGenotypes} output.
 }

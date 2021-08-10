@@ -261,28 +261,44 @@ checkJoin <- function(data, return_flags = FALSE) {
 
 #' checkGenotypes
 #'
-#' \code{checkGenotypes} checks genotyping data for common errors in \code{readGenotypes} output.
+#' \code{checkGenotypes} checks genotyping data for common errors in
+#' \code{readGenotypes} output.
 #'
-#' @param geno_data a genotyping dataframe generated from the \code{readGenotypes} function.
+#' @param geno_data a genotyping dataframe generated from the
+#'   \code{readGenotypes} function.
 #' @param fulc_data a single, joined fulcrum dataframe with all collection data.
 #' @param return_geno logical, if \code{TRUE} the genotyping data is returned.
-#' @param return_flags logical, if \code{TRUE} the rows of data for specific flags are returned.
-#' @param target_sp vector of target species for species id checks. Default target species names are:
-#' Caenorhabditis briggsae, Caenorhabditis elegans, Caenorhabditis tropicalis.
-#' @return a list of flagged rows in genotyping and fulcrum dataframes for each flag.
+#' @param return_flags logical, if \code{TRUE} the rows of data for specific
+#'   flags are returned.
+#' @param target_sp vector of target species for species id checks. Default
+#'   target species names are: Caenorhabditis briggsae, Caenorhabditis elegans,
+#'   Caenorhabditis tropicalis. \code{target_sp} parameter is only required when
+#'   the \code{profile} parameter is set to \code{"nematode"}.
+#' @param profile set to \code{"general"} to use a basic genotyping sheet with
+#'   basic functionality. Set to \code{"nematode"} to use the nematode specific
+#'   genotyping sheet and the standard Andersen Lab functionality.
+#' @return a list of flagged rows in genotyping and fulcrum dataframes for each
+#'   flag.
 #' @importFrom rebus ALPHA one_or_more %R% DGT WRD optional
 #' @import dplyr
 #' @export
 #'
 
-checkGenotypes <- function(geno_data, fulc_data, return_geno = TRUE, return_flags = FALSE, target_sp = c("Caenorhabditis briggsae", "Caenorhabditis elegans", "Caenorhabditis tropicalis")) {
-
+checkGenotypes <- function(geno_data, fulc_data, return_geno = TRUE, return_flags = FALSE,
+                           target_sp = c("Caenorhabditis briggsae", "Caenorhabditis elegans", "Caenorhabditis tropicalis"),
+                           profile = "general") {
   if(return_geno == TRUE & return_flags == TRUE){
     message("Both return_geno and return_flags cannnot be set to true, nothing will be returned")
   }
   if("list" %in% class(geno_data)){
     message("geno_data is in list form when dataframe is expected")
   }
+  if(!(profile %in% c("general", "nematode"))){
+    message('profile parameter must be set to either "general" or "nematode"')
+  }
+
+  if(profile == "nematode"){
+    message('Using "nematode" profile:')
 
   message(">>> Checking data classes")
   types <- as.data.frame(unlist(sapply(geno_data, class)))
@@ -391,4 +407,66 @@ checkGenotypes <- function(geno_data, fulc_data, return_geno = TRUE, return_flag
                   "strain_name_expected" = strain_name_expected))
     }
   }
+}
+if(profile == "general"){
+  message('Using "general" profile, target_sp parameter will not be used:')
+
+  # Find usual S-labels in genotyping dataframe
+  usual_s_labels <- stringr::str_subset(geno_data$s_label, pattern = "S-" %R% DGT %R% DGT %R% DGT %R% DGT %R% optional(DGT) %R% optional(DGT))
+
+  # add s_label flags to genotyping dataframe
+  geno_data_flagged <- geno_data %>%
+    dplyr::mutate(flag_unusual_s_label_genotyping = ifelse(!(s_label %in% c(usual_s_labels,NA)), TRUE, FALSE),
+                  flag_missing_s_label_genotyping = ifelse(is.na(s_label), TRUE, FALSE),
+                  flag_s_label_not_in_fulcrum = ifelse(!(s_label %in% fulc_data$s_label), TRUE, FALSE)) %>%
+    dplyr::group_by(s_label) %>%
+    dplyr::mutate(flag_duplicated_s_label_genotyping = ifelse(dplyr::n() > 1, TRUE, FALSE)) %>%
+    dplyr::ungroup()
+
+  # report s_label check
+  message(">>> Checking s labels")
+
+  # check for missing s_labels
+  missing_s_label_genotyping <- geno_data_flagged %>% dplyr::filter(flag_missing_s_label_genotyping == TRUE)
+  print(paste("There are", nrow(missing_s_label_genotyping), "rows with missing s labels, these s labels are:", sep = " "))
+  if(nrow(missing_s_label_genotyping) > 0){print(missing_s_label_genotyping$s_label)}
+
+  # check for duplicated s_labels
+  duplicated_s_label_genotyping <- geno_data_flagged %>% dplyr::filter(flag_duplicated_s_label_genotyping == TRUE)
+  print(paste("There are", nrow(duplicated_s_label_genotyping), "rows with duplicated s labels, these s labels are:", sep = " "))
+  if(nrow(duplicated_s_label_genotyping) > 0){print(duplicated_s_label_genotyping$s_label)}
+
+  # check for unusual s_labels
+  unusual_s_label_genotyping <- geno_data_flagged %>% dplyr::filter(flag_unusual_s_label_genotyping == TRUE)
+  print(paste("There are", nrow(unusual_s_label_genotyping), "rows with unusual s labels, these s labels are:", sep = " "))
+  if(nrow(unusual_s_label_genotyping) > 0){print(unusual_s_label_genotyping$s_label)}
+
+  # check for s_labels not in fulcrum
+  s_label_not_in_fulcrum <- geno_data_flagged %>% dplyr::filter(flag_s_label_not_in_fulcrum == TRUE)
+  print(paste("There are", nrow(s_label_not_in_fulcrum), "rows with s labels not found in the Fulcrum data, these s labels are:", sep = " "))
+  if(nrow(s_label_not_in_fulcrum) > 0){print(s_label_not_in_fulcrum$s_label)}
+
+  # make a dataframe for s_labels in Fulcrum but not in the genotyping sheet
+  s_label_in_fulcrum_not_in_genotyping <- fulc_data %>%
+    dplyr::filter(!is.na(s_label)) %>%
+    dplyr::filter(!(s_label %in% geno_data$s_label))
+  print(paste("There are", nrow(s_label_in_fulcrum_not_in_genotyping), "s labels in the Fulcrum data not in the genotyping data, these s labels are:", sep = " "))
+  if(nrow(s_label_in_fulcrum_not_in_genotyping) > 0){print(s_label_in_fulcrum_not_in_genotyping$s_label)}
+
+
+  # return geno_data with added flags
+  if(return_flags == FALSE){
+    if(return_geno == TRUE){return(geno_data_flagged)}}
+
+  # return data frames with appropriate missing flags
+  if(return_geno == FALSE){
+    if(return_flags == TRUE){
+      return(list("missing_s_label_genotyping" = missing_s_label_genotyping,
+                  "duplicated_s_label_genotyping" = duplicated_s_label_genotyping,
+                  "unusual_s_label_genotyping" = unusual_s_label_genotyping,
+                  "s_label_not_in_fulcrum" = s_label_not_in_fulcrum,
+                  "s_label_in_fulcrum_not_in_genotyping" = s_label_in_fulcrum_not_in_genotyping))
+    }
+  }
+}
 }

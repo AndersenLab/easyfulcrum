@@ -40,7 +40,8 @@
 
 
 <meta property="og:title" content="checkGenotypes — checkGenotypes" />
-<meta property="og:description" content="checkGenotypes checks genotyping data for common errors in readGenotypes output." />
+<meta property="og:description" content="checkGenotypes checks genotyping data for common errors in
+readGenotypes output." />
 
 
 
@@ -121,7 +122,8 @@
     </div>
 
     <div class="ref-description">
-    <p><code>checkGenotypes</code> checks genotyping data for common errors in <code>readGenotypes</code> output.</p>
+    <p><code>checkGenotypes</code> checks genotyping data for common errors in
+<code>readGenotypes</code> output.</p>
     </div>
 
     <pre class="usage"><span class='fu'>checkGenotypes</span><span class='op'>(</span>
@@ -130,7 +132,8 @@
   return_geno <span class='op'>=</span> <span class='cn'>TRUE</span>,
   return_flags <span class='op'>=</span> <span class='cn'>FALSE</span>,
   target_sp <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Caenorhabditis briggsae"</span>, <span class='st'>"Caenorhabditis elegans"</span>,
-    <span class='st'>"Caenorhabditis tropicalis"</span><span class='op'>)</span>
+    <span class='st'>"Caenorhabditis tropicalis"</span><span class='op'>)</span>,
+  profile <span class='op'>=</span> <span class='st'>"general"</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -138,7 +141,8 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>geno_data</th>
-      <td><p>a genotyping dataframe generated from the <code>readGenotypes</code> function.</p></td>
+      <td><p>a genotyping dataframe generated from the
+<code>readGenotypes</code> function.</p></td>
     </tr>
     <tr>
       <th>fulc_data</th>
@@ -150,18 +154,28 @@
     </tr>
     <tr>
       <th>return_flags</th>
-      <td><p>logical, if <code>TRUE</code> the rows of data for specific flags are returned.</p></td>
+      <td><p>logical, if <code>TRUE</code> the rows of data for specific
+flags are returned.</p></td>
     </tr>
     <tr>
       <th>target_sp</th>
-      <td><p>vector of target species for species id checks. Default target species names are:
-Caenorhabditis briggsae, Caenorhabditis elegans, Caenorhabditis tropicalis.</p></td>
+      <td><p>vector of target species for species id checks. Default
+target species names are: Caenorhabditis briggsae, Caenorhabditis elegans,
+Caenorhabditis tropicalis. <code>target_sp</code> parameter is only required when
+the <code>profile</code> parameter is set to <code>"nematode"</code>.</p></td>
+    </tr>
+    <tr>
+      <th>profile</th>
+      <td><p>set to <code>"general"</code> to use a basic genotyping sheet with
+basic functionality. Set to <code>"nematode"</code> to use the nematode specific
+genotyping sheet and the standard Andersen Lab functionality.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a list of flagged rows in genotyping and fulcrum dataframes for each flag.</p>
+    <p>a list of flagged rows in genotyping and fulcrum dataframes for each
+  flag.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
