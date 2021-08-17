@@ -13,12 +13,13 @@
 #'   files with similar names will be written over. Default is FALSE.
 #' @param CeNDR Logical, determines whether to write CeNDR criteria for
 #'   qualifying photos to a subdirectory
-#' @param pub_url A public url that holds sample images named by project then
-#'   C-label. For example, if the full url for C-0001 is
-#'   https://storage.googleapis.com/elegansvariation.org/photos/hawaii2017/C-0001.jpg,
+#' @param pub_url A public url that holds sample images organized by project and
+#'   named by C-label. For example, if the full url for C-5133 is
+#'   https://storage.googleapis.com/elegansvariation.org/photos/isolation/fulcrum/2020JanuaryHawaii/sampling_thumbs/C-5133.jpg,
 #'   the pub_url should be set to
-#'   https://storage.googleapis.com/elegansvariation.org/photos/. The project
-#'   name, C-label, and file extension will be filled by the function.
+#'   https://storage.googleapis.com/elegansvariation.org/photos/isolation/fulcrum/.
+#'   The project name, "sampling_thumbs", C-label, and file extension will be
+#'   filled by the function.
 #' @param select_vars Logical, TRUE  will return only the default variables,
 #'   FALSE will return all variables. FALSE is recommended if using customized
 #'   Fulcrum applications other than "Nematode field sampling" and "Nematode
@@ -39,8 +40,9 @@
 #' @export
 #'
 
+
 procPhotos <- function(dir, data, max_dim = 500, overwrite = FALSE, CeNDR = FALSE,
-                       pub_url = "https://storage.googleapis.com/elegansvariation.org/photos/", select_vars = T) {
+                       pub_url = "https://storage.googleapis.com/elegansvariation.org/photos/isolation/fulcrum/", select_vars = T) {
   # edit pub_url to take into account project name and subfolder
   project_url <- glue::glue("{pub_url}{unique(data$project)}/")
 
@@ -234,11 +236,11 @@ procPhotos <- function(dir, data, max_dim = 500, overwrite = FALSE, CeNDR = FALS
     dplyr::left_join(dplyr::select(to_change1, sample_photo1, orig_file_name:thumb_file_name), by = c("sample_photo1" = "sample_photo1")) %>%
     dplyr::left_join(dplyr::select(to_change2, sample_photo2, orig_file_name2:thumb_file_name2), by = c("sample_photo2" = "sample_photo2")) %>%
     dplyr::left_join(dplyr::select(to_change3, sample_photo3, orig_file_name3:thumb_file_name3), by = c("sample_photo3" = "sample_photo3")) %>%
-    dplyr::mutate(sample_photo1_processed_url = case_when(!is.na(sample_photo1) ~ glue::glue("{project_url}{c_label}.jpg"),
+    dplyr::mutate(sample_photo1_processed_url = case_when(!is.na(sample_photo1) ~ glue::glue("{project_url}sampling_thumbs/{c_label}.jpg"),
                                                           TRUE ~ NA_character_),
-                  sample_photo2_processed_url = case_when(!is.na(sample_photo2) ~ glue::glue("{project_url}{c_label}.jpg"),
+                  sample_photo2_processed_url = case_when(!is.na(sample_photo2) ~ glue::glue("{project_url}sampling_thumbs/{c_label}.jpg"),
                                                           TRUE ~ NA_character_),
-                  sample_photo3_processed_url = case_when(!is.na(sample_photo3) ~ glue::glue("{project_url}{c_label}.jpg"),
+                  sample_photo3_processed_url = case_when(!is.na(sample_photo3) ~ glue::glue("{project_url}sampling_thumbs/{c_label}.jpg"),
                                                           TRUE ~ NA_character_)) %>%
     dplyr::select(project:sample_photo1, sample_photo1_processed_url, orig_file_name:thumb_file_name, sample_photo2, sample_photo2_processed_url, orig_file_name2:thumb_file_name2,
                   sample_photo3, sample_photo3_processed_url, orig_file_name3:thumb_file_name3, everything())

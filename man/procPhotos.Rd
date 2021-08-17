@@ -10,7 +10,8 @@ procPhotos(
   max_dim = 500,
   overwrite = FALSE,
   CeNDR = FALSE,
-  pub_url = "https://storage.googleapis.com/elegansvariation.org/photos/",
+ 
+    pub_url = "https://storage.googleapis.com/elegansvariation.org/photos/isolation/fulcrum/",
   select_vars = T
 )
 }
@@ -29,12 +30,13 @@ files with similar names will be written over. Default is FALSE.}
 \item{CeNDR}{Logical, determines whether to write CeNDR criteria for
 qualifying photos to a subdirectory}
 
-\item{pub_url}{A public url that holds sample images named by project then
-C-label. For example, if the full url for C-0001 is
-https://storage.googleapis.com/elegansvariation.org/photos/hawaii2017/C-0001.jpg,
+\item{pub_url}{A public url that holds sample images organized by project and
+named by C-label. For example, if the full url for C-5133 is
+https://storage.googleapis.com/elegansvariation.org/photos/isolation/fulcrum/2020JanuaryHawaii/sampling_thumbs/C-5133.jpg,
 the pub_url should be set to
-https://storage.googleapis.com/elegansvariation.org/photos/. The project
-name, C-label, and file extension will be filled by the function.}
+https://storage.googleapis.com/elegansvariation.org/photos/isolation/fulcrum/.
+The project name, "sampling_thumbs", C-label, and file extension will be
+filled by the function.}
 
 \item{select_vars}{Logical, TRUE  will return only the default variables,
 FALSE will return all variables. FALSE is recommended if using customized

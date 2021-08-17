@@ -130,9 +130,11 @@ projects <- pull(df%>%dplyr::distinct(project)%>%dplyr::filter(!is.na(project)))
 collectors <- pull(df%>%dplyr::distinct(collection_by)%>%dplyr::filter(!is.na(collection_by)))
 isolators <- pull(df%>%dplyr::distinct(isolation_by)%>%dplyr::filter(!is.na(isolation_by)))
 collection_dates <- pull(df%>%dplyr::distinct(collection_date_UTC)%>%
-                           dplyr::filter(!is.na(collection_date_UTC))) %>% ymd() %>% sf()
+                           dplyr::filter(!is.na(collection_date_UTC)) %>%
+                           dplyr::arrange(collection_date_UTC)) %>% ymd() %>% sf()
 isolation_dates <- pull(df%>%dplyr::distinct(isolation_date_UTC)%>%
-                          dplyr::filter(!is.na(isolation_date_UTC))) %>% ymd() %>% sf()
+                          dplyr::filter(!is.na(isolation_date_UTC)) %>%
+                          dplyr::arrange(isolation_date_UTC)) %>% ymd() %>% sf()
 
 # make personnel dataframe
 personnel_projects <- data.frame(projects)
@@ -246,8 +248,8 @@ general_map <-  map_general(all_map_df,"color")
 general_map
 ```
 
-<font color="darkred">*red points*</font> are collections with isolations. 
-<br> <font color="black">*black points*</font>  are collections without isolations. 
+<font color="darkred">*red points*</font> are collections with target isolations. 
+<br> <font color="black">*black points*</font>  are collections without target isolations. 
 
 ### All collections plots
 
