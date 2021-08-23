@@ -20,10 +20,6 @@
 #'   https://storage.googleapis.com/elegansvariation.org/photos/isolation/fulcrum/.
 #'   The project name, "sampling_thumbs", C-label, and file extension will be
 #'   filled by the function.
-#' @param select_vars Logical, TRUE  will return only the default variables,
-#'   FALSE will return all variables. FALSE is recommended if using customized
-#'   Fulcrum applications other than "Nematode field sampling" and "Nematode
-#'   isolation". TRUE is default.
 #' @return A new directory data/processed/fulcrum/photos. This directory
 #'   contains full size sample photos renamed with C-labels and a thumbnails
 #'   subfolder that contains resized images. A dataframe identical to input with
@@ -40,9 +36,8 @@
 #' @export
 #'
 
-
 procPhotos <- function(dir, data, max_dim = 500, overwrite = FALSE, CeNDR = FALSE,
-                       pub_url = "https://storage.googleapis.com/elegansvariation.org/photos/isolation/fulcrum/", select_vars = T) {
+                       pub_url = "https://storage.googleapis.com/elegansvariation.org/photos/isolation/fulcrum/") {
   # edit pub_url to take into account project name and subfolder
   project_url <- glue::glue("{pub_url}{unique(data$project)}/")
 
@@ -246,7 +241,9 @@ procPhotos <- function(dir, data, max_dim = 500, overwrite = FALSE, CeNDR = FALS
                   sample_photo3, sample_photo3_processed_url, orig_file_name3:thumb_file_name3, everything())
 
   # return
-  message("DONE")
+  message(glue::glue("DONE -- saving data to .rds file {dir}/data/processed/fulcrum/",
+                     as.character(Sys.Date()),"_",
+                     tail(strsplit(dir,"/")[[1]],1),"fulcrum.rds"))
   if(is.character(dir)){
     saveRDS(object = data_out,
             file = glue::glue("{dir}","/data/processed/fulcrum/",

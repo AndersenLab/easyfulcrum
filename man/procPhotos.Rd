@@ -11,8 +11,7 @@ procPhotos(
   overwrite = FALSE,
   CeNDR = FALSE,
  
-    pub_url = "https://storage.googleapis.com/elegansvariation.org/photos/isolation/fulcrum/",
-  select_vars = T
+    pub_url = "https://storage.googleapis.com/elegansvariation.org/photos/isolation/fulcrum/"
 )
 }
 \arguments{
@@ -37,11 +36,6 @@ the pub_url should be set to
 https://storage.googleapis.com/elegansvariation.org/photos/isolation/fulcrum/.
 The project name, "sampling_thumbs", C-label, and file extension will be
 filled by the function.}
-
-\item{select_vars}{Logical, TRUE  will return only the default variables,
-FALSE will return all variables. FALSE is recommended if using customized
-Fulcrum applications other than "Nematode field sampling" and "Nematode
-isolation". TRUE is default.}
 }
 \value{
 A new directory data/processed/fulcrum/photos. This directory
