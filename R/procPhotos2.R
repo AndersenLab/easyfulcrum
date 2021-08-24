@@ -152,7 +152,7 @@ procPhotos2 <- function(dir, data, max_dim = 500, overwrite = FALSE, CeaNDR = FA
   }
 
   # copy all images create folder of these images and thumbnails
-  to_change <- data %>%
+  to_change_clabel <- data %>%
     dplyr::filter(!is.na(c_label)) %>%
     dplyr::distinct(c_label, .keep_all = TRUE) %>%
     dplyr::mutate(orig_file_name = glue::glue("{dir_photos}/{sample_photo1}.jpg"),
@@ -166,13 +166,13 @@ procPhotos2 <- function(dir, data, max_dim = 500, overwrite = FALSE, CeaNDR = FA
                   thumb_file_name3 = glue::glue("{processed_dir}/C_labels/thumbnails/{c_label}_3.jpg")) %>%
     dplyr::select(strain_name, species_id, c_label, sample_photo1, sample_photo2, sample_photo3, orig_file_name:thumb_file_name3)
 
-  to_change1 <- to_change %>%
+  to_change1_clabel <- to_change_clabel %>%
     dplyr::filter(!is.na(sample_photo1))
 
-  to_change2 <- to_change %>%
+  to_change2_clabel <- to_change_clabel %>%
     dplyr::filter(!is.na(sample_photo2))
 
-  to_change3 <- to_change %>%
+  to_change3_clabel <- to_change_clabel %>%
     dplyr::filter(!is.na(sample_photo3))
 
   # make C_label directories
@@ -180,15 +180,15 @@ procPhotos2 <- function(dir, data, max_dim = 500, overwrite = FALSE, CeaNDR = FA
   fs::dir_create(glue::glue("{processed_dir}/C_labels/thumbnails"))
 
   # copy files to new directory and rename
-  fs::file_copy(to_change1$orig_file_name, to_change1$new_file_name, overwrite = overwrite)
-  fs::file_copy(to_change2$orig_file_name2, to_change2$new_file_name2, overwrite = overwrite)
-  fs::file_copy(to_change3$orig_file_name3, to_change3$new_file_name3, overwrite = overwrite)
+  fs::file_copy(to_change1_clabel$orig_file_name, to_change1_clabel$new_file_name, overwrite = overwrite)
+  fs::file_copy(to_change2_clabel$orig_file_name2, to_change2_clabel$new_file_name2, overwrite = overwrite)
+  fs::file_copy(to_change3_clabel$orig_file_name3, to_change3_clabel$new_file_name3, overwrite = overwrite)
 
 
   # loop through renamed images to make thumbnails
-  for(i in unique(to_change1$new_file_name)) {
+  for(i in unique(to_change1_clabel$new_file_name)) {
     # Make message
-    message(glue::glue("Processing collection photo:{to_change1 %>% dplyr::filter(new_file_name == i) %>% dplyr::pull(orig_file_name)}"))
+    message(glue::glue("Processing collection photo:{to_change1_clabel %>% dplyr::filter(new_file_name == i) %>% dplyr::pull(orig_file_name)}"))
     # setup image in R
     img <- imager::load.image(i)
     # get raw img dimesions
@@ -199,12 +199,12 @@ procPhotos2 <- function(dir, data, max_dim = 500, overwrite = FALSE, CeaNDR = FA
     thumb <- imager::resize(img, -percentage, -percentage) # need negative for resize function
 
     # write the file
-    imager::save.image(thumb, file = glue::glue("{to_change1 %>% dplyr::filter(new_file_name == i) %>% dplyr::pull(thumb_file_name)}"))
+    imager::save.image(thumb, file = glue::glue("{to_change1_clabel %>% dplyr::filter(new_file_name == i) %>% dplyr::pull(thumb_file_name)}"))
   }
 
-  for(i in unique(to_change2$new_file_name2)) {
+  for(i in unique(to_change2_clabel$new_file_name2)) {
     # Make message
-    message(glue::glue("Processing collection photo:{to_change2 %>% dplyr::filter(new_file_name2 == i) %>% dplyr::pull(orig_file_name2)}"))
+    message(glue::glue("Processing collection photo:{to_change2_clabel %>% dplyr::filter(new_file_name2 == i) %>% dplyr::pull(orig_file_name2)}"))
 
     # setup image in R
     img <- imager::load.image(i)
@@ -216,12 +216,12 @@ procPhotos2 <- function(dir, data, max_dim = 500, overwrite = FALSE, CeaNDR = FA
     thumb <- imager::resize(img, -percentage, -percentage) # need negative for resize function
 
     # write the file
-    imager::save.image(thumb, file = glue::glue("{to_change %>% dplyr::filter(new_file_name2 == i) %>% dplyr::pull(thumb_file_name2)}"))
+    imager::save.image(thumb, file = glue::glue("{to_change_clabel %>% dplyr::filter(new_file_name2 == i) %>% dplyr::pull(thumb_file_name2)}"))
   }
 
-  for(i in unique(to_change3$new_file_name3)) {
+  for(i in unique(to_change3_clabel$new_file_name3)) {
     # Make message
-    message(glue::glue("Processing collection photo:{to_change3 %>% dplyr::filter(new_file_name3 == i) %>% dplyr::pull(orig_file_name3)}"))
+    message(glue::glue("Processing collection photo:{to_change3_clabel %>% dplyr::filter(new_file_name3 == i) %>% dplyr::pull(orig_file_name3)}"))
 
     # setup image in R
     img <- imager::load.image(i)
@@ -233,7 +233,7 @@ procPhotos2 <- function(dir, data, max_dim = 500, overwrite = FALSE, CeaNDR = FA
     thumb <- imager::resize(img, -percentage, -percentage) # need negative for resize function
 
     # write the file
-    imager::save.image(thumb, file = glue::glue("{to_change %>% dplyr::filter(new_file_name3 == i) %>% dplyr::pull(thumb_file_name3)}"))
+    imager::save.image(thumb, file = glue::glue("{to_change_clabel %>% dplyr::filter(new_file_name3 == i) %>% dplyr::pull(thumb_file_name3)}"))
   }
 
   # make a md5 hash for sample photos and thubnails integrity
@@ -262,16 +262,29 @@ procPhotos2 <- function(dir, data, max_dim = 500, overwrite = FALSE, CeaNDR = FA
 
   # get hash 1
   thumb_hash1 <- thumb_hash %>%
-    dplyr::filter(c_label %in% to_change1$c_label)
+    dplyr::filter(c_label %in% to_change1_clabel$c_label &
+                    !(grepl("_2", thumb_hash$sample_photo_resized_file_name)) &
+                    !(grepl("_3", thumb_hash$sample_photo_resized_file_name)))
   # get hash 2
   thumb_hash2 <- thumb_hash %>%
-    dplyr::filter(c_label %in% to_change2$c_label)
+    dplyr::filter(c_label %in% to_change2_clabel$c_label &
+                    grepl("_2", thumb_hash$sample_photo_resized_file_name))
   # get hash 3
   thumb_hash3 <- thumb_hash %>%
-    dplyr::filter(c_label %in% to_change3$c_label)
+    dplyr::filter(c_label %in% to_change3_clabel$c_label &
+                    grepl("_3", thumb_hash$sample_photo_resized_file_name))
 
   # join hash to data frame
   data_out <- data %>%
+    dplyr::left_join(dplyr::select(to_change1_clabel, sample_photo1, orig_file_name:thumb_file_name), by = c("sample_photo1" = "sample_photo1")) %>%
+    dplyr::left_join(dplyr::select(to_change2_clabel, sample_photo2, orig_file_name2:thumb_file_name2), by = c("sample_photo2" = "sample_photo2")) %>%
+    dplyr::left_join(dplyr::select(to_change3_clabel, sample_photo3, orig_file_name3:thumb_file_name3), by = c("sample_photo3" = "sample_photo3")) %>%
+    dplyr::mutate(sample_photo1_processed_url = case_when(!is.na(sample_photo1) ~ glue::glue("{project_url}sampling_thumbs/{c_label}.jpg"),
+                                                          TRUE ~ NA_character_),
+                  sample_photo2_processed_url = case_when(!is.na(sample_photo2) ~ glue::glue("{project_url}sampling_thumbs/{c_label}_2.jpg"),
+                                                          TRUE ~ NA_character_),
+                  sample_photo3_processed_url = case_when(!is.na(sample_photo3) ~ glue::glue("{project_url}sampling_thumbs/{c_label}_3.jpg"),
+                                                          TRUE ~ NA_character_)) %>%
     dplyr::left_join(dplyr::select(raw_hash1, sample_photo1_hash = sample_photo_raw_photo_hash,
                                    sample_photo1_raw_file_name = sample_photo_raw_file_name, sample_photo), by = c("sample_photo1" = "sample_photo")) %>%
     dplyr::left_join(dplyr::select(raw_hash2, sample_photo2_hash = sample_photo_raw_photo_hash,
@@ -279,24 +292,18 @@ procPhotos2 <- function(dir, data, max_dim = 500, overwrite = FALSE, CeaNDR = FA
     dplyr::left_join(dplyr::select(raw_hash3, sample_photo3_hash = sample_photo_raw_photo_hash,
                                    sample_photo3_raw_file_name = sample_photo_raw_file_name, sample_photo), by = c("sample_photo3" = "sample_photo")) %>%
     dplyr::left_join(dplyr::select(thumb_hash1, sample_photo1_resized_hash = sample_photo_resized_hash,
-                                   sample_photo1_processed_file_name = sample_photo_processed_file_name,
-                                   sample_photo1_resized_file_name = sample_photo_resized_file_name, c_label), by = c("c_label" = "c_label")) %>%
+                  sample_photo1_processed_file_name = sample_photo_processed_file_name,
+                  sample_photo1_resized_file_name = sample_photo_resized_file_name, c_label), by = c("c_label" = "c_label")) %>%
     dplyr::left_join(dplyr::select(thumb_hash2, sample_photo2_resized_hash = sample_photo_resized_hash,
-                                   sample_photo2_processed_file_name = sample_photo_processed_file_name,
-                                   sample_photo2_resized_file_name = sample_photo_resized_file_name, c_label), by = c("c_label" = "c_label")) %>%
+                sample_photo2_processed_file_name = sample_photo_processed_file_name,
+                sample_photo2_resized_file_name = sample_photo_resized_file_name, c_label), by = c("c_label" = "c_label")) %>%
     dplyr::left_join(dplyr::select(thumb_hash3, sample_photo3_resized_hash = sample_photo_resized_hash,
-                                   sample_photo3_processed_file_name = sample_photo_processed_file_name,
-                                   sample_photo3_resized_file_name = sample_photo_resized_file_name, c_label), by = c("c_label" = "c_label"))  %>%
-    dplyr::mutate(sample_photo1_processed_url = ifelse(!is.na(sample_photo1_processed_file_name), glue::glue("{project_url}","{sample_photo1_processed_file_name}"), NA),
-                  sample_photo2_processed_url = ifelse(!is.na(sample_photo2_processed_file_name), glue::glue("{project_url}","{sample_photo2_processed_file_name}"), NA),
-                  sample_photo3_processed_url = ifelse(!is.na(sample_photo3_processed_file_name), glue::glue("{project_url}","{sample_photo3_processed_file_name}"), NA)) %>%
+               sample_photo3_processed_file_name = sample_photo_processed_file_name,
+               sample_photo3_resized_file_name = sample_photo_resized_file_name, c_label), by = c("c_label" = "c_label"))  %>%
     dplyr::select(project:sample_photo1, sample_photo1_raw_file_name, sample_photo1_processed_file_name, sample_photo1_processed_url, sample_photo1_hash, sample_photo1_resized_file_name, sample_photo1_resized_hash,
-                  sample_photo2, sample_photo2_raw_file_name, sample_photo2_processed_file_name, sample_photo2_processed_url, sample_photo2_hash, sample_photo2_resized_file_name, sample_photo2_resized_hash,
-                  sample_photo3, sample_photo3_raw_file_name, sample_photo3_processed_file_name, sample_photo3_processed_url, sample_photo3_hash, sample_photo3_resized_file_name, sample_photo3_resized_hash,
-                  everything())
-
-  # dplyr::select(project:sample_photo1, sample_photo1_processed_url, orig_file_name:thumb_file_name, sample_photo2, sample_photo2_processed_url, orig_file_name2:thumb_file_name2,
-  #               sample_photo3, sample_photo3_processed_url, orig_file_name3:thumb_file_name3, everything())
+                sample_photo2, sample_photo2_raw_file_name, sample_photo2_processed_file_name, sample_photo2_processed_url, sample_photo2_hash, sample_photo2_resized_file_name, sample_photo2_resized_hash,
+               sample_photo3, sample_photo3_raw_file_name, sample_photo3_processed_file_name, sample_photo3_processed_url, sample_photo3_hash, sample_photo3_resized_file_name, sample_photo3_resized_hash,
+              everything())
 
   # return
   message(glue::glue("DONE -- saving data to .rds file {dir}/data/processed/fulcrum/",
