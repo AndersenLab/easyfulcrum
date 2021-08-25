@@ -42,6 +42,17 @@
 #'
 
 procPhotos2 <- function(dir, data, max_dim = 500, overwrite = FALSE, CeaNDR = FALSE, pub_url = "https://storage.googleapis.com/elegansvariation.org/photos/isolation/fulcrum/") {
+
+  # warn that more than one project detected
+  if(length(unique(data$project)) > 1){
+    warning(glue::glue("{length(unique(data$project))} distinct collection projects in data, expected 1"))
+  }
+
+  # end if project NA exists
+  if(sum(is.na(data$project)) > 0){
+    stop("At least one NA detected in data$project, expected no NAs.")
+  }
+
   # edit pub_url to take into account project name and subfolder
   project_url <- glue::glue("{pub_url}{unique(data$project)}/sampling_thumbs/")
   # edit dir to be appropriate for path to photos
