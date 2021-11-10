@@ -81,7 +81,11 @@ procFulcrum <- function(data) {
       dplyr::mutate(flag_unusual_sample_photo_num = ifelse(is.na(stringr::str_count(sample_photo, pattern = ",")) |
                                                              stringr::str_count(sample_photo, pattern = ",") != 0, TRUE, FALSE)) %>%
       # break apart multiple sample photos. This takes the first sample photo and warns if additional photos are discarded
-      tidyr::separate(col = sample_photo, into = c("sample_photo1", "sample_photo2", "sample_photo3"), sep = ",", extra = "drop", fill = "right")
+      tidyr::separate(col = sample_photo, into = c("sample_photo1", "sample_photo2", "sample_photo3"), sep = ",", extra = "drop", fill = "right") %>%
+      # force gridsect variables to correct class b/c they will default to logical if no gridsects are present
+      dplyr::mutate(gridsect_index = as.character(gridsect_index),
+                    gridsect_direction = as.character(gridsect_direction),
+                    gridsect_radius = as.character(gridsect_radius))
 
     # add to processed list
     proc_data["field_sampling_proc"] <- list(field_sampling_proc)
