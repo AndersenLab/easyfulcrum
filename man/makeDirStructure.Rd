@@ -4,13 +4,16 @@
 \alias{makeDirStructure}
 \title{makeDirStructure}
 \usage{
-makeDirStructure(startdir, projectdirname)
+makeDirStructure(startdir, projectdirname = NULL)
 }
 \arguments{
-\item{startdir}{the working folder where project files will lie.}
+\item{startdir}{the system directory where project directory will be created.}
 
-\item{projectdirname}{the name of the project, folder will be constructed under \code{startdir}.}
+\item{projectdirname}{the name of the project, a new directory named after
+the project will be made under \code{startdir}. If \code{NULL} only the
+subdirectories will be made under \code{startdir}.}
 }
 \description{
-\code{makeDirStructure} Makes the nested folder directory for use in easyfulcrum.
+\code{makeDirStructure} Makes the required directory structure for use with
+\code{easyfulcrum}.
 }
