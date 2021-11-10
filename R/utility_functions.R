@@ -26,21 +26,36 @@ FtoC <- function(F) {
 
 #' makeDirStructure
 #'
-#' \code{makeDirStructure} Makes the nested folder directory for use in easyfulcrum.
+#' \code{makeDirStructure} Makes the required directory structure for use with
+#' \code{easyfulcrum}.
 #'
-#' @param startdir the working folder where project files will lie.
-#' @param projectdirname the name of the project, folder will be constructed under \code{startdir}.
+#' @param startdir the system directory where project directory will be created.
+#' @param projectdirname the name of the project, a new directory named after
+#' the project will be made under \code{startdir}. If \code{NULL} only the
+#' subdirectories will be made under \code{startdir}.
+#' @param
 #' @export
 #'
 
-makeDirStructure <- function(startdir, projectdirname) {
-  # creates empty directory folders as required
-  dir.create(file.path(startdir, projectdirname, "data", "raw", "fulcrum", "photos"), recursive = TRUE)
-  dir.create(file.path(startdir, projectdirname, "data", "raw", "annotate"), recursive = TRUE)
-  dir.create(file.path(startdir, projectdirname, "data", "processed", "fulcrum"), recursive = TRUE)
-  dir.create(file.path(startdir, projectdirname, "data", "processed", "genotypes"), recursive = TRUE)
-  dir.create(file.path(startdir, projectdirname, "reports"), recursive = TRUE)
-  dir.create(file.path(startdir, projectdirname, "scripts"), recursive = TRUE)
+makeDirStructure <- function(startdir, projectdirname = NULL) {
+  if (!is.null(projectdirname)) {
+    # creates empty directory folders as required under startdir/projectdirname/
+    dir.create(file.path(startdir, projectdirname, "data", "raw", "fulcrum", "photos"), recursive = TRUE)
+    dir.create(file.path(startdir, projectdirname, "data", "raw", "annotate"), recursive = TRUE)
+    dir.create(file.path(startdir, projectdirname, "data", "processed", "fulcrum"), recursive = TRUE)
+    dir.create(file.path(startdir, projectdirname, "data", "processed", "genotypes"), recursive = TRUE)
+    dir.create(file.path(startdir, projectdirname, "reports"), recursive = TRUE)
+    dir.create(file.path(startdir, projectdirname, "scripts"), recursive = TRUE)
+  }
+  else {
+    # creates empty directory folders under as required under startdir/
+    dir.create(file.path(startdir, "data", "raw", "fulcrum", "photos"), recursive = TRUE)
+    dir.create(file.path(startdir, "data", "raw", "annotate"), recursive = TRUE)
+    dir.create(file.path(startdir, "data", "processed", "fulcrum"), recursive = TRUE)
+    dir.create(file.path(startdir, "data", "processed", "genotypes"), recursive = TRUE)
+    dir.create(file.path(startdir, "reports"), recursive = TRUE)
+    dir.create(file.path(startdir, "scripts"), recursive = TRUE)
+  }
 }
 
 #' loadExampleFiles
