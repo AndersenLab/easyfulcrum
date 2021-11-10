@@ -180,7 +180,7 @@ checkJoin <- function(data, return_flags = FALSE) {
   print(paste("There are", nrow(check_classes), "improperly classified variables", sep = " "))
   if(nrow(check_classes) > 0){
     print(check_classes$variable)
-    print("Improperly classified variables may require manipulation after read-in")}
+    print("Improperly classified variables may require manipulation after read-in.\nSee easyfulcrum::fulcrumTypes for expected classes")}
   # check for duplicated c labels
   message(">>> Checking duplicated c labels")
   duplicated_c_label <- data %>% dplyr::filter(flag_duplicated_c_label_field_sampling == TRUE)
