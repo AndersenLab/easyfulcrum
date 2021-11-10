@@ -26,12 +26,12 @@ FtoC <- function(F) {
 
 #' makeDirStructure
 #'
-#' \code{makeDirStructure} Makes the required directory structure for use with
+#' \code{makeDirStructure} makes the required directory structure for use with
 #' \code{easyfulcrum}.
 #'
-#' @param startdir the system directory where project directory will be created.
+#' @param startdir the directory where the directory structure will be created.
 #' @param projectdirname the name of the project, a new directory named after
-#' the project will be made under \code{startdir}. If \code{NULL} only the
+#' the project will be made under \code{startdir}. If \code{NULL}, only the
 #' subdirectories will be made under \code{startdir}.
 #' @param
 #' @export

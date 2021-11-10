@@ -7,13 +7,13 @@
 makeDirStructure(startdir, projectdirname = NULL)
 }
 \arguments{
-\item{startdir}{the system directory where project directory will be created.}
+\item{startdir}{the directory where the directory structure will be created.}
 
 \item{projectdirname}{the name of the project, a new directory named after
-the project will be made under \code{startdir}. If \code{NULL} only the
+the project will be made under \code{startdir}. If \code{NULL}, only the
 subdirectories will be made under \code{startdir}.}
 }
 \description{
-\code{makeDirStructure} Makes the required directory structure for use with
+\code{makeDirStructure} makes the required directory structure for use with
 \code{easyfulcrum}.
 }
