@@ -84,7 +84,7 @@ procFulcrum <- function(data) {
       tidyr::separate(col = sample_photo, into = c("sample_photo1", "sample_photo2", "sample_photo3"), sep = ",", extra = "drop", fill = "right") %>%
       # force gridsect variables to correct class b/c they will default to logical if no gridsects are present
       dplyr::mutate(gridsect_index = as.character(gridsect_index),
-                    gridsect_direction = as.character(gridsect_direction),
+                    grid_sect_direction = as.character(grid_sect_direction),
                     gridsect_radius = as.character(gridsect_radius))
 
     # add to processed list
