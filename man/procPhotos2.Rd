@@ -44,7 +44,7 @@ filled by the function.}
 A folder named \code{photos} in the \code{data/processed/fulcrum}
   directory. The folder contains sample photos renamed with C-labels. If
   \code{CeNDR} is set to TRUE sample photos will be renamed with strain names
-  as well organized by. A dataframe identical to input \code{data} with old
+  as well organized by species. A dataframe identical to input \code{data} with old
   and new image file names, md5 photo hash values, and a public url to find
   images. The function also saves a .rds file to the
   \code{data/processed/fulcrum} directory.
