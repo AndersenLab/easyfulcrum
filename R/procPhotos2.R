@@ -322,7 +322,7 @@ procPhotos2 <- function(dir, data, max_dim = 500, overwrite = FALSE, CeaNDR = FA
                      as.character(Sys.Date()),"_",
                      tail(strsplit(dir,"/")[[1]],1),"fulcrum.rds"))
   if(is.character(dir)){
-    saveRDS(object = data_out,
+    save(object = data_out,
             file = glue::glue("{dir}","/data/processed/fulcrum/",
                               as.character(Sys.Date()),"_",
                               tail(strsplit(dir,"/")[[1]],1),"fulcrum.rds"), version = 3)}
