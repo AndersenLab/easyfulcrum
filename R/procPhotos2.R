@@ -41,7 +41,8 @@
 #' @export
 #'
 
-procPhotos2 <- function(dir, data, max_dim = 500, overwrite = FALSE, CeaNDR = FALSE, pub_url = "https://storage.googleapis.com/elegansvariation.org/photos/isolation/fulcrum/") {
+procPhotos2 <- function(dir, data, max_dim = 500, overwrite = FALSE, CeaNDR = FALSE,
+                        pub_url = "https://storage.googleapis.com/elegansvariation.org/photos/isolation/fulcrum/") {
 
   # warn that more than one project detected
   if(length(unique(data$project)) > 1){
@@ -290,11 +291,11 @@ procPhotos2 <- function(dir, data, max_dim = 500, overwrite = FALSE, CeaNDR = FA
     dplyr::left_join(dplyr::select(to_change1_clabel, sample_photo1, orig_file_name:thumb_file_name), by = c("sample_photo1" = "sample_photo1")) %>%
     dplyr::left_join(dplyr::select(to_change2_clabel, sample_photo2, orig_file_name2:thumb_file_name2), by = c("sample_photo2" = "sample_photo2")) %>%
     dplyr::left_join(dplyr::select(to_change3_clabel, sample_photo3, orig_file_name3:thumb_file_name3), by = c("sample_photo3" = "sample_photo3")) %>%
-    dplyr::mutate(sample_photo1_processed_url = case_when(!is.na(sample_photo1) ~ glue::glue("{project_url}sampling_thumbs/{c_label}.jpg"),
+    dplyr::mutate(sample_photo1_processed_url = case_when(!is.na(sample_photo1) ~ glue::glue("{project_url}{c_label}.jpg"),
                                                           TRUE ~ NA_character_),
-                  sample_photo2_processed_url = case_when(!is.na(sample_photo2) ~ glue::glue("{project_url}sampling_thumbs/{c_label}_2.jpg"),
+                  sample_photo2_processed_url = case_when(!is.na(sample_photo2) ~ glue::glue("{project_url}{c_label}_2.jpg"),
                                                           TRUE ~ NA_character_),
-                  sample_photo3_processed_url = case_when(!is.na(sample_photo3) ~ glue::glue("{project_url}sampling_thumbs/{c_label}_3.jpg"),
+                  sample_photo3_processed_url = case_when(!is.na(sample_photo3) ~ glue::glue("{project_url}{c_label}_3.jpg"),
                                                           TRUE ~ NA_character_)) %>%
     dplyr::left_join(dplyr::select(raw_hash1, sample_photo1_hash = sample_photo_raw_photo_hash,
                                    sample_photo1_raw_file_name = sample_photo_raw_file_name, sample_photo), by = c("sample_photo1" = "sample_photo")) %>%
