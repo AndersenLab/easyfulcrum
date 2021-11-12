@@ -8,19 +8,23 @@ makeSpSheet(
   data,
   target_sp = c("Caenorhabditis briggsae", "Caenorhabditis elegans",
     "Caenorhabditis tropicalis"),
-  dir
+  dir = NULL
 )
 }
 \arguments{
-\item{data}{a checked dataframe generated from the \code{procPhotos} function.}
+\item{data}{a checked dataframe generated from the \code{procPhotos}
+function.}
 
-\item{target_sp}{a vector of target species names with full genus and species names. Default target species names are:
-Caenorhabditis briggsae, Caenorhabditis elegans, Caenorhabditis tropicalis.}
+\item{target_sp}{a vector of target species names with full genus and species
+names. Default target species names are: Caenorhabditis briggsae,
+Caenorhabditis elegans, Caenorhabditis tropicalis.}
 
-\item{dir}{The path to the base fulcrum directory, species sheet will be saved as reports/spSheet.csv}
+\item{dir}{Default is NULL.Supply the path to the base fulcrum directory to
+export the species sheet to \code{reports/spSheet.csv}.}
 }
 \value{
-a list of dataframes containing species sheets for target species with flags for identified issues
+a list of dataframes containing species sheets for target species
+  with flags for identified issues.
 }
 \description{
 \code{makeSpSheet} produces a species sheet .csv file for target species

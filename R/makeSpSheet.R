@@ -2,16 +2,20 @@
 #'
 #' \code{makeSpSheet} produces a species sheet .csv file for target species
 #'
-#' @param data a checked dataframe generated from the \code{procPhotos} function.
-#' @param target_sp a vector of target species names with full genus and species names. Default target species names are:
-#' Caenorhabditis briggsae, Caenorhabditis elegans, Caenorhabditis tropicalis.
-#' @param dir The path to the base fulcrum directory, species sheet will be saved as reports/spSheet.csv
-#' @return a list of dataframes containing species sheets for target species with flags for identified issues
+#' @param data a checked dataframe generated from the \code{procPhotos}
+#'   function.
+#' @param target_sp a vector of target species names with full genus and species
+#'   names. Default target species names are: Caenorhabditis briggsae,
+#'   Caenorhabditis elegans, Caenorhabditis tropicalis.
+#' @param dir Default is NULL.Supply the path to the base fulcrum directory to
+#'   export the species sheet to \code{reports/spSheet.csv}.
+#' @return a list of dataframes containing species sheets for target species
+#'   with flags for identified issues.
 #' @import dplyr
 #' @export
 #'
 
-makeSpSheet <- function(data, target_sp = c("Caenorhabditis briggsae", "Caenorhabditis elegans", "Caenorhabditis tropicalis"), dir) {
+makeSpSheet <- function(data, target_sp = c("Caenorhabditis briggsae", "Caenorhabditis elegans", "Caenorhabditis tropicalis"), dir = NULL) {
   # select and rename data
   sp_data <- data %>%
     dplyr::filter(!is.na(strain_name)) %>%
@@ -80,8 +84,10 @@ makeSpSheet <- function(data, target_sp = c("Caenorhabditis briggsae", "Caenorha
                   isotype_ref_strain,
                   wgs_seq)
 
+  if(!is.null(dir)) {
   # write csv and save under reports subfolder
   write.csv(sp_data,glue::glue("{dir}","/reports/spSheet.csv"))
+  }
 
   # make flags
   flag_sp <- sp_data %>%
