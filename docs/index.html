@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-home">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,18 +33,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">easyfulcrum</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.0</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="reference/index.html">Reference</a>
 </li>
@@ -72,58 +68,73 @@
       </header><div class="row">
   <div class="contents col-md-9">
 
-<div id="overview-of-easyfulcrum" class="section level2">
-<h2 class="hasAnchor">
-<a href="#overview-of-easyfulcrum" class="anchor"></a>Overview of easyfulcrum:</h2>
+<div class="section level2">
+<h2 id="overview-of-easyfulcrum">Overview of easyfulcrum:<a class="anchor" aria-label="anchor" href="#overview-of-easyfulcrum"></a>
+</h2>
 <p>The <strong>easyfulcrum</strong> package is a tool to process and analyze ecological field sampling data generated using the Fulcrum mobile application.<br></p>
 <p>The <strong>easyfulcrum</strong> R package offers an organized workflow for processing ecological sampling data generated using the Fulcrum mobile application. <strong>easyfulcrum</strong> provides simple and efficient functions to clean, process, and visualize ecological field sampling and isolation data collected using custom Fulcrum applications. It also provides functions to join these data with genotype information if organisms isolated from the field are identified using molecular barcodes. Together, the Fulcrum mobile application and <strong>easyfulcrum</strong> R package allow researchers to easily implement mobile data-collection, cloud-based databases, and standardized data analysis tools to improve ecological sampling accuracy and efficiency.<br></p>
 </div>
-<div id="installing-easyfulcrum" class="section level2">
-<h2 class="hasAnchor">
-<a href="#installing-easyfulcrum" class="anchor"></a>Installing easyfulcrum:</h2>
-<p>Package installation depends on devtools 2.4.1 or later, and R 3.5.0 or later. Many packages on which easyFulcrum depends require development prerequisites on MacOS systems, including command line tools: (<a href="http://www.rstudio.com/ide/docs/packages/prerequisites" class="uri">http://www.rstudio.com/ide/docs/packages/prerequisites</a>). To use easyFulcrum’s procPhotos() function the imager package is required. This package has its own dependencies outside of R, which can be installed easily following the instructions provided on the package website (<a href="https://dahtah.github.io/imager/" class="uri">https://dahtah.github.io/imager/</a>).</p>
+<div class="section level2">
+<h2 id="installing-easyfulcrum">Installing easyfulcrum:<a class="anchor" aria-label="anchor" href="#installing-easyfulcrum"></a>
+</h2>
+<p>Package installation depends on devtools 2.4.1 or later, and R 3.5.0 or later. Many packages on which easyFulcrum depends require development prerequisites on MacOS systems, including command line tools: (<a href="http://www.rstudio.com/ide/docs/packages/prerequisites" class="external-link uri">http://www.rstudio.com/ide/docs/packages/prerequisites</a>). To use easyFulcrum’s procPhotos() function the imager package is required. This package has its own dependencies outside of R, which can be installed easily following the instructions provided on the package website (<a href="https://dahtah.github.io/imager/" class="external-link uri">https://dahtah.github.io/imager/</a>).</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span>
-<span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">"AndersenLab/easyfulcrum"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span>
+<span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/remote-reexports.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"AndersenLab/easyfulcrum"</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="using-easyfulcrum" class="section level2">
-<h2 class="hasAnchor">
-<a href="#using-easyfulcrum" class="anchor"></a>Using easyfulcrum:</h2>
+<div class="section level2">
+<h2 id="using-easyfulcrum">Using easyfulcrum:<a class="anchor" aria-label="anchor" href="#using-easyfulcrum"></a>
+</h2>
 <p>A general overview of the 14 main <strong>easyfulcrum</strong> functions is shown below.</p>
-<p><img src="https://github.com/AndersenLab/easyfulcrum/blob/main/docs/reference/figures/easyfulcrum_overview.jpg" alt="Project workflow simple"></p>
-<p>The <strong>easyfulcrum</strong> vignette describes these functions and the features of the package in detail. This vignette of the package workflow with example data in the raw csv and jpg format is available online (<a href="http://andersenlab.org/easyfulcrum/articles/easyFulcrum.html" class="uri">http://andersenlab.org/easyfulcrum/articles/easyFulcrum.html</a>).</p>
+<div class="figure">
+<img src="https://github.com/AndersenLab/easyfulcrum/blob/main/docs/reference/figures/easyfulcrum_overview.jpg" alt=""><p class="caption">Project workflow simple</p>
+</div>
+<p>The <strong>easyfulcrum</strong> vignette describes these functions and the features of the package in detail. This vignette of the package workflow with example data in the raw csv and jpg format is available online (<a href="http://andersenlab.org/easyfulcrum/articles/easyFulcrum.html" class="external-link uri">http://andersenlab.org/easyfulcrum/articles/easyFulcrum.html</a>).</p>
 </div>
 
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <div class="license">
-<h2>License</h2>
+<h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
 <li>
-<a href="https://opensource.org/licenses/mit-license.php">MIT</a> + file <a href="LICENSE-text.html">LICENSE</a>
+<a href="https://opensource.org/licenses/mit-license.php" class="external-link">MIT</a> + file <a href="LICENSE-text.html">LICENSE</a>
 </li>
 </ul>
 </div>
-<div class="developers">
-<h2>Developers</h2>
+
+
+<div class="citation">
+<h2 data-toc-skip>Citation</h2>
 <ul class="list-unstyled">
-<li>Tim Crombie <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0002-5645-4154" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
-<li>Matteo Di Bernardo <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0002-7574-1941" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
-<li>Daniel Cook <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0003-3347-562X" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li><a href="authors.html#citation">Citing easyfulcrum</a></li>
 </ul>
 </div>
+
+<div class="developers">
+<h2 data-toc-skip>Developers</h2>
+<ul class="list-unstyled">
+<li>Tim Crombie <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0002-5645-4154" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Matteo Di Bernardo <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0002-7574-1941" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Daniel Cook <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0003-3347-562X" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+</ul>
+</div>
+
+
 
   </div>
 </div>
 
 
       <footer><div class="copyright">
-  <p>Developed by Tim Crombie, Matteo Di Bernardo, Daniel Cook.</p>
+  <p></p>
+<p>Developed by Tim Crombie, Matteo Di Bernardo, Daniel Cook.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
 </div>
 
       </footer>
@@ -131,6 +142,8 @@
 
   
 
+
+  
 
   </body>
 </html>
