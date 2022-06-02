@@ -9,7 +9,7 @@
 #' \code{procFulcrum} will automatically convert to celsius (assumes temperature incorrectly in fahrenheit).
 #' flagged ambient temperature: occurs when ambient temperature > 40,
 #' \code{procFulcrum} will automatically convert to celsius (assumes temperature incorrectly in fahrenheit).
-#' flagged ambient run temperature: occurs when ambient humidity and temperature are repeated in subsequent measurements,
+#' flagged ambient run temperature: occurs when ambient humidity and temperature are repeated five times or more in subsequent measurements,
 #' this is meant to flag values if probe is stuck, \code{procFulcrum} does not automatically modify anything for this flag.
 #'
 #' @param data list format output of \code{procFulcrum}.

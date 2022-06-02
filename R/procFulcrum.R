@@ -70,8 +70,11 @@ procFulcrum <- function(data) {
       dplyr::mutate(flag_ambient_temperature_run = ifelse(ambient_humidity == dplyr::lag(ambient_humidity) &
                                                             raw_ambient_temperature == dplyr::lag(raw_ambient_temperature) & gridsect == "no", TRUE, FALSE),
                     run_length = runner::streak_run(flag_ambient_temperature_run),
-                    flag_ambient_temperature_run = ifelse((run_length > 3 & flag_ambient_temperature_run == TRUE) |
-                                     (lead(run_length, n = 2L) >= 3 & flag_ambient_temperature_run == TRUE), TRUE, FALSE)) %>%
+                    flag_ambient_temperature_run = dplyr::case_when((run_length >= 4 & flag_ambient_temperature_run == TRUE)  ~ T,
+                                                              (dplyr::lead(run_length, n = 3L) >= 4 & flag_ambient_temperature_run == TRUE) ~ T,
+                                                              (dplyr::lead(run_length, n = 2L) >= 4 & flag_ambient_temperature_run == TRUE) ~ T,
+                                                              (dplyr::lead(run_length, n = 1L) >= 4 & flag_ambient_temperature_run == TRUE) ~ T,
+                                                              TRUE ~ F)) %>%
       dplyr::select(-run_length) %>%
       # flag duplicated C-labels
       dplyr::group_by(c_label) %>%

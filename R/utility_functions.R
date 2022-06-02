@@ -33,7 +33,7 @@ FtoC <- function(F) {
 #' @param projectdirname the name of the project, a new directory named after
 #' the project will be made under \code{startdir}. If \code{NULL}, only the
 #' subdirectories will be made under \code{startdir}.
-#' @param
+#'
 #' @export
 #'
 

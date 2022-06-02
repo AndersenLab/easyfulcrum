@@ -1,6 +1,6 @@
 ---
 title: "easyFulcrum"
-author: "Author: Matteo Di Bernardo"
+author: "Author: Tim Crombie and Matteo Di Bernardo"
 date: "`r format(Sys.time(), '%d %b %Y')`"
 output: rmarkdown::html_vignette
 vignette: >
@@ -122,14 +122,17 @@ flag_temp <- checkTemperatures(data = proc_fulc, return_flags = TRUE)
 
 #### fixTemperatures: 
 
-`fixTemperatures` takes a) `fulcrum_id`s that need to be reverted *back to their original values* (if readings above 40 degrees were truly in Celsius) for both substrate temperatures (`substrate_temperature_ids`) and ambient temperatures (`ambient_temperature_ids`) as well as b) `fulcrum_id`s for which humidity and temperature readings need to be set to NA due to a stuck measurement device (`ambient_temperature_run_ids`).
+`fixTemperatures` takes a) `fulcrum_id`s that need to be reverted *back to their original values* (if readings above 40 degrees were truly in Celsius) for both substrate temperatures (`substrate_temperature_ids`) and ambient temperatures (`ambient_temperature_ids`) as well as b) `fulcrum_id`s for which humidity and temperature readings need to be set to NA due to a stuck measurement device (`ambient_temperature_run_ids`). In the example below we set all the `ambient_temperature_run = TRUE` values to NA. Also, note that the first observation of the humidity and temperature value for a given run is not flagged as part of the run.
 
 ```{r}
 proc_fulc_clean <- fixTemperatures(data = proc_fulc,
                                    substrate_temperature_ids = "a7db618d-44cc-4b4a-bc67-871306029274",
                                    ambient_temperature_ids = "b1f20ae4-c5c2-426f-894a-e1f46c2fa693",
                                    ambient_temperature_run_ids=c("dda77efe-d73c-48e9-aefb-b508e613256b",
-                                                                 "93de14a0-40ab-4793-8614-ab1512ab158c"))
+                                                                 "93de14a0-40ab-4793-8614-ab1512ab158c",
+                                                                 "216cb71a-6470-46eb-950d-366ac3180498",
+                                                                 "920a6a56-7a29-47f4-afce-a5f83787d639",
+                                                                 "6b25c113-4bb6-4bc5-9473-eca1f8075d10"))
 ```
 
 The flag variables will be maintained, so rerunning `checkTemperatures` on the cleaned processed fulcrum data will ensure that corrections have been implemented as desired.
