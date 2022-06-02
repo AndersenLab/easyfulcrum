@@ -1,0 +1,23 @@
+citHeader("To cite easyfulcrum in publications use:")
+
+citEntry(entry = "Article",
+  title        = "{easyFulcrum}: An R package to process and analyze ecological sampling data generated using the Fulcrum mobile application",
+  author       = personList(as.person("Matteo Di Bernardo"),
+                   as.person("Timothy A. Crombie"),
+                   as.person("Daniel E. Cook"),
+                   as.person("Erik C. Andersen")),
+  journal      = "PLoS One",
+  year         = "2021",
+  volume       = "16",
+  number       = "10",
+  pages        = "e0254293",
+  url          = "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0254293",
+
+  textVersion  =
+  paste("Matteo Di Bernardo, Timothy A. Crombie, Daniel E. Cook, Erik C. Andersen (2021).",
+        "easyFulcrum: An R package to process and analyze ecological sampling data generated using the Fulcrum mobile application.",
+        "PLoS One, 16(10), e0254293.",
+        "URL https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0254293.")
+)
+
+
