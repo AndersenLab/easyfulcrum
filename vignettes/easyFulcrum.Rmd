@@ -1,6 +1,6 @@
 ---
 title: "easyFulcrum"
-author: "Author: Tim Crombie and Matteo Di Bernardo"
+author: "Authors: Tim Crombie and Matteo Di Bernardo"
 date: "`r format(Sys.time(), '%d %b %Y')`"
 output: rmarkdown::html_vignette
 vignette: >
