@@ -196,7 +196,7 @@ checkJoin <- function(data, return_flags = FALSE) {
     print(unusual_sample_photo_num$c_label)
     print("Unusual sample photo number are found in the ...field_sampling.csv")}
   # check for unusual distances between photo and record locations
-  message(">>> Checking for >100 meter distance between location methods") # TAC
+  message(">>> Checking for >500 meter distance between location methods") # TAC
   diffs <- data %>% dplyr::filter(flag_collection_lat_long_method_diff_extreme == TRUE)
   print(paste("There are", nrow(diffs), "rows with a >100 meter distance between the record creation location and photo location, their c labels are:", sep = " "))
   if(nrow(diffs) > 0){
