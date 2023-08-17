@@ -7,7 +7,7 @@
 #' @param target_sp a vector of target species names with full genus and species
 #'   names. Default target species names are: Caenorhabditis briggsae,
 #'   Caenorhabditis elegans, Caenorhabditis tropicalis.
-#' @param dir Default is NULL.Supply the path to the base fulcrum directory to
+#' @param dir Default is NULL. Supply the path to the project directory to
 #'   export the species sheet to \code{reports/spSheet.csv}.
 #' @return a list of dataframes containing species sheets for target species
 #'   with flags for identified issues.

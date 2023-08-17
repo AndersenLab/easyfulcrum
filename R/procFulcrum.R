@@ -128,9 +128,14 @@ procFulcrum <- function(data) {
                     isolation_by = created_by,
                     isolation_local_time = time,
                     isolation_latitude = latitude,
-                    isolation_longitude = longitude) %>%
-      dplyr::select(-created_at, -project, -geometry, -photos, -photos_caption, -photos_url, -gps_altitude, -gps_horizontal_accuracy,
-                    -gps_vertical_accuracy, -gps_speed, -gps_course)
+                    isolation_longitude = longitude,
+                    isolation_photo = photos) %>% # TAC
+      dplyr::mutate(flag_unusual_isolation_photo_num = ifelse(is.na(stringr::str_count(isolation_photo, pattern = ",")) |
+                                                             stringr::str_count(isolation_photo, pattern = ",") != 0, TRUE, FALSE)) %>%
+      # break apart multiple isolation photos. This takes the first isolation photo and warns if additional photos are discarded
+      tidyr::separate(col = isolation_photo, into = c("isolation_photo"), sep = ",", extra = "drop", fill = "right") %>%
+      dplyr::select(-created_at, -project, -geometry, -photos_caption, -photos_url, -gps_altitude, -gps_horizontal_accuracy,
+                    -gps_vertical_accuracy, -gps_speed, -gps_course) # TAC , -photos
 
     # add to list
     proc_data["isolation_proc"] <- list(isolation_proc)

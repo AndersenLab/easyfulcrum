@@ -9,8 +9,7 @@ annotateFulcrum(data, dir = NULL, select_vars = F)
 \arguments{
 \item{data}{A single dataframe generated with the joinFulcrum function.}
 
-\item{dir}{The path to the base fulcrum directory. Within this directory,
-data/raw/annotate should contain: island.csv, location.csv, trails.csv}
+\item{dir}{The path to the project directory.}
 
 \item{select_vars}{Logical, TRUE  will return only the default variables,
 FALSE will return all variables. FALSE is recommended if using customized

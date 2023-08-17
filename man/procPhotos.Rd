@@ -10,8 +10,8 @@ procPhotos(
   max_dim = 500,
   overwrite = FALSE,
   CeNDR = FALSE,
- 
-    pub_url = "https://storage.googleapis.com/elegansvariation.org/photos/isolation/fulcrum/"
+  pub_url =
+    "https://storage.googleapis.com/elegansvariation.org/photos/isolation/fulcrum/"
 )
 }
 \arguments{

@@ -1,7 +1,7 @@
 #' procPhotos2
 #'
 #' \code{procPhotos2} copies raw sample photos, renames them with the C-label
-#' and strain name if \code{CeNDR} is set to TRUE, and pastes them in
+#' and strain name if \code{CaeNDR} is set to TRUE, and saves them in
 #' data/processed/fulcrum/photos folder. The function also makes thumbnails for
 #' use with interactive maps and calculates md5 checksums for images.
 #'
@@ -26,8 +26,11 @@
 #'   filled by the function.
 #' @return A folder named \code{photos} in the \code{data/processed/fulcrum}
 #'   directory. The folder contains sample photos renamed with C-labels. If
-#'   \code{CeNDR} is set to TRUE sample photos will be renamed with strain names
-#'   as well organized by species. A dataframe identical to input \code{data} with old
+#'   \code{CaeNDR} is set to TRUE sample photos will be renamed with strain names
+#'   as well organized by species. Multiple sample photos for a single C-label
+#'   are given a numeric suffix after the strain name \code{strain_name_#}.
+#'   The isolation photos have the highest suffix. The function uses a single isolation
+#'   photo even if mutiple exist. A dataframe identical to input \code{data} with old
 #'   and new image file names, md5 photo hash values, and a public url to find
 #'   images. The function also saves a .rds file to the
 #'   \code{data/processed/fulcrum} directory.
@@ -67,27 +70,40 @@ procPhotos2 <- function(dir, data, max_dim = 500, overwrite = FALSE, CeaNDR = FA
       dplyr::filter(!is.na(strain_name)) %>%
       dplyr::filter(species_id %in% c("C. elegans","C. briggsae","C. tropicalis","Caenorhabditis elegans","Caenorhabditis briggsae","Caenorhabditis tropicalis")) %>%
       dplyr::mutate(orig_file_name = glue::glue("{dir_photos}/{sample_photo1}.jpg"),
-                    new_file_name = case_when(species_id %in% c("C. briggsae", "Caenorhabditis briggsae") ~ glue::glue("{processed_dir}/CeaNDR/full/Cb/{strain_name}.jpg"),
-                                              species_id %in% c("C. elegans", "Caenorhabditis elegans") ~ glue::glue("{processed_dir}/CeaNDR/full/Ce/{strain_name}.jpg"),
-                                              species_id %in% c("C. tropicalis", "Caenorhabditis tropicalis") ~ glue::glue("{processed_dir}/CeaNDR/full/Ct/{strain_name}.jpg")),
-                    thumb_file_name = case_when(species_id %in% c("C. briggsae", "Caenorhabditis briggsae") ~ glue::glue("{processed_dir}/CeaNDR/thumbnails/Cb/{strain_name}.jpg"),
-                                                species_id %in% c("C. elegans", "Caenorhabditis elegans") ~ glue::glue("{processed_dir}/CeaNDR/thumbnails/Ce/{strain_name}.jpg"),
-                                                species_id %in% c("C. tropicalis", "Caenorhabditis tropicalis") ~ glue::glue("{processed_dir}/CeaNDR/thumbnails/Ct/{strain_name}.jpg"))) %>%
+                    new_file_name = case_when(species_id %in% c("C. briggsae", "Caenorhabditis briggsae") ~ glue::glue("{processed_dir}/CeaNDR/Cb/{strain_name}.jpg"),
+                                              species_id %in% c("C. elegans", "Caenorhabditis elegans") ~ glue::glue("{processed_dir}/CeaNDR/Ce/{strain_name}.jpg"),
+                                              species_id %in% c("C. tropicalis", "Caenorhabditis tropicalis") ~ glue::glue("{processed_dir}/CeaNDR/Ct/{strain_name}.jpg")),
+                    thumb_file_name = case_when(species_id %in% c("C. briggsae", "Caenorhabditis briggsae") ~ glue::glue("{processed_dir}/CeaNDR/Cb/{strain_name}.thumb.jpg"),
+                                                species_id %in% c("C. elegans", "Caenorhabditis elegans") ~ glue::glue("{processed_dir}/CeaNDR/Ce/{strain_name}.thumb.jpg"),
+                                                species_id %in% c("C. tropicalis", "Caenorhabditis tropicalis") ~ glue::glue("{processed_dir}/CeaNDR/Ct/{strain_name}.thumb.jpg"))) %>%
       dplyr::mutate(orig_file_name2 = glue::glue("{dir_photos}/{sample_photo2}.jpg"),
-                    new_file_name2 = case_when(species_id %in% c("C. briggsae", "Caenorhabditis briggsae") ~ glue::glue("{processed_dir}/CeaNDR/full/Cb/{strain_name}_2.jpg"),
-                                               species_id %in% c("C. elegans", "Caenorhabditis elegans") ~ glue::glue("{processed_dir}/CeaNDR/full/Ce/{strain_name}_2.jpg"),
-                                               species_id %in% c("C. tropicalis", "Caenorhabditis tropicalis") ~ glue::glue("{processed_dir}/CeaNDR/full/Ct/{strain_name}_2.jpg")),
-                    thumb_file_name2 = case_when(species_id %in% c("C. briggsae", "Caenorhabditis briggsae") ~ glue::glue("{processed_dir}/CeaNDR/thumbnails/Cb/{strain_name}_2.jpg"),
-                                                 species_id %in% c("C. elegans", "Caenorhabditis elegans") ~ glue::glue("{processed_dir}/CeaNDR/thumbnails/Ce/{strain_name}_2.jpg"),
-                                                 species_id %in% c("C. tropicalis", "Caenorhabditis tropicalis") ~ glue::glue("{processed_dir}/CeaNDR/thumbnails/Ct/{strain_name}_2.jpg"))) %>%
+                    new_file_name2 = case_when(species_id %in% c("C. briggsae", "Caenorhabditis briggsae") ~ glue::glue("{processed_dir}/CeaNDR/Cb/{strain_name}_2.jpg"),
+                                               species_id %in% c("C. elegans", "Caenorhabditis elegans") ~ glue::glue("{processed_dir}/CeaNDR/Ce/{strain_name}_2.jpg"),
+                                               species_id %in% c("C. tropicalis", "Caenorhabditis tropicalis") ~ glue::glue("{processed_dir}/CeaNDR/Ct/{strain_name}_2.jpg")),
+                    thumb_file_name2 = case_when(species_id %in% c("C. briggsae", "Caenorhabditis briggsae") ~ glue::glue("{processed_dir}/CeaNDR/Cb/{strain_name}_2.thumb.jpg"),
+                                                 species_id %in% c("C. elegans", "Caenorhabditis elegans") ~ glue::glue("{processed_dir}/CeaNDR/Ce/{strain_name}_2.thumb.jpg"),
+                                                 species_id %in% c("C. tropicalis", "Caenorhabditis tropicalis") ~ glue::glue("{processed_dir}/CeaNDR/Ct/{strain_name}_2.thumb.jpg"))) %>%
       dplyr::mutate(orig_file_name3 = glue::glue("{dir_photos}/{sample_photo3}.jpg"),
-                    new_file_name3 = case_when(species_id %in% c("C. briggsae", "Caenorhabditis briggsae") ~ glue::glue("{processed_dir}/CeaNDR/full/Cb/{strain_name}_3.jpg"),
-                                               species_id %in% c("C. elegans", "Caenorhabditis elegans") ~ glue::glue("{processed_dir}/CeaNDR/full/Ce/{strain_name}_3.jpg"),
-                                               species_id %in% c("C. tropicalis", "Caenorhabditis tropicalis") ~ glue::glue("{processed_dir}/CeaNDR/full/Ct/{strain_name}_3.jpg")),
-                    thumb_file_name3 = case_when(species_id %in% c("C. briggsae", "Caenorhabditis briggsae") ~ glue::glue("{processed_dir}/CeaNDR/thumbnails/Cb/{strain_name}_3.jpg"),
-                                                 species_id %in% c("C. elegans", "Caenorhabditis elegans") ~ glue::glue("{processed_dir}/CeaNDR/thumbnails/Ce/{strain_name}_3.jpg"),
-                                                 species_id %in% c("C. tropicalis", "Caenorhabditis tropicalis") ~ glue::glue("{processed_dir}/CeaNDR/thumbnails/Ct/{strain_name}_3.jpg"))) %>%
-      dplyr::select(strain_name, species_id, c_label, sample_photo1, sample_photo2, sample_photo3, orig_file_name:thumb_file_name3)
+                    new_file_name3 = case_when(species_id %in% c("C. briggsae", "Caenorhabditis briggsae") ~ glue::glue("{processed_dir}/CeaNDR/Cb/{strain_name}_3.jpg"),
+                                               species_id %in% c("C. elegans", "Caenorhabditis elegans") ~ glue::glue("{processed_dir}/CeaNDR/Ce/{strain_name}_3.jpg"),
+                                               species_id %in% c("C. tropicalis", "Caenorhabditis tropicalis") ~ glue::glue("{processed_dir}/CeaNDR/Ct/{strain_name}_3.jpg")),
+                    thumb_file_name3 = case_when(species_id %in% c("C. briggsae", "Caenorhabditis briggsae") ~ glue::glue("{processed_dir}/CeaNDR/Cb/{strain_name}_3.thumb.jpg"),
+                                                 species_id %in% c("C. elegans", "Caenorhabditis elegans") ~ glue::glue("{processed_dir}/CeaNDR/Ce/{strain_name}_3.thumb.jpg"),
+                                                 species_id %in% c("C. tropicalis", "Caenorhabditis tropicalis") ~ glue::glue("{processed_dir}/CeaNDR/Ct/{strain_name}_3.thumb.jpg"))) %>%
+      dplyr::select(strain_name, species_id, c_label, sample_photo1, sample_photo2, sample_photo3, orig_file_name:thumb_file_name3, isolation_photo) %>%
+      tidyr::pivot_longer(cols = sample_photo1:sample_photo3, names_to = "photo", values_to = "photo_hash") %>%
+      dplyr::group_by(strain_name) %>%
+      dplyr::mutate(n_sample_photos = sum(!is.na(photo_hash))) %>%
+      dplyr::ungroup() %>%
+      tidyr::pivot_wider(names_from = "photo", values_from = "photo_hash") %>%
+      dplyr::mutate(orig_file_name4 = glue::glue("{dir_photos}/{isolation_photo}.jpg"),
+                    new_file_name4 = case_when(species_id %in% c("C. briggsae", "Caenorhabditis briggsae") ~ glue::glue("{processed_dir}/CeaNDR/Cb/{strain_name}_{1+n_sample_photos}.jpg"),
+                                               species_id %in% c("C. elegans", "Caenorhabditis elegans") ~ glue::glue("{processed_dir}/CeaNDR/Ce/{strain_name}_{1+n_sample_photos}.jpg"),
+                                               species_id %in% c("C. tropicalis", "Caenorhabditis tropicalis") ~ glue::glue("{processed_dir}/CeaNDR/Ct/{strain_name}_{1+n_sample_photos}.jpg")),
+                    thumb_file_name4 = case_when(species_id %in% c("C. briggsae", "Caenorhabditis briggsae") ~ glue::glue("{processed_dir}/CeaNDR/Cb/{strain_name}_{1+n_sample_photos}.thumb.jpg"),
+                                                 species_id %in% c("C. elegans", "Caenorhabditis elegans") ~ glue::glue("{processed_dir}/CeaNDR/Ce/{strain_name}_{1+n_sample_photos}.thumb.jpg"),
+                                                 species_id %in% c("C. tropicalis", "Caenorhabditis tropicalis") ~ glue::glue("{processed_dir}/CeaNDR/Ct/{strain_name}_{1+n_sample_photos}.thumb.jpg"))) %>%
+      dplyr::select(strain_name, species_id, c_label, sample_photo1, sample_photo2, sample_photo3, orig_file_name:thumb_file_name4)
 
     to_change1 <- to_change %>%
       dplyr::filter(!is.na(sample_photo1))
@@ -98,18 +114,20 @@ procPhotos2 <- function(dir, data, max_dim = 500, overwrite = FALSE, CeaNDR = FA
     to_change3 <- to_change %>%
       dplyr::filter(!is.na(sample_photo3))
 
+    to_change4 <- to_change %>%
+      dplyr::filter(!is.na(isolation_photo))
+
+
     # make CaeNDR subdirectories in dir
-    fs::dir_create(glue::glue("{processed_dir}/CeaNDR/full/Cb"))
-    fs::dir_create(glue::glue("{processed_dir}/CeaNDR/full/Ce"))
-    fs::dir_create(glue::glue("{processed_dir}/CeaNDR/full/Ct"))
-    fs::dir_create(glue::glue("{processed_dir}/CeaNDR/thumbnails/Cb"))
-    fs::dir_create(glue::glue("{processed_dir}/CeaNDR/thumbnails/Ce"))
-    fs::dir_create(glue::glue("{processed_dir}/CeaNDR/thumbnails/Ct"))
+    fs::dir_create(glue::glue("{processed_dir}/CeaNDR/Cb"))
+    fs::dir_create(glue::glue("{processed_dir}/CeaNDR/Ce"))
+    fs::dir_create(glue::glue("{processed_dir}/CeaNDR/Ct"))
 
     # copy files to new directory and rename
     fs::file_copy(to_change1$orig_file_name, to_change1$new_file_name, overwrite = overwrite)
     fs::file_copy(to_change2$orig_file_name2, to_change2$new_file_name2, overwrite = overwrite)
     fs::file_copy(to_change3$orig_file_name3, to_change3$new_file_name3, overwrite = overwrite)
+    fs::file_copy(to_change4$orig_file_name4, to_change4$new_file_name4, overwrite = overwrite)
 
     # loop through renamed images to make thumbnails
     for(i in unique(to_change1$new_file_name)) {
@@ -161,20 +179,41 @@ procPhotos2 <- function(dir, data, max_dim = 500, overwrite = FALSE, CeaNDR = FA
       # write the file
       imager::save.image(thumb, file = glue::glue("{to_change %>% dplyr::filter(new_file_name3 == i) %>% dplyr::pull(thumb_file_name3)}"))
     }
+
+    for(i in unique(to_change4$new_file_name4)) {
+      # Make message
+      message(glue::glue("Processing collection photo:{to_change4 %>% dplyr::filter(new_file_name4 == i) %>% dplyr::pull(orig_file_name4)}"))
+
+      # setup image in R
+      img <- imager::load.image(i)
+      # get raw img dimesions
+      raw_max_dim <- max(dim(img))
+      percentage <- 100*(max_dim/raw_max_dim)
+
+      # resize to make thumbnail
+      thumb <- imager::resize(img, -percentage, -percentage) # need negative for resize function
+
+      # write the file
+      imager::save.image(thumb, file = glue::glue("{to_change %>% dplyr::filter(new_file_name4 == i) %>% dplyr::pull(thumb_file_name4)}"))
+    }
+
   }
 
+  #============================================================================#
+  # This section will process images for the project report                    #
+  #============================================================================#
   # copy all images create folder of these images and thumbnails
   to_change_clabel <- data %>%
     dplyr::filter(!is.na(c_label)) %>%
     dplyr::distinct(c_label, .keep_all = TRUE) %>%
     dplyr::mutate(orig_file_name = glue::glue("{dir_photos}/{sample_photo1}.jpg"),
-                  new_file_name = glue::glue("{processed_dir}/C_labels/full/{c_label}.jpg"),
+                  new_file_name = glue::glue("{processed_dir}/C_labels/{c_label}.jpg"),
                   thumb_file_name = glue::glue("{processed_dir}/C_labels/thumbnails/{c_label}.jpg")) %>%
     dplyr::mutate(orig_file_name2 = glue::glue("{dir_photos}/{sample_photo2}.jpg"),
-                  new_file_name2 = glue::glue("{processed_dir}/C_labels/full/{c_label}_2.jpg"),
+                  new_file_name2 = glue::glue("{processed_dir}/C_labels/{c_label}_2.jpg"),
                   thumb_file_name2 = glue::glue("{processed_dir}/C_labels/thumbnails/{c_label}_2.jpg")) %>%
     dplyr::mutate(orig_file_name3 = glue::glue("{dir_photos}/{sample_photo3}.jpg"),
-                  new_file_name3 = glue::glue("{processed_dir}/C_labels/full/{c_label}_3.jpg"),
+                  new_file_name3 = glue::glue("{processed_dir}/C_labels/{c_label}_3.jpg"),
                   thumb_file_name3 = glue::glue("{processed_dir}/C_labels/thumbnails/{c_label}_3.jpg")) %>%
     dplyr::select(strain_name, species_id, c_label, sample_photo1, sample_photo2, sample_photo3, orig_file_name:thumb_file_name3)
 

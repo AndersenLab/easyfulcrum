@@ -59,7 +59,11 @@ joinFulcrum <- function(data, select_vars = F) {
       dplyr::mutate(collection_lat_long_method_diff = geosphere::distHaversine(c(collection_longitude, collection_latitude),
                                                                                c(collection_fulcrum_longitude, collection_fulcrum_latitude)),
                     # adjust collection_lat_long_method_diff to NA if there is only a fulcrum GPS position
-                    collection_lat_long_method_diff = ifelse(collection_lat_long_method == "fulcrum", NA, collection_lat_long_method_diff)) %>%
+                    collection_lat_long_method_diff = ifelse(collection_lat_long_method == "fulcrum", NA, collection_lat_long_method_diff),
+                    flag_collection_lat_long_method_diff_extreme = case_when(is.na(collection_lat_long_method_diff) ~ FALSE,
+                                                                             !is.na(collection_lat_long_method_diff) & collection_lat_long_method_diff < 100 ~ FALSE,
+                                                                             !is.na(collection_lat_long_method_diff) & collection_lat_long_method_diff >= 100 ~ TRUE,
+                                                                             TRUE ~ NA)) %>%
       dplyr::ungroup() %>%
       # fix altitude method and altitude
       dplyr::mutate(collection_altitude = ifelse(collection_lat_long_method == "photo" & !(is.na(exif_gps_altitude)), exif_gps_altitude,
@@ -90,6 +94,7 @@ joinFulcrum <- function(data, select_vars = F) {
                       collection_longitude,
                       collection_lat_long_method,
                       collection_lat_long_method_diff,
+                      flag_collection_lat_long_method_diff_extreme,
                       fulcrum_altitude,
                       exif_gps_altitude,
                       collection_altitude,
@@ -159,7 +164,11 @@ joinFulcrum <- function(data, select_vars = F) {
       dplyr::mutate(collection_lat_long_method_diff = geosphere::distHaversine(c(collection_longitude, collection_latitude),
                                                                                c(collection_fulcrum_longitude, collection_fulcrum_latitude)),
                     # adjust collection_lat_long_method_diff to NA if there is only a fulcrum GPS position
-                    collection_lat_long_method_diff = ifelse(collection_lat_long_method == "fulcrum", NA, collection_lat_long_method_diff)) %>%
+                    collection_lat_long_method_diff = ifelse(collection_lat_long_method == "fulcrum", NA, collection_lat_long_method_diff),
+                    flag_collection_lat_long_method_diff_extreme = case_when(is.na(collection_lat_long_method_diff) ~ FALSE,
+                                                                             !is.na(collection_lat_long_method_diff) & collection_lat_long_method_diff < 100 ~ FALSE,
+                                                                             !is.na(collection_lat_long_method_diff) & collection_lat_long_method_diff >= 100 ~ TRUE,
+                                                                             TRUE ~ NA)) %>%
       # fix altitude method and altitude
       dplyr::mutate(collection_altitude = ifelse(collection_lat_long_method == "photo" & !(is.na(exif_gps_altitude)), exif_gps_altitude,
                                                  ifelse(is.na(exif_gps_altitude) & !(is.na(fulcrum_altitude)), fulcrum_altitude,
@@ -198,6 +207,7 @@ joinFulcrum <- function(data, select_vars = F) {
                       flag_duplicated_s_label_isolation_s_labeled_plates,
                       flag_missing_s_label_isolation_s_labeled_plates,
                       flag_missing_isolation_record,
+                      flag_unusual_isolation_photo_num,
                       collection_by,
                       collection_datetime_UTC,
                       collection_date_UTC,
@@ -210,6 +220,7 @@ joinFulcrum <- function(data, select_vars = F) {
                       collection_longitude,
                       collection_lat_long_method,
                       collection_lat_long_method_diff,
+                      flag_collection_lat_long_method_diff_extreme,
                       fulcrum_altitude,
                       exif_gps_altitude,
                       collection_altitude,
@@ -245,6 +256,7 @@ joinFulcrum <- function(data, select_vars = F) {
                       isolation_local_time,
                       isolation_latitude,
                       isolation_longitude,
+                      isolation_photo,
                       worms_on_sample)
     }
   }

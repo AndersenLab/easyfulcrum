@@ -74,7 +74,7 @@ loadExampleFiles <- function(startdir, projectdirname) {
   files_path <- stringr::str_replace(system.file("extdata", "nematode_isolation.csv", package = "easyfulcrum", mustWork = TRUE),
                                      pattern = "nematode_isolation.csv", replacement = "")
 
-  # Make vecotr of .csv and .jpg file paths
+  # Make vector of .csv and .jpg file paths
   csv <- stringr::str_subset(list.files(files_path), pattern = ".csv")
   csv_paths <- paste0(files_path, csv)
   jpg <- stringr::str_subset(list.files(files_path), pattern = ".jpg")

@@ -13,7 +13,7 @@ function.}
 \item{fulc}{a collection data frame output from the \code{procFulcrum}
 function.}
 
-\item{dir}{OPTIONAL, the path to the base fulcrum directory, if passed will
+\item{dir}{OPTIONAL, the path to the project directory, if passed will
 save the genotyping data in data/processed/genotypes.}
 
 \item{select_vars}{Logical, TRUE  will return only the default variables,

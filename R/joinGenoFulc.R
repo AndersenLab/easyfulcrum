@@ -8,7 +8,7 @@
 #'   function.
 #' @param geno a genotyping data frame output from the \code{loadGenotypes}
 #'   function.
-#' @param dir OPTIONAL, the path to the base fulcrum directory, if passed will
+#' @param dir OPTIONAL, the path to the project directory, if passed will
 #'   save the genotyping data in data/processed/genotypes.
 #' @param select_vars Logical, TRUE  will return only the default variables,
 #'   FALSE will return all variables. FALSE is recommended if using customized
@@ -86,6 +86,7 @@ joinGenoFulc <- function(geno, fulc, dir = NULL, select_vars = F) {
                   isolation_local_time,
                   isolation_latitude,
                   isolation_longitude,
+                  isolation_photo,
                   worms_on_sample,
                   #select these variables if they exist only, avoids error if not
                   any_of(c("shipment_sent_date",
@@ -107,6 +108,8 @@ joinGenoFulc <- function(geno, fulc, dir = NULL, select_vars = F) {
                   flag_substrate_temperature,
                   flag_unusual_sample_photo_num,
                   flag_duplicated_c_label_field_sampling,
+                  flag_collection_lat_long_method_diff_extreme,
+                  flag_unusual_isolation_photo_num,
                   flag_duplicated_isolation_for_c_label,
                   flag_duplicated_s_label_isolation_s_labeled_plates,
                   flag_missing_s_label_isolation_s_labeled_plates,

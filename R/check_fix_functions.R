@@ -155,11 +155,11 @@ fixTemperatures <- function(data,
 #' \code{checkJoin} checks for flags (9) in \code{joinFulcrum} output.
 #'
 #' This check function will return \emph{c_labels} and \emph{s_labels} for various flags relating to missing or duplicated data.
-#' Messages regarding what checks are being done, and where they lie in the raw dataframes is also provided.
+#' Messages regarding what checks are being done, and where they might lie in the raw dataframes are also provided.
 #' We advise returning to the raw dataframes using the information returned in these checks to better understand
-#' issues that may have occurred during data collection, before re-running.
+#' issues that might have occurred during data collection, before re-running.
 #'
-#' @param data dataframe output of \code{joinFulcrum}.
+#' @param data dataframe output from \code{joinFulcrum}.
 #' @param return_flags set to TRUE if flagged rows are to be returned as a dataframe.
 #' @return \emph{c_labels} and \emph{s_label}s (as appropriate) for rows with each of the six flags,
 #' and the origin of the location of the raw data that triggered the flag
@@ -195,6 +195,20 @@ checkJoin <- function(data, return_flags = FALSE) {
   if(nrow(unusual_sample_photo_num) > 0){
     print(unusual_sample_photo_num$c_label)
     print("Unusual sample photo number are found in the ...field_sampling.csv")}
+  # check for unusual distances between photo and record locations
+  message(">>> Checking for >100 meter distance between location methods") # TAC
+  diffs <- data %>% dplyr::filter(flag_collection_lat_long_method_diff_extreme == TRUE)
+  print(paste("There are", nrow(diffs), "rows with a >100 meter distance between the record creation location and photo location, their c labels are:", sep = " "))
+  if(nrow(diffs) > 0){
+    print(diffs$c_label)
+    print("The unusual location c labels are found in the ...field_sampling.csv and the ...field_sampling_sample_photo.csv")}
+  # check for unusual isolation photo numbers
+  message(">>> Checking unusual isolation photo number") # TAC
+  unusual_isolation_photo_num <- data %>% dplyr::filter(flag_unusual_isolation_photo_num == TRUE)
+  print(paste("There are", nrow(unusual_isolation_photo_num), "rows with unusual isolation photo numbers, their c labels are:", sep = " "))
+  if(nrow(unusual_isolation_photo_num) > 0){
+    print(unusual_isolation_photo_num$c_label)
+    print("Unusual isolation photo number are found in the ...isolation.csv")}
   # check for duplicated isolation for c labels
   message(">>> Checking duplicated isolation for c label")
   duplicated_isolation_for_c_label <- data %>% dplyr::filter(flag_duplicated_isolation_for_c_label == TRUE)

@@ -1,6 +1,6 @@
 Package: easyfulcrum
 Title: easyFulcrum: An R package to process and analyze ecological sampling data generated using the Fulcrum mobile application
-Version: 1.0.0
+Version: 1.1.0
 Authors@R: c(
     person(given = "Tim",
            family = "Crombie",
@@ -21,7 +21,7 @@ Description: This package contains functions to process and analyze data exporte
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.3
 Imports:
     tidyr,
     glue,

@@ -10,8 +10,8 @@ procPhotos2(
   max_dim = 500,
   overwrite = FALSE,
   CeaNDR = FALSE,
- 
-    pub_url = "https://storage.googleapis.com/elegansvariation.org/photos/isolation/fulcrum/"
+  pub_url =
+    "https://storage.googleapis.com/elegansvariation.org/photos/isolation/fulcrum/"
 )
 }
 \arguments{
@@ -43,15 +43,18 @@ filled by the function.}
 \value{
 A folder named \code{photos} in the \code{data/processed/fulcrum}
   directory. The folder contains sample photos renamed with C-labels. If
-  \code{CeNDR} is set to TRUE sample photos will be renamed with strain names
-  as well organized by species. A dataframe identical to input \code{data} with old
+  \code{CaeNDR} is set to TRUE sample photos will be renamed with strain names
+  as well organized by species. Multiple sample photos for a single C-label
+  are given a numeric suffix after the strain name \code{strain_name_#}.
+  The isolation photos have the highest suffix. The function uses a single isolation
+  photo even if mutiple exist. A dataframe identical to input \code{data} with old
   and new image file names, md5 photo hash values, and a public url to find
   images. The function also saves a .rds file to the
   \code{data/processed/fulcrum} directory.
 }
 \description{
 \code{procPhotos2} copies raw sample photos, renames them with the C-label
-and strain name if \code{CeNDR} is set to TRUE, and pastes them in
+and strain name if \code{CaeNDR} is set to TRUE, and saves them in
 data/processed/fulcrum/photos folder. The function also makes thumbnails for
 use with interactive maps and calculates md5 checksums for images.
 }

@@ -19,7 +19,7 @@ function.}
 names. Default target species names are: Caenorhabditis briggsae,
 Caenorhabditis elegans, Caenorhabditis tropicalis.}
 
-\item{dir}{Default is NULL.Supply the path to the base fulcrum directory to
+\item{dir}{Default is NULL. Supply the path to the project directory to
 export the species sheet to \code{reports/spSheet.csv}.}
 }
 \value{

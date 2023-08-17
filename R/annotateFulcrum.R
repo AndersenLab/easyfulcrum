@@ -4,8 +4,7 @@
 #' final Fulcrum dataframe
 #'
 #' @param data A single dataframe generated with the joinFulcrum function.
-#' @param dir The path to the base fulcrum directory. Within this directory,
-#'  data/raw/annotate should contain: island.csv, location.csv, trails.csv
+#' @param dir The path to the project directory.
 #' @param select_vars Logical, TRUE  will return only the default variables,
 #'   FALSE will return all variables. FALSE is recommended if using customized
 #'   Fulcrum applications other than "Nematode field sampling" and "Nematode
@@ -120,6 +119,7 @@ annotateFulcrum <- function(data, dir = NULL, select_vars = F) {
                     flag_duplicated_s_label_isolation_s_labeled_plates,
                     flag_missing_s_label_isolation_s_labeled_plates,
                     flag_missing_isolation_record,
+                    flag_unusual_isolation_photo_num,
                     collection_by,
                     collection_datetime_UTC,
                     collection_date_UTC,
@@ -132,6 +132,7 @@ annotateFulcrum <- function(data, dir = NULL, select_vars = F) {
                     collection_longitude,
                     collection_lat_long_method,
                     collection_lat_long_method_diff,
+                    flag_collection_lat_long_method_diff_extreme,
                     fulcrum_altitude,
                     exif_gps_altitude,
                     collection_altitude,
@@ -170,6 +171,7 @@ annotateFulcrum <- function(data, dir = NULL, select_vars = F) {
                     isolation_local_time,
                     isolation_latitude,
                     isolation_longitude,
+                    isolation_photo,
                     worms_on_sample)
   }
   # return data
