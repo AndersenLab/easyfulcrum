@@ -47,7 +47,7 @@ A folder named \code{photos} in the \code{data/processed/fulcrum}
   as well organized by species. Multiple sample photos for a single C-label
   are given a numeric suffix after the strain name \code{strain_name_#}.
   The isolation photos have the highest suffix. The function uses a single isolation
-  photo even if mutiple exist. A dataframe identical to input \code{data} with old
+  photo even if multiple exist. A dataframe identical to input \code{data} with old
   and new image file names, md5 photo hash values, and a public url to find
   images. The function also saves a .rds file to the
   \code{data/processed/fulcrum} directory.

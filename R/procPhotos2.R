@@ -30,13 +30,14 @@
 #'   as well organized by species. Multiple sample photos for a single C-label
 #'   are given a numeric suffix after the strain name \code{strain_name_#}.
 #'   The isolation photos have the highest suffix. The function uses a single isolation
-#'   photo even if mutiple exist. A dataframe identical to input \code{data} with old
+#'   photo even if multiple exist. A dataframe identical to input \code{data} with old
 #'   and new image file names, md5 photo hash values, and a public url to find
 #'   images. The function also saves a .rds file to the
 #'   \code{data/processed/fulcrum} directory.
 #' @importFrom rebus ALPHA one_or_more %R% DGT WRD optional
 #' @importFrom imager load.image resize save.image
 #' @importFrom glue glue
+#' @importFrom progress progress_bar
 #' @import dplyr
 #' @import stringr
 #' @import tidyr
@@ -105,6 +106,62 @@ procPhotos2 <- function(dir, data, max_dim = 500, overwrite = FALSE, CeaNDR = FA
                                                  species_id %in% c("C. tropicalis", "Caenorhabditis tropicalis") ~ glue::glue("{processed_dir}/CeaNDR/Ct/{strain_name}_{1+n_sample_photos}.thumb.jpg"))) %>%
       dplyr::select(strain_name, species_id, c_label, sample_photo1, sample_photo2, sample_photo3, orig_file_name:thumb_file_name4)
 
+    # check for files
+    should.exist.df <- to_change %>%
+      dplyr::group_by(c_label) %>%
+      dplyr::mutate(strain = paste(strain_name, collapse = " | ")) %>%
+      dplyr::ungroup() %>%
+      dplyr::distinct(c_label, .keep_all = T) %>%
+      dplyr::select(strain, c_label, sample_photo1, sample_photo2, sample_photo3, isolation_photo) %>%
+      tidyr::pivot_longer(col = sample_photo1:isolation_photo, names_to = "photo", values_to = "hash") %>%
+      dplyr::filter(!is.na(hash))
+
+    exist.df <- tibble::tibble(files = list.files(dir_photos)) %>%
+      tidyr::separate(files, into = "hash", extra = "drop", sep = ".jp", remove = FALSE)
+
+    test.exist.df <- dplyr::left_join(should.exist.df, exist.df, by = "hash") %>%
+      dplyr::mutate(expected_photo_n = n(),
+                    missing_photo_n = sum(is.na(files)))
+
+    flag.exist.df <- test.exist.df %>%
+      dplyr::mutate(flag_photo_missing = ifelse(is.na(files), TRUE, FALSE)) %>%
+      dplyr::filter(flag_photo_missing == TRUE) %>%
+      dplyr::mutate(missing_file = paste0(hash, ".jpg"))
+
+    # Warning for missing photos CaeNDR
+    if(unique(test.exist.df$missing_photo_n) > 0){
+      # send a warning
+      message(glue::glue("Warning:
+                         CaeNDR processing is missing {unique(test.exist.df$missing_photo_n)} of {unique(test.exist.df$expected_photo_n)} .jpg photos expected to be in:
+                         {dir_photos}
+                         A missing photos report can be found in {dir}/reports/{as.character(Sys.Date())}_CaeNDR_missing_photos_report.csv"))
+
+      # make report
+      write.csv(flag.exist.df %>% select(1:4,missing_file), file = glue::glue("{dir}/reports/{as.character(Sys.Date())}_CaeNDR_missing_photos_report.csv"))
+
+      # allow user to quite or continue
+      continue = readline(prompt = glue::glue("Do you want to continue processing exisiting CaeNDR photos, enter yes or no : "))
+
+      # user entry logic
+      if(stringr::str_detect(continue, regex('y', ignore_case = T))){
+
+        # filter the to_change data to only the existing files and process those
+      missing_hashes <- paste(flag.exist.df$hash, collapse = "|")
+      to_change <- to_change %>%
+        mutate(across(c(sample_photo1, sample_photo2, sample_photo3, isolation_photo),
+                      ~ stringr::str_replace(., pattern = regex(missing_hashes), replacement = NA_character_)))
+
+      } else {
+        # send quit message
+        message("quiting, no photos have been processed.")
+        return()
+      }
+
+    } else {
+      # give the good news
+      message(glue::glue("CaeNDR processing found all expected .jpg photos in {dir_photos}"))
+    }
+
     to_change1 <- to_change %>%
       dplyr::filter(!is.na(sample_photo1))
 
@@ -117,7 +174,6 @@ procPhotos2 <- function(dir, data, max_dim = 500, overwrite = FALSE, CeaNDR = FA
     to_change4 <- to_change %>%
       dplyr::filter(!is.na(isolation_photo))
 
-
     # make CaeNDR subdirectories in dir
     fs::dir_create(glue::glue("{processed_dir}/CeaNDR/Cb"))
     fs::dir_create(glue::glue("{processed_dir}/CeaNDR/Ce"))
@@ -129,10 +185,15 @@ procPhotos2 <- function(dir, data, max_dim = 500, overwrite = FALSE, CeaNDR = FA
     fs::file_copy(to_change3$orig_file_name3, to_change3$new_file_name3, overwrite = overwrite)
     fs::file_copy(to_change4$orig_file_name4, to_change4$new_file_name4, overwrite = overwrite)
 
+    # make a nice CaeNDR progress bar
+    caendr_pb <- progress::progress_bar$new(total = sum(length(unique(to_change1$new_file_name)),
+                                                        length(unique(to_change2$new_file_name)),
+                                                        length(unique(to_change3$new_file_name)),
+                                                        length(unique(to_change4$new_file_name))),
+                                            format = "CaeNDR processing [:bar] :percent eta: :eta",
+                                            clear = FALSE)
     # loop through renamed images to make thumbnails
     for(i in unique(to_change1$new_file_name)) {
-      # Make message
-      message(glue::glue("Processing collection photo:{to_change1 %>% dplyr::filter(new_file_name == i) %>% dplyr::pull(orig_file_name)}"))
       # setup image in R
       img <- imager::load.image(i)
       # get raw img dimesions
@@ -144,12 +205,12 @@ procPhotos2 <- function(dir, data, max_dim = 500, overwrite = FALSE, CeaNDR = FA
 
       # write the file
       imager::save.image(thumb, file = glue::glue("{to_change1 %>% dplyr::filter(new_file_name == i) %>% dplyr::pull(thumb_file_name)}"))
+
+      # Update the progress bar
+      caendr_pb$tick()
     }
 
     for(i in unique(to_change2$new_file_name2)) {
-      # Make message
-      message(glue::glue("Processing collection photo:{to_change2 %>% dplyr::filter(new_file_name2 == i) %>% dplyr::pull(orig_file_name2)}"))
-
       # setup image in R
       img <- imager::load.image(i)
       # get raw img dimesions
@@ -161,12 +222,12 @@ procPhotos2 <- function(dir, data, max_dim = 500, overwrite = FALSE, CeaNDR = FA
 
       # write the file
       imager::save.image(thumb, file = glue::glue("{to_change %>% dplyr::filter(new_file_name2 == i) %>% dplyr::pull(thumb_file_name2)}"))
+
+      # Update the progress bar
+      caendr_pb$tick()
     }
 
     for(i in unique(to_change3$new_file_name3)) {
-      # Make message
-      message(glue::glue("Processing collection photo:{to_change3 %>% dplyr::filter(new_file_name3 == i) %>% dplyr::pull(orig_file_name3)}"))
-
       # setup image in R
       img <- imager::load.image(i)
       # get raw img dimesions
@@ -178,12 +239,12 @@ procPhotos2 <- function(dir, data, max_dim = 500, overwrite = FALSE, CeaNDR = FA
 
       # write the file
       imager::save.image(thumb, file = glue::glue("{to_change %>% dplyr::filter(new_file_name3 == i) %>% dplyr::pull(thumb_file_name3)}"))
+
+      # Update the progress bar
+      caendr_pb$tick()
     }
 
     for(i in unique(to_change4$new_file_name4)) {
-      # Make message
-      message(glue::glue("Processing collection photo:{to_change4 %>% dplyr::filter(new_file_name4 == i) %>% dplyr::pull(orig_file_name4)}"))
-
       # setup image in R
       img <- imager::load.image(i)
       # get raw img dimesions
@@ -195,8 +256,10 @@ procPhotos2 <- function(dir, data, max_dim = 500, overwrite = FALSE, CeaNDR = FA
 
       # write the file
       imager::save.image(thumb, file = glue::glue("{to_change %>% dplyr::filter(new_file_name4 == i) %>% dplyr::pull(thumb_file_name4)}"))
-    }
 
+      # Update the progress bar
+      caendr_pb$tick()
+    }
   }
 
   #============================================================================#
@@ -217,6 +280,57 @@ procPhotos2 <- function(dir, data, max_dim = 500, overwrite = FALSE, CeaNDR = FA
                   thumb_file_name3 = glue::glue("{processed_dir}/C_labels/thumbnails/{c_label}_3.jpg")) %>%
     dplyr::select(strain_name, species_id, c_label, sample_photo1, sample_photo2, sample_photo3, orig_file_name:thumb_file_name3)
 
+  # check for files
+  should.exist.clabel.df <- to_change_clabel %>%
+    dplyr::select(c_label, sample_photo1, sample_photo2, sample_photo3) %>%
+    tidyr::pivot_longer(col = sample_photo1:sample_photo3, names_to = "photo", values_to = "hash") %>%
+    dplyr::filter(!is.na(hash))
+
+  exist.df <- tibble::tibble(files = list.files(dir_photos)) %>%
+    tidyr::separate(files, into = "hash", extra = "drop", sep = ".jp", remove = FALSE)
+
+  test.exist.clabel.df <- dplyr::left_join(should.exist.clabel.df, exist.df, by = "hash") %>%
+    dplyr::mutate(expected_photo_n = n(),
+                  missing_photo_n = sum(is.na(files)))
+
+  flag.exist.clabel.df <- test.exist.clabel.df %>%
+    dplyr::mutate(flag_photo_missing = ifelse(is.na(files), TRUE, FALSE)) %>%
+    dplyr::filter(flag_photo_missing == TRUE) %>%
+    dplyr::mutate(missing_file = paste0(hash, ".jpg"))
+
+  # Warning for missing photos CaeNDR
+  if(unique(test.exist.clabel.df$missing_photo_n) > 0){
+    # send a warning
+    message(glue::glue("Warning:
+                         C-label processing is missing {unique(test.exist.clabel.df$missing_photo_n)} of {unique(test.exist.clabel.df$expected_photo_n)} .jpg photos expected to be in:
+                         {dir_photos}
+                         A missing photos report can be found in {dir}/reports/{as.character(Sys.Date())}_c_lablel_missing_photos_report.csv"))
+
+    # make report
+    write.csv(flag.exist.clabel.df %>% select(1:4,missing_file), file = glue::glue("{dir}/reports/{as.character(Sys.Date())}_c_label_missing_photos_report.csv"))
+
+    # allow user to quite or continue
+    continue = readline(prompt = glue::glue("Do you want to continue processing exisiting C-label photos, enter yes or no : "))
+
+    # user entry logic
+    if(stringr::str_detect(continue, regex('y', ignore_case = T))){
+
+      # filter the to_change data to only the existing files and process those
+      missing_hashes_clabel <- paste(flag.exist.clabel.df$hash, collapse = "|")
+      to_change_clabel <- to_change_clabel %>%
+        mutate(across(c(sample_photo1, sample_photo2, sample_photo3),
+                      ~ stringr::str_replace(., pattern = regex(missing_hashes_clabel), replacement = NA_character_)))
+
+    } else {
+      # send quit message
+      message("quiting")
+      return()
+    }
+  } else {
+    # give the good news
+    message(glue::glue("C-label processing found all expected .jpg photos in {dir_photos}"))
+  }
+
   to_change1_clabel <- to_change_clabel %>%
     dplyr::filter(!is.na(sample_photo1))
 
@@ -235,11 +349,15 @@ procPhotos2 <- function(dir, data, max_dim = 500, overwrite = FALSE, CeaNDR = FA
   fs::file_copy(to_change2_clabel$orig_file_name2, to_change2_clabel$new_file_name2, overwrite = overwrite)
   fs::file_copy(to_change3_clabel$orig_file_name3, to_change3_clabel$new_file_name3, overwrite = overwrite)
 
+  # make a nice C-label progress bar
+  clabel_pb <- progress::progress_bar$new(total = sum(length(unique(to_change1_clabel$new_file_name)),
+                                                      length(unique(to_change2_clabel$new_file_name)),
+                                                      length(unique(to_change3_clabel$new_file_name))),
+                                          format = "C-label processing [:bar] :percent eta: :eta",
+                                          clear = FALSE)
 
   # loop through renamed images to make thumbnails
   for(i in unique(to_change1_clabel$new_file_name)) {
-    # Make message
-    message(glue::glue("Processing collection photo:{to_change1_clabel %>% dplyr::filter(new_file_name == i) %>% dplyr::pull(orig_file_name)}"))
     # setup image in R
     img <- imager::load.image(i)
     # get raw img dimesions
@@ -251,12 +369,11 @@ procPhotos2 <- function(dir, data, max_dim = 500, overwrite = FALSE, CeaNDR = FA
 
     # write the file
     imager::save.image(thumb, file = glue::glue("{to_change1_clabel %>% dplyr::filter(new_file_name == i) %>% dplyr::pull(thumb_file_name)}"))
+
+    clabel_pb$tick()
   }
 
   for(i in unique(to_change2_clabel$new_file_name2)) {
-    # Make message
-    message(glue::glue("Processing collection photo:{to_change2_clabel %>% dplyr::filter(new_file_name2 == i) %>% dplyr::pull(orig_file_name2)}"))
-
     # setup image in R
     img <- imager::load.image(i)
     # get raw img dimesions
@@ -268,12 +385,11 @@ procPhotos2 <- function(dir, data, max_dim = 500, overwrite = FALSE, CeaNDR = FA
 
     # write the file
     imager::save.image(thumb, file = glue::glue("{to_change_clabel %>% dplyr::filter(new_file_name2 == i) %>% dplyr::pull(thumb_file_name2)}"))
+
+    clabel_pb$tick()
   }
 
   for(i in unique(to_change3_clabel$new_file_name3)) {
-    # Make message
-    message(glue::glue("Processing collection photo:{to_change3_clabel %>% dplyr::filter(new_file_name3 == i) %>% dplyr::pull(orig_file_name3)}"))
-
     # setup image in R
     img <- imager::load.image(i)
     # get raw img dimesions
@@ -285,6 +401,8 @@ procPhotos2 <- function(dir, data, max_dim = 500, overwrite = FALSE, CeaNDR = FA
 
     # write the file
     imager::save.image(thumb, file = glue::glue("{to_change_clabel %>% dplyr::filter(new_file_name3 == i) %>% dplyr::pull(thumb_file_name3)}"))
+
+    clabel_pb$tick()
   }
 
   # make a md5 hash for sample photos and thubnails integrity
