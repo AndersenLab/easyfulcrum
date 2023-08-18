@@ -41,7 +41,8 @@ Imports:
     cowplot,
     leaflet,
     DT,
-    rmarkdown
+    rmarkdown,
+    progress
 Suggests:
     knitr
 Depends: 
