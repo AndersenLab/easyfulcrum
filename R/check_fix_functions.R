@@ -197,10 +197,10 @@ checkJoin <- function(data, return_flags = FALSE) {
     print("Unusual sample photo number are found in the ...field_sampling.csv")}
   # check for unusual distances between photo and record locations
   message(">>> Checking for >500 meter distance between location methods") # TAC
-  diffs <- data %>% dplyr::filter(flag_collection_lat_long_method_diff_extreme == TRUE)
-  print(paste("There are", nrow(diffs), "rows with a >100 meter distance between the record creation location and photo location, their c labels are:", sep = " "))
-  if(nrow(diffs) > 0){
-    print(diffs$c_label)
+  collection_lat_long_method_diff_extreme <- data %>% dplyr::filter(flag_collection_lat_long_method_diff_extreme == TRUE)
+  print(paste("There are", nrow(collection_lat_long_method_diff_extreme), "rows with a >500 meter distance between the record creation location and photo location, their c labels are:", sep = " "))
+  if(nrow(collection_lat_long_method_diff_extreme) > 0){
+    print(collection_lat_long_method_diff_extreme$c_label)
     print("The unusual location c labels are found in the ...field_sampling.csv and the ...field_sampling_sample_photo.csv")}
   # check for unusual isolation photo numbers
   message(">>> Checking unusual isolation photo number") # TAC
@@ -264,9 +264,9 @@ checkJoin <- function(data, return_flags = FALSE) {
                 "duplicated_c_label" = duplicated_c_label,
                 "unusual_sample_photo_num" = unusual_sample_photo_num,
                 "duplicated_isolation_for_c_label" = duplicated_isolation_for_c_label,
-                "flag_collection_lat_long_method_diff_extreme" = flag_collection_lat_long_method_diff_extreme,
+                "collection_lat_long_method_diff_extreme" = collection_lat_long_method_diff_extreme,
                 "missing_isolation_record" = missing_isolation_record,
-                "flag_unusual_isolation_photo_num" = flag_unusual_isolation_photo_num,
+                "unusual_isolation_photo_num" = unusual_isolation_photo_num,
                 "extreme_substrate_temperature" = extreme_substrate_temperature,
                 "extreme_ambient_temperature" = extreme_ambient_temperature,
                 "extreme_collection_altitude" = extreme_collection_altitude,
